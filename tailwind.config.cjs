@@ -11,6 +11,13 @@ module.exports = {
         forgen: ["var(--font-foregen)", ...fontFamily.sans],
         brown: ["var(--font-brown)", ...fontFamily.sans],
       },
+      colors: {
+        primaryA: "#100B00",
+        primaryB: "#F4F5F6",
+        secondaryA: "#59F8E8",
+        secondaryB: "#FF5964",
+        tertiary: "#1B065E",
+      },
     },
   },
   plugins: [],

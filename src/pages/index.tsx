@@ -1,6 +1,6 @@
-import { type NextPage } from "next";
 import Logo from "assets/svgs/logo.svg";
-import Image from "next/image";
+import { type NextPage } from "next";
+import { CldImage } from "next-cloudinary";
 
 const Home: NextPage = () => {
   return (
@@ -10,12 +10,14 @@ const Home: NextPage = () => {
           <div className="z-10 m-6 hover:animate-spin">
             <Logo height={200} width={200} className="fill-primaryB" />
           </div>
-          <Image
-            src="https://res.cloudinary.com/dzyy8nvgd/image/upload/v1670323578/apidame-web/IMG_5147.CR2_jnr28e.jpg"
+          <CldImage
+            src="apidame-web/splash-image"
             alt="Climber dynoing"
             width={4752}
             height={3168}
-            className="absolute inset-0 h-full w-full object-cover "
+            className="absolute inset-0 h-full w-full object-cover"
+            sizes="100vw"
+            placeholder="blur"
           />
         </div>
       </main>

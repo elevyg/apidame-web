@@ -38,4 +38,15 @@ const brown = localFont({
   variable: "--font-brown",
 });
 
-export { foregen, brown };
+const holluise = localFont({
+  src: [
+    {
+      path: "../assets/fonts/Holluise-Regular.ttf",
+      style: "normal",
+      weight: "400",
+    },
+  ],
+  variable: "--font-holluise",
+});
+
+export { foregen, brown, holluise };

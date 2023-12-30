@@ -7,7 +7,7 @@ import localFont from "@next/font/local";
 import { trpc } from "../utils/trpc";
 
 import "../styles/globals.css";
-import { brown, foregen } from "styles/font";
+import { brown, foregen, holluise } from "styles/font";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -23,7 +23,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={`${foregen.variable} ${brown.variable} font-sans`}>
+      <main
+        className={`${foregen.variable} ${brown.variable} ${holluise.variable} font-sans`}
+      >
         <Component {...pageProps} />
       </main>
     </SessionProvider>

@@ -1,10 +1,17 @@
 import { type NextPage } from "next";
+import Logo from "assets/svgs/logo.svg";
 import { CldImage } from "next-cloudinary";
 
 const Home: NextPage = () => {
   return (
     <main className="flex flex-col">
-      <div className="h-screen">
+      <nav className="flex h-24 items-center justify-center gap-2 bg-primaryA">
+        <Logo height={50} width={50} className="fill-primaryB" />
+        <h1 className="font-holluise text-5xl tracking-[0.4em] text-primaryB">
+          APIDAME BOULDER
+        </h1>
+      </nav>
+      <div className="relative h-screen">
         <div className="absolute inset-0 z-10 flex items-center justify-center  overflow-hidden">
           <CldImage
             src="apidame-web/vamos-a-escalar-complete"
@@ -25,7 +32,9 @@ const Home: NextPage = () => {
           placeholder="blur"
         />
       </div>
-      <div className="h-screen bg-primaryB"></div>
+      <div className="flex h-screen justify-center bg-primaryB p-6">
+        <h2 className="font-forgen text-5xl">Precios y horarios</h2>
+      </div>
     </main>
   );
 };

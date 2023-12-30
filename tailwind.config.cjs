@@ -10,6 +10,7 @@ module.exports = {
         sans: ["var(--font-foregen)", ...fontFamily.sans],
         forgen: ["var(--font-foregen)", ...fontFamily.sans],
         brown: ["var(--font-brown)", ...fontFamily.sans],
+        holluise: ["var(--font-holluise)", ...fontFamily.sans],
       },
       colors: {
         primaryA: "#100B00",

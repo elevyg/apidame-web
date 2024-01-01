@@ -33,11 +33,12 @@ const Home: NextPage = () => {
         />
       </div>
       <div className="flex flex-col justify-between bg-primaryA md:flex-row ">
-        <div className="flex flex-1 flex-col items-center justify-center gap-3 p-3 py-6">
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 p-10 ">
           <h2 className="font-forgen text-5xl text-primaryB">Ubicación</h2>
           <p className="font-brown text-primaryB">
             Nuestro centro se ubica en por el Camino Internacional, a 200 metros
-            del límite urbano de Chile Chico.
+            del límite urbano de Chile Chico. Este es nuestro letrero que da a
+            la calle:
           </p>
           <CldImage
             src="apidame-web/apidame_street_sign_pnneko"
@@ -65,7 +66,7 @@ const Home: NextPage = () => {
       <div className="flex flex-col justify-evenly gap-4 bg-primaryB p-6 md:flex-row">
         <div>
           <h2 className="font-forgen text-5xl">Horarios</h2>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 font-brown">
             <div>
               <h3 className="text-xl">Martes a Viernes</h3>
               <p>17:00 a 22:00</p>
@@ -79,15 +80,21 @@ const Home: NextPage = () => {
               <h3 className="text-xl">Domingo y festivos</h3>
               <p>Cerrado en principio</p>
               <p>
-                Cualquier cambio se publicará en nuestro Instagram
-                @apidameboulder
+                Cualquier cambio se publicará en nuestro Instagram{" "}
+                <a
+                  className="text-secondaryB underline"
+                  href="https://www.instagram.com/apidameboulder/"
+                >
+                  @apidameboulder
+                </a>
               </p>
             </div>
           </div>
         </div>
+        <Logo height={50} width={50} className="fill-primaryA md:hidden" />
         <div>
           <h2 className="font-forgen text-5xl">Precios</h2>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 font-brown">
             <div>
               <h3 className="text-xl">Diario</h3>
               <p>$6.000</p>
@@ -100,10 +107,22 @@ const Home: NextPage = () => {
               <h3 className="text-xl">1 semana</h3>
               <p>$20.000</p>
             </div>
+            <div>
+              <h3 className="text-xl">Membresía</h3>
+              <p>
+                Envíanos un correo a{" "}
+                <a
+                  className="text-secondaryB underline"
+                  href="mailto:hola@apidame.com"
+                >
+                  hola@apidame.com
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </div>
-      <footer className="flex items-center justify-center gap-4 bg-primaryA py-4 md:py-6">
+      <footer className="flex items-center justify-center gap-4 bg-primaryA py-4 md:py-10">
         <Logo height={50} width={50} className="fill-primaryB" />
         <h1 className="font-holluise text-2xl tracking-[0.4em] text-primaryB md:text-5xl">
           APIDAME BOULDER

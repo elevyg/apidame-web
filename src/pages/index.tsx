@@ -6,8 +6,12 @@ const Home: NextPage = () => {
   return (
     <main className="flex flex-col">
       <nav className="flex items-center justify-center gap-4 bg-primaryA py-4 md:py-6">
-        <Logo height={50} width={50} className="fill-primaryB" />
-        <h1 className="font-holluise text-2xl tracking-[0.4em] text-primaryB md:text-5xl">
+        <Logo
+          height={50}
+          width={50}
+          className="h-p[30px] w-[30px] fill-primaryB md:h-[50px] md:w-[50px]"
+        />
+        <h1 className="font-holluise text-xl tracking-[0.4em] text-primaryB md:text-5xl">
           APIDAME BOULDER
         </h1>
       </nav>
@@ -132,8 +136,12 @@ const Home: NextPage = () => {
         </div>
       </div>
       <footer className="flex items-center justify-center gap-4 bg-primaryA py-4 md:py-10">
-        <Logo height={50} width={50} className="fill-primaryB" />
-        <h1 className="font-holluise text-2xl tracking-[0.4em] text-primaryB md:text-5xl">
+        <Logo
+          height={50}
+          width={50}
+          className="h-p[30px] w-[30px] fill-primaryB md:h-[50px] md:w-[50px]"
+        />
+        <h1 className="font-holluise text-xl tracking-[0.4em] text-primaryB md:text-5xl">
           APIDAME BOULDER
         </h1>
       </footer>

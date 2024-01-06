@@ -37,7 +37,7 @@ const Home: NextPage = () => {
         />
       </div>
       <div className="relative flex flex-col overflow-hidden p-10 md:flex-row">
-        <div className="absolute inset-0  z-0 bg-repeat"></div>
+        <div className="absolute inset-0  z-0 bg-[url(https://res.cloudinary.com/dzyy8nvgd/image/upload/c_scale,q_auto,w_500/v1704542059/apidame-web/vamos_a_escalar_kids_bg_t2l80k.png)] bg-repeat"></div>
         <CldImage
           src="apidame-web/taller_de_escalada_kids_uzwz5q"
           alt="Taller de escalada kids"

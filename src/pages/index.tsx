@@ -150,22 +150,26 @@ const Home: NextPage = () => {
           <div className="flex flex-col gap-4 font-brown">
             <div>
               <h3 className="text-xl">Diario</h3>
-              <p>$6.000</p>
+              <p className="line-through" >$6.000</p>
+              <p>$3.000</p>
             </div>
             <div>
               <h3 className="text-xl">Estudiantes y menores de 18 años*</h3>
-              <p>$4.000</p>
+              <p className="line-through" >$4.000</p>
+              <p>$2.000</p>
               <p className="text-sm text-gray-700">
                 * Acreditar con carnet o alguna credencial de estudiante
               </p>
             </div>
             <div>
               <h3 className="text-xl">3 días</h3>
-              <p>$15.000</p>
+              <p className="line-through" >$15.000</p>  
+              <p>$7.500</p>
             </div>
             <div>
               <h3 className="text-xl">1 semana</h3>
-              <p>$20.000</p>
+              <p className="line-through" >$20.000</p>
+              <p>$10.000</p>
             </div>
             <div>
               <h3 className="text-xl">Membresía</h3>

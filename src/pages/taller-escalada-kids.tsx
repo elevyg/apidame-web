@@ -48,9 +48,9 @@ const Home: NextPage = () => {
             <h2>Detalles del Taller:</h2>
             <ul>
               <li>Días: Martes y jueves</li>
-              <li>Horario: 6:30 pm a 8:00 pm</li>
+              <li>Horario: 6:30 pm a 7:30 pm</li>
               <li>
-                Duración: Enero (¡con la posibilidad de extenderse a febrero!)
+                Duración: Enero y Febrero 
               </li>
               <li>Tarifa Mensual: $45.000</li>
             </ul>

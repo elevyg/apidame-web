@@ -60,9 +60,8 @@ const Home: NextPage = () => {
             </h1>
             <p>
               ¡Descubre la emoción de la escalada para niños en un ambiente
-              seguro y divertido! Martes y jueves de 6:30 pm a 8:00 pm en enero
-              (¡posibilidad de extenderse a febrero!). Solo $45k al mes,
-              zapatillas incluidas. 🧗‍♂️
+              seguro y divertido! Martes y jueves de 6:30 pm a 7:30 pm en enero y febrero. Solo $45k al mes,
+              prestamo de zapatillas incluidas. 🧗‍♂️
             </p>
             <p>
               ¡Desarrolla habilidades, construye confianza y diviértete en Chile

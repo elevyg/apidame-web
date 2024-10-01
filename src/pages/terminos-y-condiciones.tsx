@@ -1,10 +1,4 @@
 import React from "react";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Términos y Condiciones | Nombre de la Empresa",
-  description: "Términos y condiciones de uso de nuestro servicio.",
-};
 
 const TerminosYCondiciones: React.FC = () => {
   return (

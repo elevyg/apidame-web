@@ -42,48 +42,10 @@ const Home: NextPage = () => {
           placeholder="blur"
         />
       </div>
-      <div className="relative flex flex-col overflow-hidden p-10 md:flex-row">
-        <div className="absolute inset-0  z-0 bg-[url(https://res.cloudinary.com/dzyy8nvgd/image/upload/c_scale,q_auto,w_500/v1704542059/apidame-web/vamos_a_escalar_kids_bg_t2l80k.png)] bg-repeat"></div>
-        <CldImage
-          src="apidame-web/taller_de_escalada_kids_uzwz5q"
-          alt="Taller de escalada kids"
-          width={800}
-          height={900}
-          className="z-10 flex-1 object-contain"
-          sizes="100vw"
-          placeholder="blur"
-        />
-        <div className="landing-container relative flex flex-1 flex-col gap-4 font-brown md:pl-5">
-          <div className="hero-card flex h-full flex-col items-center justify-center gap-6 bg-white p-4 text-xl">
-            <h1 className="text-3xl">
-              🌟 Taller de Escalada Kids en Apidame Boulder 🌟
-            </h1>
-            <p>
-              ¡Descubre la emoción de la escalada para niños en un ambiente
-              seguro y divertido! Martes y jueves de 6:30 pm a 8:00 pm en enero
-              (¡posibilidad de extenderse a febrero!). Solo $45k al mes,
-              zapatillas incluidas. 🧗‍♂️
-            </p>
-            <p>
-              ¡Desarrolla habilidades, construye confianza y diviértete en Chile
-              Chico!
-            </p>
-            <a
-              className=" rounded-md bg-red-600 py-2 px-6 font-forgen tracking-wider text-white"
-              href="https://forms.gle/3jppPguUMqGFrjNC8"
-            >
-              Inscríbete
-            </a>
-            <Link
-              className=" rounded-md bg-blue-600 py-2 px-6 font-forgen tracking-wider text-white"
-              href="/taller-escalada-kids"
-            >
-              Más información
-            </Link>
-          </div>
-        </div>
-      </div>
-      <div className="flex w-full flex-col justify-between bg-primaryA md:flex-row">
+      <div
+        id="location"
+        className="flex w-full flex-col justify-between bg-primaryA md:flex-row"
+      >
         <div className="flex flex-col items-center justify-center gap-3  p-10 md:max-w-[50%]">
           <h2 className="font-forgen text-5xl text-primaryB">Ubicación</h2>
           <p className="font-brown text-primaryB">
@@ -114,38 +76,28 @@ const Home: NextPage = () => {
           ></iframe>
         </div>
       </div>
-      <div className="flex flex-col gap-4 bg-primaryB  md:flex-row">
-        <div className="p-6">
+      <div
+        id="prices-and-hours"
+        className="flex flex-col gap-4 bg-primaryB  md:flex-row"
+      >
+        <div className="p-6 md:flex-1">
           <h2 className="font-forgen text-5xl">Horarios</h2>
-          <div className="flex flex-col gap-4 font-brown">
-            <div>
-              <h3 className="text-xl">Martes a Viernes</h3>
-              <p>17:00 a 22:00</p>
-            </div>
-            <div>
-              <h3 className="text-xl">Sábado</h3>
-              <p>10:00 a 14:00</p>
-              <p>17:00 a 22:00</p>
-            </div>
-            <div>
-              <h3 className="text-xl">Domingo y festivos</h3>
-              <p>Cerrado en principio</p>
-              <p>
-                Cualquier cambio se publicará en nuestro Instagram{" "}
-                <a
-                  className="text-secondaryB underline"
-                  href="https://www.instagram.com/apidameboulder/"
-                >
-                  @apidameboulder
-                </a>
-              </p>
-            </div>
-          </div>
+          <p className="mt-4 font-brown text-xl">
+            Contáctanos por Instagram para agendar tu sesión de escalada:
+            <a
+              className="ml-2 text-secondaryB underline"
+              href="https://www.instagram.com/apidameboulder/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              @apidameboulder
+            </a>
+          </p>
         </div>
         <div className="flex w-full items-center justify-center md:hidden">
           <Logo height={50} width={50} className="fill-primaryA" />
         </div>
-        <div className="p-6">
+        <div className="bg-primaryA p-6 text-white md:flex-1">
           <h2 className="font-forgen text-5xl">Precios</h2>
           <div className="flex flex-col gap-4 font-brown">
             <div>

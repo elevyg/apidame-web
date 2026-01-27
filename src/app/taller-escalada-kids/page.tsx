@@ -31,7 +31,6 @@ export default function TallerEscaladaKids() {
           height={900}
           className="z-10 flex-1 object-contain"
           sizes="100vw"
-          placeholder="blur"
         />
         <div className="landing-container relative flex flex-1 flex-col gap-4 bg-white p-4 font-brown md:pl-5">
           <h1 className="font-forgen text-3xl">

@@ -30,7 +30,6 @@ export default function Home() {
             width={2000}
             height={2000}
             className="px-10 md:w-2/3"
-            placeholder="blur"
           />
         </div>
         <CldImage
@@ -40,7 +39,6 @@ export default function Home() {
           height={3168}
           className="absolute inset-0 h-full w-full object-cover"
           sizes="100vw"
-          placeholder="blur"
         />
       </div>
       <div
@@ -61,7 +59,6 @@ export default function Home() {
             height={300}
             className="object-cover"
             sizes="100vw"
-            placeholder="blur"
             aspectRatio="1:1"
           />
         </div>

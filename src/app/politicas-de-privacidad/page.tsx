@@ -1,7 +1,6 @@
-import React from "react";
 import Link from "next/link";
 
-const PrivacyPolicy: React.FC = () => {
+export default function PrivacyPolicy() {
   return (
     <div className="container mx-auto px-4 py-8 font-forgen text-black">
       <h1 className="mb-6 text-3xl font-bold">Privacy Policy</h1>
@@ -78,6 +77,4 @@ const PrivacyPolicy: React.FC = () => {
       </Link>
     </div>
   );
-};
-
-export default PrivacyPolicy;
+}

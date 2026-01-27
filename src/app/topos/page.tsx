@@ -1,8 +1,7 @@
-import { type NextPage } from "next";
 import Link from "next/link";
 import Logo from "assets/svgs/icon-solo.svg";
 
-const Topos: NextPage = () => {
+export default function Topos() {
   return (
     <main>
       <nav className="">
@@ -26,6 +25,4 @@ const Topos: NextPage = () => {
       ></iframe>
     </main>
   );
-};
-
-export default Topos;
+}

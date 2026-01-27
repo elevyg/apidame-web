@@ -1,9 +1,10 @@
-import { type NextPage } from "next";
+"use client";
+
 import Logo from "assets/svgs/icon-solo.svg";
 import { CldImage } from "next-cloudinary";
 import Link from "next/link";
 
-const Home: NextPage = () => {
+export default function Home() {
   return (
     <main className="flex flex-col">
       <nav className="">
@@ -146,6 +147,4 @@ const Home: NextPage = () => {
       </footer>
     </main>
   );
-};
-
-export default Home;
+}

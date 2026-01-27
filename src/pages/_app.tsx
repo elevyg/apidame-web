@@ -1,20 +1,12 @@
-import { type AppType } from "next/app";
-import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
+import type { AppProps } from "next/app";
 import Head from "next/head";
-import localFont from "@next/font/local";
-
-import { trpc } from "../utils/trpc";
 
 import "../styles/globals.css";
 import { brown, foregen, holluise } from "styles/font";
 
-const MyApp: AppType<{ session: Session | null }> = ({
-  Component,
-  pageProps: { session, ...pageProps },
-}) => {
+export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <SessionProvider session={session}>
+    <>
       <Head>
         <title>Apidame Boulder</title>
         <meta
@@ -28,8 +20,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
       >
         <Component {...pageProps} />
       </main>
-    </SessionProvider>
+    </>
   );
-};
-
-export default trpc.withTRPC(MyApp);
+}

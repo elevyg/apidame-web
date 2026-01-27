@@ -1,3 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-foregen), ui-sans-serif, system-ui, sans-serif;
+  --font-forgen: var(--font-foregen), ui-sans-serif, system-ui, sans-serif;
+  --font-brown: var(--font-brown), ui-sans-serif, system-ui, sans-serif;
+  --font-holluise: var(--font-holluise), ui-sans-serif, system-ui, sans-serif;
+
+  --color-primaryA: #100B00;
+  --color-primaryB: #F4F5F6;
+  --color-secondaryA: #59F8E8;
+  --color-secondaryB: #FF5964;
+  --color-tertiary: #1B065E;
+}

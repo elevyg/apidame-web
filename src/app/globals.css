@@ -11,4 +11,32 @@
   --color-secondaryA: #59F8E8;
   --color-secondaryB: #FF5964;
   --color-tertiary: #1B065E;
+
+  --shadow-bevel-raised: 
+    inset -2px -2px 0 rgba(0,0,0,0.8),
+    inset 2px 2px 0 rgba(89,248,232,0.6);
+  --shadow-bevel-sunken: 
+    inset 2px 2px 4px rgba(0,0,0,0.8),
+    inset -1px -1px 0 rgba(89,248,232,0.2);
+  --shadow-hard: 4px 4px 0 rgba(0,0,0,0.4);
+
+  --border-chunky: 3px;
+
+  --spacing-panel: 0.5rem;
+}
+
+.y2k-panel {
+  border: var(--border-chunky) solid var(--color-secondaryA);
+  box-shadow: var(--shadow-bevel-raised);
+  background: var(--color-primaryA);
+}
+
+.y2k-panel-sunken {
+  box-shadow: var(--shadow-bevel-sunken);
+  background: #0a0700;
+}
+
+.y2k-accent-bar {
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--color-secondaryA), transparent);
 }

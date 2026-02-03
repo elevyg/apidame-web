@@ -60,17 +60,17 @@ export default function Topos() {
               Selecciona una pared para explorar sus rutas.
             </p>
           </div>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-3 md:grid-cols-2">
             {cards.map((card) => {
               const badgeStyle =
                 statusStyles[card.status] ?? "border-primaryB/40 text-primaryB";
               const content = (
                 <div
-                  className={`y2k-panel y2k-noise flex h-full flex-col gap-3 border ${card.enabled ? "px-4 py-4" : "px-3 py-3"} ${card.enabled ? "" : "y2k-card-disabled"}`}
+                  className={`y2k-panel y2k-noise flex h-full flex-col gap-3 border ${card.enabled ? "px-3 py-3" : "px-3 py-3"} ${card.enabled ? "" : "y2k-card-disabled"}`}
                 >
-                  <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-start justify-between gap-3">
                     <span
-                      className={`rounded-full border px-3 py-1 text-[11px] font-brown uppercase tracking-[0.2em] ${badgeStyle}`}
+                      className={`rounded-full border px-3 py-1 text-[10px] font-brown uppercase tracking-[0.2em] ${badgeStyle}`}
                     >
                       {card.status}
                     </span>
@@ -83,31 +83,35 @@ export default function Topos() {
                       />
                     </div>
                   </div>
-                  {card.thumbnail ? (
-                    <div className="y2k-frame h-32 overflow-hidden">
-                      <img
-                        src={card.thumbnail}
-                        alt={`Preview ${card.title}`}
-                        className="h-full w-full object-cover"
-                      />
+                  <div className="flex items-center gap-3">
+                    {card.thumbnail ? (
+                      <div className="y2k-frame h-16 w-24 overflow-hidden">
+                        <img
+                          src={card.thumbnail}
+                          alt={`Preview ${card.title}`}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="y2k-frame flex h-16 w-24 items-center justify-center border border-dashed border-primaryB/20 text-[10px] font-brown text-primaryB/40">
+                        Preview
+                      </div>
+                    )}
+                    <div className="flex flex-1 flex-col gap-1">
+                      <h3
+                        className={`font-forgen text-primaryB ${card.enabled ? "text-base" : "text-[15px]"}`}
+                      >
+                        {card.title}
+                      </h3>
+                      <p
+                        className={`font-brown text-primaryB/60 ${card.enabled ? "text-[11px]" : "text-[10px]"}`}
+                      >
+                        {card.description}
+                      </p>
                     </div>
-                  ) : (
-                    <div className="y2k-frame flex h-20 items-center justify-center border border-dashed border-primaryB/20 text-[11px] font-brown text-primaryB/40">
-                      Preview pronto
-                    </div>
-                  )}
-                  <h3
-                    className={`font-forgen text-primaryB ${card.enabled ? "text-lg" : "text-base"}`}
-                  >
-                    {card.title}
-                  </h3>
-                  <p
-                    className={`font-brown text-primaryB/60 ${card.enabled ? "text-xs" : "text-[11px]"}`}
-                  >
-                    {card.description}
-                  </p>
-                  <span className="mt-auto text-xs font-brown text-secondaryA/70">
-                    {card.enabled ? "Abrir topo" : "Disponible pronto"}
+                  </div>
+                  <span className="text-xs font-brown text-secondaryA/70">
+                    {card.enabled ? "Abrir topo →" : "Disponible pronto"}
                   </span>
                 </div>
               );
@@ -125,7 +129,7 @@ export default function Topos() {
           </div>
         </section>
 
-        <section className="y2k-panel y2k-noise flex min-h-[360px] flex-col">
+        <section className="y2k-panel y2k-noise flex min-h-[260px] flex-col">
           <div className="border-b-2 border-secondaryA/30 px-4 py-3">
             <h3 className="font-forgen text-xl text-primaryB">
               Rutas destacadas

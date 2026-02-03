@@ -115,7 +115,7 @@ export default function WallExplorer({
 
     viewerRef.current = viewer;
 
-    if (window.OpenSeadragon?.ControlAnchor) {
+    if (window.OpenSeadragon?.ControlAnchor && viewer.navigator?.setPosition) {
       viewer.navigator.setPosition(
         window.OpenSeadragon.ControlAnchor.BOTTOM_RIGHT,
       );

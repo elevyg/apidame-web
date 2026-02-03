@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import type { OpenSeadragonViewer } from "./openseadragon.d";
 import type { TopoData, TopoRoute } from "./types";
 
 type WallExplorerProps = {
@@ -25,16 +25,10 @@ export default function WallExplorer({
   error,
 }: WallExplorerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const viewerRef = useRef<any>(null);
+  const viewerRef = useRef<OpenSeadragonViewer | null>(null);
   const overlayMapRef = useRef<Map<string, HTMLElement>>(new Map());
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const [viewerError, setViewerError] = useState<string | null>(null);
-  const [debugCoords, setDebugCoords] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
-  const searchParams = useSearchParams();
-  const debugMode = searchParams.get("debug") === "1";
 
   const image = data?.image;
 
@@ -126,25 +120,10 @@ export default function WallExplorer({
       viewer.viewport.goHome(true);
     });
 
-    if (debugMode) {
-      viewer.addHandler("canvas-click", (event: any) => {
-        const viewportPoint = viewer.viewport.pointFromPixel(event.position);
-        const imagePoint = viewer.viewport.viewportToImageCoordinates(
-          viewportPoint,
-        );
-        const coords = {
-          x: Math.round(imagePoint.x),
-          y: Math.round(imagePoint.y),
-        };
-        setDebugCoords(coords);
-        console.log("Topo coords", coords);
-      });
-    }
-
     return () => {
       viewer.destroy();
     };
-  }, [scriptLoaded, image, debugMode]);
+  }, [scriptLoaded, image]);
 
   const visibleRouteMap = useMemo(() => {
     return new Map(visibleRoutes.map((route) => [route.id, route]));
@@ -152,7 +131,8 @@ export default function WallExplorer({
 
   useEffect(() => {
     const viewer = viewerRef.current;
-    if (!viewer || !image) return;
+    const OSD = window.OpenSeadragon;
+    if (!viewer || !image || !OSD) return;
 
     overlayMapRef.current.forEach((element) => {
       viewer.removeOverlay(element);
@@ -178,7 +158,7 @@ export default function WallExplorer({
       viewer.addOverlay({
         element,
         location: rect,
-        placement: window.OpenSeadragon.Placement.CENTER,
+        placement: OSD.Placement.CENTER,
       });
 
       overlayMapRef.current.set(route.id, element);
@@ -218,7 +198,7 @@ export default function WallExplorer({
 
   if (error) {
     return (
-      <div className="flex h-full items-center justify-center p-6 text-center text-xs font-brown text-secondaryB">
+      <div className="font-brown text-secondaryB flex h-full items-center justify-center p-6 text-center text-xs">
         {error}
       </div>
     );
@@ -226,7 +206,7 @@ export default function WallExplorer({
 
   if (!image) {
     return (
-      <div className="flex h-full items-center justify-center p-6 text-center text-xs font-brown text-primaryB/60">
+      <div className="font-brown text-primaryB/60 flex h-full items-center justify-center p-6 text-center text-xs">
         Cargando topo...
       </div>
     );
@@ -234,9 +214,11 @@ export default function WallExplorer({
 
   if (viewerError) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-2 p-6 text-center text-xs font-brown text-secondaryB">
+      <div className="font-brown text-secondaryB flex h-full flex-col items-center justify-center gap-2 p-6 text-center text-xs">
         <p>{viewerError}</p>
-        <p className="text-primaryB/60">Se mostrará el topo descargable abajo.</p>
+        <p className="text-primaryB/60">
+          Se mostrará el topo descargable abajo.
+        </p>
       </div>
     );
   }
@@ -244,11 +226,6 @@ export default function WallExplorer({
   return (
     <div className="relative h-full w-full">
       <div ref={containerRef} className="h-full w-full" />
-      {debugMode && debugCoords ? (
-        <div className="absolute right-3 top-3 rounded border border-secondaryA/60 bg-primaryA/80 px-3 py-2 text-[11px] font-brown text-secondaryA">
-          x: {debugCoords.x}, y: {debugCoords.y}
-        </div>
-      ) : null}
     </div>
   );
 }

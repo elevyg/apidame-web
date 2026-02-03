@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Logo from "assets/svgs/icon-solo.svg";
+import TopoClient from "./TopoClient";
 
 export default function Topos() {
   return (
@@ -23,22 +24,17 @@ export default function Topos() {
       <div className="flex min-h-0 flex-1 flex-col p-4 md:p-8">
         <div className="y2k-accent-bar mb-4 shrink-0" />
 
-        <div className="y2k-panel flex min-h-0 flex-1 flex-col">
-          <div className="flex shrink-0 items-center justify-between border-b-2 border-secondaryA/30 px-4 py-3">
-            <h2 className="font-forgen text-2xl text-primaryB md:text-3xl">
-              TOPOS
-            </h2>
-            <div className="flex items-center gap-3">
-              <span className="font-brown text-xs text-primaryB/50">
-                ↕ scroll
-              </span>
-              <div className="flex gap-1">
-                <span className="h-3 w-3 rounded-full bg-secondaryA/50" />
-                <span className="h-3 w-3 rounded-full bg-secondaryB/50" />
-              </div>
-            </div>
-          </div>
+        <TopoClient />
 
+        <div className="y2k-accent-bar mt-4 shrink-0" />
+
+        <div className="y2k-panel mt-4 flex min-h-[220px] flex-col">
+          <div className="border-b-2 border-secondaryA/30 px-4 py-3">
+            <h3 className="font-forgen text-xl text-primaryB">Descargar topos</h3>
+            <p className="font-brown text-xs text-primaryB/60">
+              Archivos originales para imprimir.
+            </p>
+          </div>
           <div className="relative min-h-0 flex-1 p-(--spacing-panel)">
             <div className="y2k-panel-sunken absolute inset-0 m-(--spacing-panel)">
               <iframe
@@ -48,8 +44,6 @@ export default function Topos() {
             </div>
           </div>
         </div>
-
-        <div className="y2k-accent-bar mt-4 shrink-0" />
       </div>
     </main>
   );

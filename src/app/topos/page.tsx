@@ -26,6 +26,21 @@ export default function Topos() {
 
         <TopoClient />
 
+        <div className="y2k-panel mt-4 border-2 border-secondaryB/70 bg-secondaryB/10 px-4 py-4">
+          <div className="flex items-center gap-3">
+            <span className="rounded-full border border-secondaryB px-3 py-1 text-xs font-brown text-secondaryB">
+              Próximamente
+            </span>
+            <p className="font-forgen text-lg text-primaryB">
+              Topo Interactivo de la Pared Norte y Escudo
+            </p>
+          </div>
+          <p className="mt-2 font-brown text-xs text-primaryB/70">
+            Estamos preparando los topos digitales para esos sectores. Muy
+            pronto estarán disponibles.
+          </p>
+        </div>
+
         <div className="y2k-accent-bar mt-4 shrink-0" />
 
         <div className="y2k-panel mt-4 flex min-h-[220px] flex-col">

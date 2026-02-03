@@ -41,14 +41,20 @@ export default function TopoClient() {
 
   return (
     <section className="flex min-h-0 flex-1 flex-col gap-4">
-      <div className="y2k-panel flex min-h-[320px] flex-1 flex-col">
-        <div className="flex items-center justify-between border-b-2 border-secondaryA/30 px-4 py-3">
-          <h2 className="font-forgen text-2xl text-primaryB md:text-3xl">
-            Topo Interactivo Proa y Repisa Central
-          </h2>
+      <div className="y2k-panel flex min-h-[480px] flex-1 flex-col">
+        <div className="flex flex-col gap-2 border-b-2 border-secondaryA/30 px-4 py-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 className="font-forgen text-2xl text-primaryB md:text-3xl">
+              Topo Interactivo Proa y Repisa Central
+            </h2>
+            <p className="font-brown text-xs text-primaryB/60">
+              Arrastra para mover · Pinch/scroll para zoom · Doble click para
+              acercar
+            </p>
+          </div>
           <div className="flex items-center gap-3">
             <span className="font-brown text-xs text-primaryB/50">
-              ↕ scroll
+              estilo mapa
             </span>
             <div className="flex gap-1">
               <span className="h-3 w-3 rounded-full bg-secondaryA/50" />
@@ -57,8 +63,8 @@ export default function TopoClient() {
           </div>
         </div>
 
-        <div className="relative min-h-0 flex-1 p-(--spacing-panel)">
-          <div className="y2k-panel-sunken absolute inset-0 m-(--spacing-panel)">
+        <div className="relative min-h-[320px] flex-1 p-(--spacing-panel) md:min-h-0">
+          <div className="y2k-panel-sunken h-full w-full md:absolute md:inset-0 md:m-(--spacing-panel)">
             <WallExplorer
               data={data}
               visibleRoutes={routes}

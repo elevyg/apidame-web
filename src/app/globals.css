@@ -40,3 +40,68 @@
   height: 4px;
   background: linear-gradient(90deg, transparent, var(--color-secondaryA), transparent);
 }
+
+.y2k-frame {
+  border: 2px solid rgba(89, 248, 232, 0.6);
+  box-shadow: var(--shadow-hard);
+  position: relative;
+  overflow: hidden;
+}
+
+.y2k-glow {
+  box-shadow: 0 0 12px rgba(89, 248, 232, 0.5);
+}
+
+.y2k-noise {
+  position: relative;
+  overflow: hidden;
+}
+
+.y2k-noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.15;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.03),
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px,
+      transparent 2px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.08),
+      rgba(0, 0, 0, 0.08) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  pointer-events: none;
+}
+
+.y2k-skeleton {
+  border-radius: 8px;
+  background: linear-gradient(
+    110deg,
+    rgba(255, 255, 255, 0.08) 8%,
+    rgba(89, 248, 232, 0.25) 18%,
+    rgba(255, 255, 255, 0.08) 33%
+  );
+  background-size: 200% 100%;
+  animation: y2k-shimmer 1.6s linear infinite;
+}
+
+@keyframes y2k-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.y2k-card-disabled {
+  opacity: 0.65;
+  filter: grayscale(0.2);
+}

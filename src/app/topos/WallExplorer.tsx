@@ -103,16 +103,23 @@ export default function WallExplorer({
     const viewer = window.OpenSeadragon({
       element: containerRef.current,
       tileSources: image.dziPath,
-      showNavigator: false,
-      showZoomControl: false,
-      showHomeControl: false,
+      showNavigator: true,
+      showZoomControl: true,
+      showHomeControl: true,
       showFullPageControl: false,
+      showNavigationControl: true,
       gestureSettingsMouse: {
         scrollToZoom: true,
       },
     });
 
     viewerRef.current = viewer;
+
+    if (window.OpenSeadragon?.ControlAnchor) {
+      viewer.navigator.setPosition(
+        window.OpenSeadragon.ControlAnchor.BOTTOM_RIGHT,
+      );
+    }
 
     viewer.addHandler("open", () => {
       viewer.viewport.goHome(true);

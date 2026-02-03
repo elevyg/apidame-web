@@ -103,6 +103,7 @@ export default function WallExplorer({
     const viewer = window.OpenSeadragon({
       element: containerRef.current,
       tileSources: image.dziPath,
+      prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
       showNavigator: true,
       showZoomControl: true,
       showHomeControl: true,

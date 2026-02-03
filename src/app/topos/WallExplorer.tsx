@@ -13,6 +13,8 @@ type WallExplorerProps = {
 };
 
 const SCRIPT_SRC = "/vendor/openseadragon.min.js";
+const CDN_SRC =
+  "https://openseadragon.github.io/openseadragon/openseadragon.min.js";
 const DEFAULT_MARKER_SIZE = 120;
 
 export default function WallExplorer({
@@ -40,24 +42,46 @@ export default function WallExplorer({
     if (!containerRef.current) return;
     if (!image) return;
 
-    const existingScript = document.querySelector(
-      `script[src="${SCRIPT_SRC}"]`,
-    );
+    const loadScript = (src: string) =>
+      new Promise<void>((resolve, reject) => {
+        const existing = document.querySelector(`script[src="${src}"]`);
+        if (existing) {
+          if (window.OpenSeadragon) {
+            resolve();
+          } else {
+            existing.addEventListener("load", () => resolve());
+            existing.addEventListener("error", () => reject());
+          }
+          return;
+        }
 
-    if (existingScript) {
-      setScriptLoaded(true);
-      return;
-    }
+        const script = document.createElement("script");
+        script.src = src;
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject();
+        document.body.appendChild(script);
+      });
 
-    const script = document.createElement("script");
-    script.src = SCRIPT_SRC;
-    script.async = true;
-    script.onload = () => setScriptLoaded(true);
-    script.onerror = () =>
-      setViewerError(
-        "No se pudo cargar el visor. Revisa /public/vendor/openseadragon.min.js",
-      );
-    document.body.appendChild(script);
+    loadScript(SCRIPT_SRC)
+      .then(() => {
+        if (window.OpenSeadragon) {
+          setScriptLoaded(true);
+          return;
+        }
+        return loadScript(CDN_SRC).then(() => {
+          if (window.OpenSeadragon) {
+            setScriptLoaded(true);
+            return;
+          }
+          throw new Error("OpenSeadragon no disponible");
+        });
+      })
+      .catch(() => {
+        setViewerError(
+          "No se pudo cargar OpenSeadragon. Revisa el bundle local o la conexión al CDN.",
+        );
+      });
   }, [image]);
 
   useEffect(() => {
@@ -66,7 +90,7 @@ export default function WallExplorer({
     if (!containerRef.current) return;
     if (!window.OpenSeadragon) {
       setViewerError(
-        "OpenSeadragon no está disponible. Revisa el bundle local.",
+        "OpenSeadragon no está disponible. Revisa el bundle local o la carga desde CDN.",
       );
       return;
     }

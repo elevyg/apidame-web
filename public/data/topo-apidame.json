@@ -1,0 +1,19 @@
+{
+  "image": {
+    "dziPath": "/tiles/proa-rc-topo.dzi",
+    "width": 12000,
+    "height": 8000
+  },
+  "sectors": [
+    { "id": "proa", "name": "Proa", "color": "#59F8E8" }
+  ],
+  "routes": [
+    {
+      "id": "proa-01",
+      "name": "Ruta Demo",
+      "grade": "6a",
+      "sectorId": "proa",
+      "marker": { "x": 6000, "y": 4000 }
+    }
+  ]
+}

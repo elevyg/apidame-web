@@ -39,7 +39,22 @@ export default function Topos() {
       <div className="flex min-h-0 flex-1 flex-col gap-4 p-4 pb-8 md:p-8">
         <div className="y2k-accent-bar shrink-0" />
 
-        <section className="y2k-panel y2k-noise flex flex-col gap-4 px-4 py-5 md:px-6">
+        <section className="flex flex-col gap-3 px-1">
+          <div>
+            <h2 className="font-forgen text-3xl text-primaryB md:text-5xl">
+              Cerro Apidame
+            </h2>
+            <p className="font-brown text-xs text-primaryB/60">
+              Un anfiteatro de líneas, textura y viento.
+            </p>
+          </div>
+        </section>
+
+        <section
+          id="topos-interactivos"
+          className="y2k-panel y2k-noise flex flex-col gap-4 px-4 py-5 md:px-6 transition outline-none focus-visible:ring-2 focus-visible:ring-secondaryA/70 focus-visible:ring-offset-4 focus-visible:ring-offset-primaryA [@supports(selector(:target))]:target:border-secondaryB/80 [@supports(selector(:target))]:target:shadow-[0_0_24px_rgba(255,89,100,0.35)]"
+          tabIndex={-1}
+        >
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="font-forgen text-2xl text-primaryB md:text-4xl">
@@ -48,20 +63,6 @@ export default function Topos() {
               <p className="font-brown text-xs text-primaryB/60">
                 Aquí nacen las líneas que te quedan grabadas.
               </p>
-            </div>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <Link
-                href="/topos/proa-repisa"
-                className="rounded border border-secondaryA/70 bg-secondaryA/10 px-4 py-2 text-xs font-brown uppercase tracking-[0.2em] text-secondaryA transition hover:border-secondaryB hover:text-secondaryB"
-              >
-                Explorar Proa
-              </Link>
-              <a
-                href="#rutas-destacadas"
-                className="rounded border border-primaryB/40 px-4 py-2 text-xs font-brown uppercase tracking-[0.2em] text-primaryB/70 transition hover:border-secondaryA hover:text-secondaryA"
-              >
-                Rutas destacadas
-              </a>
             </div>
           </div>
 

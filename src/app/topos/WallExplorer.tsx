@@ -99,10 +99,10 @@ export default function WallExplorer({
       tileSources: image.dziPath,
       prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
       showNavigator: true,
-      showZoomControl: true,
-      showHomeControl: true,
+      showZoomControl: false,
+      showHomeControl: false,
       showFullPageControl: false,
-      showNavigationControl: true,
+      showNavigationControl: false,
       gestureSettingsMouse: {
         scrollToZoom: true,
       },

@@ -113,6 +113,40 @@
     var(--shadow-hard);
 }
 
+.y2k-image-bleed {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  background: #0a0700;
+}
+
+.y2k-bleed-edge {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
+.y2k-image-bleed::before,
+.y2k-image-bleed::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 20%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.y2k-image-bleed::before {
+  top: 0;
+  background: linear-gradient(180deg, #0a0700 0%, rgba(10, 7, 0, 0) 100%);
+}
+
+.y2k-image-bleed::after {
+  bottom: 0;
+  background: linear-gradient(0deg, #0a0700 0%, rgba(10, 7, 0, 0) 100%);
+}
+
 .y2k-spotlight {
   background: radial-gradient(
     circle at 35% 30%,

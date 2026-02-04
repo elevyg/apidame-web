@@ -3,6 +3,7 @@ import Logo from "assets/svgs/icon-solo.svg";
 import FeaturedRoutesGallery from "./FeaturedRoutesGallery";
 import featuredRoutes from "./featuredRoutes.json";
 import type { FeaturedRoute } from "./types";
+import Image from "next/image";
 const cards = [
   {
     title: "Topo Interactivo Proa y Repisa Central",
@@ -19,18 +20,18 @@ export default function Topos() {
   const routes = featuredRoutes as FeaturedRoute[];
 
   return (
-    <main className="flex min-h-screen flex-col bg-primaryA">
+    <main className="bg-primaryA flex min-h-screen flex-col overflow-x-hidden">
       <nav className="shrink-0">
         <Link
-          className="y2k-nav-anim flex items-center justify-center gap-4 bg-primaryA py-4 md:py-6"
+          className="y2k-nav-anim bg-primaryA flex items-center justify-center gap-4 py-4 md:py-6"
           href="/"
         >
           <Logo
             height={50}
             width={50}
-            className="y2k-logo-float h-[30px] w-[30px] fill-primaryB md:h-[50px] md:w-[50px]"
+            className="y2k-logo-float fill-primaryB h-[30px] w-[30px] md:h-[50px] md:w-[50px]"
           />
-          <h1 className="font-holluise text-xl tracking-[0.4em] text-primaryB md:text-5xl">
+          <h1 className="font-holluise text-primaryB text-xl tracking-[0.4em] md:text-5xl">
             APIDAME BOULDER
           </h1>
         </Link>
@@ -41,32 +42,121 @@ export default function Topos() {
 
         <section className="flex flex-col gap-3 px-1">
           <div>
-            <h2 className="font-forgen text-3xl text-primaryB md:text-5xl">
+            <h2 className="font-forgen text-primaryB text-3xl md:text-5xl">
               Cerro Apidame
             </h2>
-            <p className="font-brown text-xs text-primaryB/60">
-              Un anfiteatro de líneas, textura y viento.
-            </p>
+          </div>
+        </section>
+
+        <section className="flex w-full max-w-screen flex-col gap-6 px-1">
+          <div className="flex flex-col gap-5 md:flex-row md:gap-5">
+            <div className="text-primaryB/80 flex flex-col gap-3 text-sm leading-relaxed md:text-lg">
+              <p className="font-brown">
+                El Cerro Apidame está en el Parque Nacional Patagonia, en uno de
+                sus extremos más cercanos a Chile Chico. Es un gran destino para
+                amantes de la fisura, con rutas de mono largo y multilargo en
+                estilo tradicional.
+              </p>
+              <p className="font-brown text-primaryB/75">
+                Su microclima permite escalar incluso cuando en el resto de la
+                región no se puede, haciendo del cerro una parada obligada en tu
+                viaje a la Patagonia.
+              </p>
+
+              <div className="border-secondaryB/60 bg-secondaryB/10 font-brown text-secondaryB rounded border px-4 py-3 text-xs">
+                <p className="text-secondaryB/80 mb-2 text-[11px] tracking-[0.2em] uppercase">
+                  Advertencia legal
+                </p>
+                <p className="text-secondaryB">
+                  El plan de manejo permite escalar en el Cerro Apidame, pero
+                  debes llenar la ficha oficial y enviarla a{" "}
+                  <span className="text-primaryB/80 break-words">
+                    benjamin.molina@conaf.cl
+                  </span>
+                  .
+                </p>
+                <a
+                  href="https://docs.google.com/document/d/16ZBggnYo3Cg7VmkN_L8jqPqSJbxMjvb8/edit"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primaryB/80 hover:text-primaryB underline"
+                >
+                  Ver ficha
+                </a>
+                <p className="text-secondaryB mt-2">
+                  Si ocurre un accidente y no completaste la ficha, tu ingreso
+                  se considera ilegal y podrían tomarse acciones legales.
+                </p>
+              </div>
+
+              <p className="font-brown text-primaryB/70 text-xs">
+                Actualmente no existe ni helicóptero ni equipo de rescate en
+                Chile Chico, para que lo tengas en consideración.
+              </p>
+            </div>
+
+            {/* <div className="flex flex-col gap-3">
+              <div className="y2k-image-bleed y2k-bleed-edge font-brown text-primaryB/50 flex aspect-[16/9] items-center justify-center text-[10px]">
+                /images/topo-page/cerro-apidame-hero.jpg
+              </div>
+              <div className="y2k-image-bleed y2k-bleed-edge font-brown text-primaryB/50 flex aspect-[16/10] items-center justify-center text-[10px]">
+                /images/topo-page/fisuras-detalle.jpg
+              </div>
+            </div> */}
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-[0.6fr_0.4fr]">
+            <div className="flex flex-col gap-2">
+              <h3 className="font-forgen text-primaryB text-lg">
+                Consejo de equipo
+              </h3>
+              <p className="font-brown text-primaryB/70 text-xs leading-relaxed">
+                Dos cuerdas de 60m son imprescindibles. Un rack doble de #2 a #3
+                más un juego de stoppers pequeños te permitirá resolver la
+                mayoría de las rutas. Uno o dos #4 ayudan en algunos largos, y
+                conviene llevar cordín para reemplazar los rapeles.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <h3 className="font-forgen text-primaryB text-lg">Acceso</h3>
+              <p className="font-brown text-primaryB/70 text-xs leading-relaxed">
+                Estamos trabajando en hacer la aproximación más amigable.
+                Actualmente puedes contactar a{" "}
+                <a
+                  href="https://www.instagram.com/rocapampa"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-secondaryA/80 hover:text-secondaryA underline"
+                >
+                  @rocapampa
+                </a>{" "}
+                en su Instagram para ingresar. Ofrece acceso público,
+                estacionamiento (cobra un costo) y porteo.
+              </p>
+              {/* <div className="y2k-image-bleed y2k-bleed-edge font-brown text-primaryB/50 flex aspect-[16/7] items-center justify-center text-[10px]">
+                /images/topo-page/acceso-rocapampa.jpg
+              </div> */}
+            </div>
           </div>
         </section>
 
         <section
           id="topos-interactivos"
-          className="y2k-panel y2k-noise flex flex-col gap-4 px-4 py-5 md:px-6 transition outline-none focus-visible:ring-2 focus-visible:ring-secondaryA/70 focus-visible:ring-offset-4 focus-visible:ring-offset-primaryA [@supports(selector(:target))]:target:border-secondaryB/80 [@supports(selector(:target))]:target:shadow-[0_0_24px_rgba(255,89,100,0.35)]"
+          className="y2k-panel y2k-noise focus-visible:ring-secondaryA/70 focus-visible:ring-offset-primaryA [@supports(selector(:target))]:target:border-secondaryB/80 flex flex-col gap-4 px-4 py-5 transition outline-none focus-visible:ring-2 focus-visible:ring-offset-4 md:px-6 [@supports(selector(:target))]:target:shadow-[0_0_24px_rgba(255,89,100,0.35)]"
           tabIndex={-1}
         >
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <h2 className="font-forgen text-2xl text-primaryB md:text-4xl">
+              <h2 className="font-forgen text-primaryB text-2xl md:text-4xl">
                 Topos interactivos
               </h2>
-              <p className="font-brown text-xs text-primaryB/60">
+              <p className="font-brown text-primaryB/60 text-xs">
                 Aquí nacen las líneas que te quedan grabadas.
               </p>
             </div>
           </div>
 
-          <div className="rounded border border-secondaryA/30 bg-primaryA/80 px-3 py-2 text-[11px] font-brown uppercase tracking-[0.3em] text-secondaryA/70">
+          <div className="border-secondaryA/30 bg-primaryA/80 font-brown text-secondaryA/70 rounded border px-3 py-2 text-[11px] tracking-[0.3em] uppercase">
             Muy pronto habrá más topos interactivos.
           </div>
 
@@ -81,14 +171,16 @@ export default function Topos() {
                       <div
                         className={`y2k-frame overflow-hidden ${card.featured ? "h-20 w-32" : "h-16 w-24"}`}
                       >
-                        <img
+                        <Image
+                          width={128}
+                          height={128}
                           src={card.thumbnail}
                           alt={`Preview ${card.title}`}
                           className="h-full w-full object-cover"
                         />
                       </div>
                     ) : (
-                      <div className="y2k-frame flex h-16 w-24 items-center justify-center border border-dashed border-primaryB/20 text-[10px] font-brown text-primaryB/40">
+                      <div className="y2k-frame border-primaryB/20 font-brown text-primaryB/40 flex h-16 w-24 items-center justify-center border border-dashed text-[10px]">
                         Preview
                       </div>
                     )}
@@ -105,7 +197,7 @@ export default function Topos() {
                       </p>
                     </div>
                   </div>
-                  <span className="text-xs font-brown text-secondaryA/70">
+                  <span className="font-brown text-secondaryA/70 text-xs">
                     {card.enabled ? "Abrir topo →" : "Disponible pronto"}
                   </span>
                 </div>
@@ -135,11 +227,11 @@ export default function Topos() {
           id="rutas-destacadas"
           className="y2k-panel y2k-noise flex min-h-[260px] flex-col"
         >
-          <div className="border-b-2 border-secondaryA/30 px-4 py-3">
-            <h3 className="font-forgen text-xl text-primaryB">
+          <div className="border-secondaryA/30 border-b-2 px-4 py-3">
+            <h3 className="font-forgen text-primaryB text-xl">
               Rutas destacadas
             </h3>
-            <p className="font-brown text-xs text-primaryB/60">
+            <p className="font-brown text-primaryB/60 text-xs">
               Selección curada y material para revisar en detalle.
             </p>
           </div>

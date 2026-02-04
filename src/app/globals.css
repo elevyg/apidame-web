@@ -105,3 +105,80 @@
   opacity: 0.65;
   filter: grayscale(0.2);
 }
+
+.y2k-featured-card {
+  transform: scale(1.02);
+  box-shadow:
+    0 0 22px rgba(255, 89, 100, 0.35),
+    var(--shadow-hard);
+}
+
+.y2k-spotlight {
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(89, 248, 232, 0.22),
+    rgba(16, 11, 0, 0) 60%
+  );
+}
+
+.y2k-marker {
+  backdrop-filter: blur(6px);
+  border: 2px solid rgba(89, 248, 232, 0.85);
+  background: rgba(16, 11, 0, 0.75);
+}
+
+.openseadragon-container .navigator {
+  border: 2px solid rgba(89, 248, 232, 0.4);
+  box-shadow: 0 0 12px rgba(89, 248, 232, 0.35);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.y2k-nav-anim {
+  position: relative;
+  overflow: hidden;
+}
+
+.y2k-nav-anim::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(89, 248, 232, 0.08),
+    transparent
+  );
+  transform: translateX(-60%);
+  animation: y2k-nav-scan 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.y2k-logo-float {
+  animation: y2k-float 4s ease-in-out infinite;
+}
+
+@keyframes y2k-nav-scan {
+  0% {
+    transform: translateX(-60%);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateX(60%);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(-60%);
+    opacity: 0.2;
+  }
+}
+
+@keyframes y2k-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}

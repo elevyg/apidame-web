@@ -42,13 +42,22 @@ export default function FeaturedRoutesGallery({
           Scroll
         </div>
         <div className="flex gap-4 overflow-x-auto pb-4 pt-2">
-          {displayedRoutes.map((route) => (
+          {displayedRoutes.map((route, index) => {
+            const isFeatured = index === 0;
+            return (
             <button
               key={route.id}
               type="button"
               onClick={() => setActiveRoute(route)}
-              className="y2k-panel y2k-noise flex min-w-[240px] flex-col gap-3 border border-secondaryA/40 px-3 py-3 text-left transition hover:border-secondaryB md:min-w-[280px]"
+              className={`y2k-panel y2k-noise relative flex min-w-[240px] flex-col gap-3 border px-3 py-3 text-left transition md:min-w-[280px] ${
+                isFeatured
+                  ? "y2k-featured-card border-secondaryB/80"
+                  : "border-secondaryA/40 hover:border-secondaryB"
+              }`}
             >
+              {isFeatured ? (
+                <div className="y2k-spotlight absolute -inset-6 -z-10" />
+              ) : null}
               <div className="y2k-frame h-36 w-full overflow-hidden bg-black/30">
                 {route.thumbnail ? (
                   <img
@@ -74,11 +83,16 @@ export default function FeaturedRoutesGallery({
                 </div>
               </div>
               <div className="flex items-center justify-between text-xs font-brown text-primaryB/70">
-                <span>Ver topo</span>
-                <span className="text-secondaryA">→</span>
+                <span className={isFeatured ? "text-secondaryB" : ""}>
+                  Ver topo
+                </span>
+                <span className={isFeatured ? "text-secondaryB" : "text-secondaryA"}>
+                  →
+                </span>
               </div>
             </button>
-          ))}
+          );
+          })}
         </div>
       </div>
 

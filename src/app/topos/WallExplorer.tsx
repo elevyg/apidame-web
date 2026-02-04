@@ -143,9 +143,9 @@ export default function WallExplorer({
       const element = document.createElement("button");
       element.type = "button";
       element.className =
-        "flex flex-col items-center gap-1 rounded-full border border-secondaryA/80 bg-primaryA/80 px-3 py-2 text-[10px] font-brown text-secondaryA shadow-lg transition hover:border-secondaryB hover:text-secondaryB";
+        "y2k-marker flex flex-col items-center gap-1 rounded-full px-3 py-2 text-[9px] font-brown text-secondaryA shadow-lg transition hover:border-secondaryB hover:text-secondaryB";
       element.setAttribute("aria-label", `${route.name} ${route.grade}`);
-      element.innerHTML = `<span class=\"text-[8px] text-primaryB/70\">${route.grade}</span><span>${route.name}</span>`;
+      element.innerHTML = `<span class=\"rounded-full border border-secondaryA/60 px-2 py-[2px] text-[8px] text-primaryB/80\">${route.grade}</span><span class=\"text-[9px] text-secondaryA\">${route.name}</span>`;
       element.onclick = () => onSelectRoute(route.id);
 
       const rect = viewer.viewport.imageToViewportRectangle(

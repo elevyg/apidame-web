@@ -7,33 +7,13 @@ const cards = [
   {
     title: "Topo Interactivo Proa y Repisa Central",
     href: "/topos/proa-repisa",
-    status: "Activo",
     thumbnail: "/topos/proa-repisa-thumb.jpg",
     description:
       "Explora la pared con zoom y detalles. Ideal para planificar tu sesión.",
     enabled: true,
     featured: true,
   },
-  {
-    title: "Topo Interactivo de la Pared Norte",
-    status: "Próximamente",
-    description: "Estamos preparando el topo digital para este sector.",
-    enabled: false,
-    featured: false,
-  },
-  {
-    title: "Topo Interactivo de Escudo",
-    status: "Próximamente",
-    description: "En camino: nueva vista interactiva para el sector Escudo.",
-    enabled: false,
-    featured: false,
-  },
 ];
-
-const statusStyles: Record<string, string> = {
-  Activo: "border-secondaryA text-secondaryA y2k-glow",
-  "Próximamente": "border-primaryB/40 text-primaryB/70",
-};
 
 export default function Topos() {
   const routes = featuredRoutes as FeaturedRoute[];
@@ -42,13 +22,13 @@ export default function Topos() {
     <main className="flex min-h-screen flex-col bg-primaryA">
       <nav className="shrink-0">
         <Link
-          className="flex items-center justify-center gap-4 bg-primaryA py-4 md:py-6"
+          className="y2k-nav-anim flex items-center justify-center gap-4 bg-primaryA py-4 md:py-6"
           href="/"
         >
           <Logo
             height={50}
             width={50}
-            className="h-[30px] w-[30px] fill-primaryB md:h-[50px] md:w-[50px]"
+            className="y2k-logo-float h-[30px] w-[30px] fill-primaryB md:h-[50px] md:w-[50px]"
           />
           <h1 className="font-holluise text-xl tracking-[0.4em] text-primaryB md:text-5xl">
             APIDAME BOULDER
@@ -63,13 +43,13 @@ export default function Topos() {
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="font-forgen text-2xl text-primaryB md:text-4xl">
-                Topos Cerro Apidame
+                Topos interactivos
               </h2>
               <p className="font-brown text-xs text-primaryB/60">
-                Explora la pared, planea tus sesiones y descubre rutas clave.
+                Aquí nacen las líneas que te quedan grabadas.
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
               <Link
                 href="/topos/proa-repisa"
                 className="rounded border border-secondaryA/70 bg-secondaryA/10 px-4 py-2 text-xs font-brown uppercase tracking-[0.2em] text-secondaryA transition hover:border-secondaryB hover:text-secondaryB"
@@ -85,38 +65,16 @@ export default function Topos() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between gap-3 rounded border border-secondaryA/30 bg-primaryA/80 px-3 py-2 text-[10px] font-brown uppercase tracking-[0.3em] text-secondaryA/70">
-            <span>STATUS: LISTO PARA ESCALAR</span>
-            <div className="flex gap-1">
-              <span className="h-2 w-2 rounded-full bg-secondaryA/70" />
-              <span className="h-2 w-2 rounded-full bg-secondaryB/70" />
-              <span className="h-2 w-2 rounded-full bg-primaryB/60" />
-            </div>
+          <div className="rounded border border-secondaryA/30 bg-primaryA/80 px-3 py-2 text-[11px] font-brown uppercase tracking-[0.3em] text-secondaryA/70">
+            Muy pronto habrá más topos interactivos.
           </div>
 
           <div className="grid gap-3 md:grid-cols-2">
             {cards.map((card) => {
-              const badgeStyle =
-                statusStyles[card.status] ?? "border-primaryB/40 text-primaryB";
               const content = (
                 <div
                   className={`y2k-panel y2k-noise flex h-full flex-col gap-3 border px-3 py-3 ${card.enabled ? "" : "y2k-card-disabled"}`}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <span
-                      className={`rounded-full border px-3 py-1 text-[10px] font-brown uppercase tracking-[0.2em] ${badgeStyle}`}
-                    >
-                      {card.status}
-                    </span>
-                    <div className="flex gap-1">
-                      <span
-                        className={`h-2 w-2 rounded-full ${card.enabled ? "bg-secondaryA/70" : "bg-primaryB/30"}`}
-                      />
-                      <span
-                        className={`h-2 w-2 rounded-full ${card.enabled ? "bg-secondaryB/70" : "bg-primaryB/30"}`}
-                      />
-                    </div>
-                  </div>
                   <div className="flex items-center gap-3">
                     {card.thumbnail ? (
                       <div

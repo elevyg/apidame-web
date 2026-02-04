@@ -26,3 +26,11 @@ export type TopoData = {
   sectors: TopoSector[];
   routes: TopoRoute[];
 };
+
+export type FeaturedRoute = {
+  id: string;
+  name: string;
+  thumbnail: string | null;
+  webViewLink: string | null;
+  modifiedTime: string | null;
+};

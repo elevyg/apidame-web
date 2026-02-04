@@ -1,5 +1,8 @@
 import Link from "next/link";
 import Logo from "assets/svgs/icon-solo.svg";
+import FeaturedRoutesGallery from "./FeaturedRoutesGallery";
+import featuredRoutes from "./featuredRoutes.json";
+import type { FeaturedRoute } from "./types";
 const cards = [
   {
     title: "Topo Interactivo Proa y Repisa Central",
@@ -9,18 +12,21 @@ const cards = [
     description:
       "Explora la pared con zoom y detalles. Ideal para planificar tu sesión.",
     enabled: true,
+    featured: true,
   },
   {
     title: "Topo Interactivo de la Pared Norte",
     status: "Próximamente",
     description: "Estamos preparando el topo digital para este sector.",
     enabled: false,
+    featured: false,
   },
   {
     title: "Topo Interactivo de Escudo",
     status: "Próximamente",
     description: "En camino: nueva vista interactiva para el sector Escudo.",
     enabled: false,
+    featured: false,
   },
 ];
 
@@ -30,6 +36,8 @@ const statusStyles: Record<string, string> = {
 };
 
 export default function Topos() {
+  const routes = featuredRoutes as FeaturedRoute[];
+
   return (
     <main className="flex min-h-screen flex-col bg-primaryA">
       <nav className="shrink-0">
@@ -51,22 +59,48 @@ export default function Topos() {
       <div className="flex min-h-0 flex-1 flex-col gap-4 p-4 pb-8 md:p-8">
         <div className="y2k-accent-bar shrink-0" />
 
-        <section className="y2k-panel flex flex-col gap-6 px-4 py-5 md:px-6">
-          <div>
-            <h2 className="font-forgen text-2xl text-primaryB md:text-3xl">
-              Topos interactivos
-            </h2>
-            <p className="font-brown text-xs text-primaryB/60">
-              Selecciona una pared para explorar sus rutas.
-            </p>
+        <section className="y2k-panel y2k-noise flex flex-col gap-4 px-4 py-5 md:px-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="font-forgen text-2xl text-primaryB md:text-4xl">
+                Topos Cerro Apidame
+              </h2>
+              <p className="font-brown text-xs text-primaryB/60">
+                Explora la pared, planea tus sesiones y descubre rutas clave.
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/topos/proa-repisa"
+                className="rounded border border-secondaryA/70 bg-secondaryA/10 px-4 py-2 text-xs font-brown uppercase tracking-[0.2em] text-secondaryA transition hover:border-secondaryB hover:text-secondaryB"
+              >
+                Explorar Proa
+              </Link>
+              <a
+                href="#rutas-destacadas"
+                className="rounded border border-primaryB/40 px-4 py-2 text-xs font-brown uppercase tracking-[0.2em] text-primaryB/70 transition hover:border-secondaryA hover:text-secondaryA"
+              >
+                Rutas destacadas
+              </a>
+            </div>
           </div>
+
+          <div className="flex items-center justify-between gap-3 rounded border border-secondaryA/30 bg-primaryA/80 px-3 py-2 text-[10px] font-brown uppercase tracking-[0.3em] text-secondaryA/70">
+            <span>STATUS: LISTO PARA ESCALAR</span>
+            <div className="flex gap-1">
+              <span className="h-2 w-2 rounded-full bg-secondaryA/70" />
+              <span className="h-2 w-2 rounded-full bg-secondaryB/70" />
+              <span className="h-2 w-2 rounded-full bg-primaryB/60" />
+            </div>
+          </div>
+
           <div className="grid gap-3 md:grid-cols-2">
             {cards.map((card) => {
               const badgeStyle =
                 statusStyles[card.status] ?? "border-primaryB/40 text-primaryB";
               const content = (
                 <div
-                  className={`y2k-panel y2k-noise flex h-full flex-col gap-3 border ${card.enabled ? "px-3 py-3" : "px-3 py-3"} ${card.enabled ? "" : "y2k-card-disabled"}`}
+                  className={`y2k-panel y2k-noise flex h-full flex-col gap-3 border px-3 py-3 ${card.enabled ? "" : "y2k-card-disabled"}`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <span
@@ -85,7 +119,9 @@ export default function Topos() {
                   </div>
                   <div className="flex items-center gap-3">
                     {card.thumbnail ? (
-                      <div className="y2k-frame h-16 w-24 overflow-hidden">
+                      <div
+                        className={`y2k-frame overflow-hidden ${card.featured ? "h-20 w-32" : "h-16 w-24"}`}
+                      >
                         <img
                           src={card.thumbnail}
                           alt={`Preview ${card.title}`}
@@ -117,11 +153,18 @@ export default function Topos() {
               );
 
               return card.enabled ? (
-                <Link key={card.title} href={card.href ?? "/topos"}>
+                <Link
+                  key={card.title}
+                  href={card.href ?? "/topos"}
+                  className={card.featured ? "md:col-span-2" : ""}
+                >
                   {content}
                 </Link>
               ) : (
-                <div key={card.title} className="cursor-not-allowed">
+                <div
+                  key={card.title}
+                  className={`cursor-not-allowed ${card.featured ? "md:col-span-2" : ""}`}
+                >
                   {content}
                 </div>
               );
@@ -129,7 +172,10 @@ export default function Topos() {
           </div>
         </section>
 
-        <section className="y2k-panel y2k-noise flex min-h-[260px] flex-col">
+        <section
+          id="rutas-destacadas"
+          className="y2k-panel y2k-noise flex min-h-[260px] flex-col"
+        >
           <div className="border-b-2 border-secondaryA/30 px-4 py-3">
             <h3 className="font-forgen text-xl text-primaryB">
               Rutas destacadas
@@ -138,18 +184,8 @@ export default function Topos() {
               Selección curada y material para revisar en detalle.
             </p>
           </div>
-          <div className="relative min-h-[240px] flex-1 p-(--spacing-panel) md:min-h-0">
-            <div className="y2k-frame y2k-panel-sunken h-full w-full md:absolute md:inset-0 md:m-(--spacing-panel)">
-              <div className="pointer-events-none absolute right-4 top-4 flex gap-1">
-                <span className="h-2 w-2 rounded-full bg-secondaryA/70" />
-                <span className="h-2 w-2 rounded-full bg-secondaryB/70" />
-                <span className="h-2 w-2 rounded-full bg-primaryB/60" />
-              </div>
-              <iframe
-                src="https://drive.google.com/embeddedfolderview?id=1-Be9uxgPKeD30336yjwvZa8czW9iBwNu#grid"
-                className="h-full w-full border-none"
-              />
-            </div>
+          <div className="relative min-h-[220px] flex-1 px-4 py-4">
+            <FeaturedRoutesGallery routes={routes} />
           </div>
         </section>
 

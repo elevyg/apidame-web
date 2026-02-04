@@ -223,9 +223,53 @@ export default function WallExplorer({
     );
   }
 
+  const handleZoom = (factor: number) => {
+    const viewer = viewerRef.current;
+    if (!viewer) return;
+    const currentZoom = viewer.viewport.getZoom();
+    const center = viewer.viewport.getCenter();
+    viewer.viewport.zoomTo(currentZoom * factor, center, true);
+  };
+
+  const handleReset = () => {
+    const viewer = viewerRef.current;
+    if (!viewer) return;
+    viewer.viewport.goHome(true);
+  };
+
   return (
     <div className="relative h-full w-full">
       <div ref={containerRef} className="h-full w-full" />
+      <div className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-3">
+        <div className="y2k-panel y2k-noise pointer-events-auto flex items-center gap-2 px-3 py-2">
+          <span className="text-[10px] font-brown uppercase tracking-[0.2em] text-secondaryA/70">
+            Controles
+          </span>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => handleZoom(1.2)}
+              className="rounded border border-secondaryA/60 px-2 py-1 text-[10px] font-brown text-secondaryA hover:border-secondaryB hover:text-secondaryB"
+            >
+              Zoom +
+            </button>
+            <button
+              type="button"
+              onClick={() => handleZoom(0.85)}
+              className="rounded border border-secondaryA/60 px-2 py-1 text-[10px] font-brown text-secondaryA hover:border-secondaryB hover:text-secondaryB"
+            >
+              Zoom -
+            </button>
+            <button
+              type="button"
+              onClick={handleReset}
+              className="rounded border border-secondaryA/60 px-2 py-1 text-[10px] font-brown text-secondaryA hover:border-secondaryB hover:text-secondaryB"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

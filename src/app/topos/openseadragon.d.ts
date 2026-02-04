@@ -13,7 +13,9 @@ export interface OpenSeadragonViewport {
     height: number,
   ): { x: number; y: number; width: number; height: number };
   imageToViewportCoordinates(x: number, y: number): { x: number; y: number };
+  getCenter(): { x: number; y: number };
   getMaxZoom(): number;
+  getZoom(): number;
   zoomTo(
     zoom: number,
     refPoint: { x: number; y: number },

@@ -21,11 +21,9 @@ export default function ProaRepisa() {
         </Link>
       </nav>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-4 p-4 md:p-8">
+      <div className="flex min-h-0 flex-1 flex-col gap-3 px-3 pb-4 pt-2 md:px-6">
         <div className="y2k-accent-bar shrink-0" />
-
         <TopoClient />
-
         <div className="y2k-accent-bar shrink-0" />
       </div>
     </main>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { TopoData, TopoRoute } from "./types";
 import WallExplorer from "./WallExplorer";
+import TopoHeroBar from "./TopoHeroBar";
 
 const DATA_URL = "/data/topo-apidame.json";
 
@@ -41,30 +42,13 @@ export default function TopoClient() {
 
   return (
     <section className="flex min-h-0 flex-1 flex-col gap-4">
-      <div className="y2k-panel flex min-h-[480px] flex-1 flex-col">
-        <div className="flex flex-col gap-2 border-b-2 border-secondaryA/30 px-4 py-3 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 className="font-forgen text-2xl text-primaryB md:text-3xl">
-              Topo Interactivo Proa y Repisa Central
-            </h2>
-            <p className="font-brown text-xs text-primaryB/60">
-              Arrastra para mover · Pinch/scroll para zoom · Doble click para
-              acercar
-            </p>
+      <div className="y2k-panel y2k-noise flex min-h-[520px] flex-1 flex-col">
+        <div className="relative flex min-h-0 flex-1">
+          <div className="pointer-events-auto absolute left-4 top-4 z-10">
+            <TopoHeroBar />
           </div>
-          <div className="flex items-center gap-3">
-            <span className="font-brown text-xs text-primaryB/50">
-              estilo mapa
-            </span>
-            <div className="flex gap-1">
-              <span className="h-3 w-3 rounded-full bg-secondaryA/50" />
-              <span className="h-3 w-3 rounded-full bg-secondaryB/50" />
-            </div>
-          </div>
-        </div>
 
-        <div className="relative min-h-[320px] flex-1 p-(--spacing-panel) md:min-h-0">
-          <div className="y2k-panel-sunken h-full w-full md:absolute md:inset-0 md:m-(--spacing-panel)">
+          <div className="y2k-panel-sunken h-full w-full">
             <WallExplorer
               data={data}
               visibleRoutes={routes}

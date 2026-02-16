@@ -18,8 +18,64 @@ const OUTPUT_PATH = path.resolve(
   "topos",
   "featuredRoutes.json",
 );
+const THUMBNAILS_DIR = path.resolve(
+  __dirname,
+  "..",
+  "public",
+  "topos",
+  "featured-routes-thumbs",
+);
+const THUMBNAILS_PUBLIC_DIR = "/topos/featured-routes-thumbs";
 
 const FIELDS = "files(id,name,thumbnailLink,modifiedTime,webViewLink)";
+
+function extensionFromContentType(contentType) {
+  if (!contentType) return ".jpg";
+  if (contentType.includes("image/png")) return ".png";
+  if (contentType.includes("image/webp")) return ".webp";
+  return ".jpg";
+}
+
+async function getExistingThumbnailPath(fileId) {
+  try {
+    const files = await fs.readdir(THUMBNAILS_DIR);
+    const existing = files.find((name) => name.startsWith(`${fileId}.`));
+    return existing ? `${THUMBNAILS_PUBLIC_DIR}/${existing}` : null;
+  } catch {
+    return null;
+  }
+}
+
+async function removeExistingThumbnailFiles(fileId) {
+  const files = await fs.readdir(THUMBNAILS_DIR);
+  const candidates = files.filter((name) => name.startsWith(`${fileId}.`));
+  await Promise.all(
+    candidates.map((name) => fs.rm(path.join(THUMBNAILS_DIR, name))),
+  );
+}
+
+async function downloadThumbnail(fileId) {
+  const url = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+  const response = await fetch(url, { redirect: "follow" });
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  const contentType = response.headers.get("content-type");
+  if (!contentType?.startsWith("image/")) {
+    throw new Error("La respuesta de miniatura no es una imagen.");
+  }
+
+  const extension = extensionFromContentType(contentType);
+  const fileName = `${fileId}${extension}`;
+  const outputPath = path.join(THUMBNAILS_DIR, fileName);
+  const buffer = Buffer.from(await response.arrayBuffer());
+
+  await removeExistingThumbnailFiles(fileId);
+  await fs.writeFile(outputPath, buffer);
+
+  return `${THUMBNAILS_PUBLIC_DIR}/${fileName}`;
+}
 
 async function main() {
   try {
@@ -47,21 +103,35 @@ async function main() {
   });
 
   const files = response.data.files ?? [];
+  await fs.mkdir(path.dirname(OUTPUT_PATH), { recursive: true });
+  await fs.mkdir(THUMBNAILS_DIR, { recursive: true });
 
-  const routes = files.map((file) => {
+  const routes = await Promise.all(files.map(async (file) => {
     const id = file.id;
+    let thumbnail = null;
+
+    if (id) {
+      try {
+        thumbnail = await downloadThumbnail(id);
+      } catch (error) {
+        const existingThumbnail = await getExistingThumbnailPath(id);
+        thumbnail = existingThumbnail;
+        const message = error instanceof Error ? error.message : String(error);
+        console.warn(
+          `⚠️ No se pudo descargar miniatura para ${file.name ?? id}: ${message}`,
+        );
+      }
+    }
+
     return {
       id,
       name: file.name,
-      thumbnail: id
-        ? `https://drive.google.com/thumbnail?id=${id}&sz=w800`
-        : null,
+      thumbnail,
       webViewLink: file.webViewLink ?? null,
       modifiedTime: file.modifiedTime ?? null,
     };
-  });
+  }));
 
-  await fs.mkdir(path.dirname(OUTPUT_PATH), { recursive: true });
   await fs.writeFile(OUTPUT_PATH, JSON.stringify(routes, null, 2));
 
   console.log(

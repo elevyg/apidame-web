@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { foregen, brown, holluise } from "./fonts";
 import GoogleAnalytics from "./GoogleAnalytics";
 import "./globals.css";
@@ -77,7 +78,11 @@ export default function RootLayout({
         className={`${foregen.variable} ${brown.variable} ${holluise.variable} font-sans`}
       >
         {children}
-        {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
+        {gaId ? (
+          <Suspense fallback={null}>
+            <GoogleAnalytics gaId={gaId} />
+          </Suspense>
+        ) : null}
       </body>
     </html>
   );

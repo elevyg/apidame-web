@@ -5,6 +5,23 @@ import { CldImage } from "next-cloudinary";
 import Link from "next/link";
 
 export default function Home() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SportsActivityLocation",
+    name: "Apidame Boulder",
+    image: "https://apidameboulder.com/opengraph-image",
+    description:
+      "Gimnasio de escalada y boulder en Chile Chico, Aysén. Horarios, precios y topos del Cerro Apidame.",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Chile Chico",
+      addressRegion: "Aysén",
+      addressCountry: "CL",
+    },
+    url: "https://apidameboulder.com",
+    sameAs: ["https://www.instagram.com/apidameboulder/"],
+  };
+
   return (
     <main className="flex flex-col">
       <nav className="">
@@ -22,6 +39,26 @@ export default function Home() {
           </h1>
         </Link>
       </nav>
+      <div className="relative overflow-hidden border-y-2 border-secondaryA bg-primaryA">
+        <div className="absolute -left-14 top-1/2 h-28 w-28 -translate-y-1/2 rounded-full bg-secondaryA/30 blur-2xl" />
+        <div className="absolute -right-14 top-1/2 h-28 w-28 -translate-y-1/2 rounded-full bg-secondaryB/40 blur-2xl" />
+        <Link
+          href="/topos"
+          className="group relative z-10 flex items-center justify-between gap-4 px-6 py-4 transition hover:bg-secondaryA/10 md:px-10"
+        >
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center rounded-full border border-secondaryB bg-secondaryB/15 px-2 py-1 font-brown text-[10px] uppercase tracking-[0.25em] text-secondaryB">
+              Nuevo
+            </span>
+            <p className="font-brown text-sm text-primaryB md:text-base">
+              Nuevo: revisa los topos de nuestro amado cerro
+            </p>
+          </div>
+          <span className="font-forgen text-lg text-secondaryA transition group-hover:translate-x-1">
+            Ver topos →
+          </span>
+        </Link>
+      </div>
       <div className="relative h-[60vh] md:h-screen">
         <div className="absolute inset-0 z-10 flex items-center justify-center overflow-hidden">
           <CldImage
@@ -142,6 +179,10 @@ export default function Home() {
           APIDAME BOULDER
         </h1>
       </footer>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
     </main>
   );
 }

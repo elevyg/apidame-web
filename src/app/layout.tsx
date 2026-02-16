@@ -2,11 +2,66 @@ import type { Metadata } from "next";
 import { foregen, brown, holluise } from "./fonts";
 import "./globals.css";
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.SITE_URL ??
+  "https://apidameboulder.com";
+
 export const metadata: Metadata = {
-  title: "Apidame Boulder",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Apidame Boulder | Escalada en Chile Chico",
+    template: "%s | Apidame Boulder",
+  },
   description:
-    "Apidame Boulder, gimansio de escalada en Chile Chico, Aysén, patagonia Chilena.",
+    "Gimnasio de escalada y boulder en Chile Chico, Aysén. Horarios, precios, ubicación y topos del Cerro Apidame.",
   icons: { icon: "/favicon.ico" },
+  keywords: [
+    "Apidame Boulder",
+    "escalada Chile Chico",
+    "boulder Aysén",
+    "topos cerro apidame",
+    "patagonia chilena",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Apidame Boulder | Escalada en Chile Chico",
+    description:
+      "Escala con nosotros en Chile Chico. Revisa horarios, precios y los topos del Cerro Apidame.",
+    url: "/",
+    siteName: "Apidame Boulder",
+    locale: "es_CL",
+    type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Apidame Boulder en Chile Chico",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Apidame Boulder | Escalada en Chile Chico",
+    description:
+      "Escala con nosotros en Chile Chico. Horarios, precios y topos del Cerro Apidame.",
+    images: ["/opengraph-image"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  category: "sports",
 };
 
 export default function RootLayout({

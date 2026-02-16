@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { foregen, brown, holluise } from "./fonts";
+import GoogleAnalytics from "./GoogleAnalytics";
 import "./globals.css";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.SITE_URL ??
   "https://apidameboulder.com";
+const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -75,6 +77,7 @@ export default function RootLayout({
         className={`${foregen.variable} ${brown.variable} ${holluise.variable} font-sans`}
       >
         {children}
+        {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
       </body>
     </html>
   );

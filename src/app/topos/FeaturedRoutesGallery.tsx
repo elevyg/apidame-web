@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import type { FeaturedRoute } from "./types";
 import PdfViewerModal from "./PdfViewerModal";
 
@@ -60,12 +61,13 @@ export default function FeaturedRoutesGallery({
               ) : null}
               <div className="y2k-frame h-36 w-full overflow-hidden bg-black/30">
                 {route.thumbnail ? (
-                  <img
+                  <Image
                     src={route.thumbnail}
                     alt={`Miniatura ${route.name}`}
                     className="h-full w-full object-cover"
                     loading="lazy"
-                    referrerPolicy="no-referrer"
+                    fill
+                    sizes="(max-width: 768px) 240px, 280px"
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-[10px] font-brown text-primaryB/40">

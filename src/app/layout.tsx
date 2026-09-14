@@ -10,6 +10,10 @@ const siteUrl =
   "https://apidameboulder.com";
 const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
+export const viewport = {
+  themeColor: "#ffffff",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -75,7 +79,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${foregen.variable} ${brown.variable} ${holluise.variable} font-sans`}
+        className={`${foregen.variable} ${brown.variable} ${holluise.variable} bg-paper text-ink antialiased`}
       >
         {children}
         {gaId ? (

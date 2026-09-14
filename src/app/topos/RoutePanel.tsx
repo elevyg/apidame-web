@@ -26,31 +26,31 @@ export default function RoutePanel({
   onSectorChange,
 }: RoutePanelProps) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="border-b-2 border-secondaryA/30 px-4 py-3">
-        <h3 className="font-forgen text-xl text-primaryB">Rutas</h3>
-        <p className="font-brown text-xs text-primaryB/60">
+    <div className="flex min-h-0 flex-1 flex-col bg-paper">
+      <div className="border-b border-rule px-4 py-3">
+        <h3 className="font-display text-xl">Rutas</h3>
+        <p className="font-brown text-xs text-ink-soft">
           {routes.length}/{allRoutes.length} rutas
         </p>
       </div>
 
-      <div className="flex flex-col gap-3 border-b border-secondaryA/20 px-4 py-3">
-        <label className="flex flex-col gap-2 text-xs font-brown text-primaryB/70">
+      <div className="flex flex-col gap-3 border-b border-rule px-4 py-3">
+        <label className="flex flex-col gap-2 font-brown text-xs text-ink-soft">
           Buscar por nombre o grado
           <input
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
-            className="rounded border border-secondaryA/40 bg-transparent px-3 py-2 text-sm text-primaryB outline-none focus:border-secondaryA"
+            className="border border-rule bg-transparent px-3 py-2 text-sm text-ink outline-none focus:border-ink"
             placeholder="Ej: El Rayo, 7a"
           />
         </label>
 
-        <label className="flex flex-col gap-2 text-xs font-brown text-primaryB/70">
+        <label className="flex flex-col gap-2 font-brown text-xs text-ink-soft">
           Sector
           <select
             value={sectorId}
             onChange={(event) => onSectorChange(event.target.value)}
-            className="rounded border border-secondaryA/40 bg-primaryA px-3 py-2 text-sm text-primaryB outline-none focus:border-secondaryA"
+            className="border border-rule bg-paper px-3 py-2 text-sm text-ink outline-none focus:border-ink"
           >
             <option value="all">Todos los sectores</option>
             {sectors.map((sector) => (
@@ -64,7 +64,7 @@ export default function RoutePanel({
 
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-2 py-2">
         {routes.length === 0 ? (
-          <div className="px-2 py-6 text-center text-xs font-brown text-primaryB/60">
+          <div className="px-2 py-6 text-center font-brown text-xs text-ink-soft">
             No hay rutas con esos filtros.
           </div>
         ) : (
@@ -76,21 +76,17 @@ export default function RoutePanel({
                 key={route.id}
                 type="button"
                 onClick={() => onSelectRoute(route.id)}
-                className={`flex w-full items-start justify-between gap-3 rounded border px-3 py-2 text-left transition ${
-                  isSelected
-                    ? "border-secondaryB/80 bg-secondaryB/10"
-                    : "border-secondaryA/10 hover:border-secondaryA/60"
+                className={`flex w-full items-start justify-between gap-3 border-b border-rule px-3 py-3 text-left ${
+                  isSelected ? "bg-paper-deep" : "hover:bg-paper-deep/60"
                 }`}
               >
                 <div>
-                  <p className="font-forgen text-base text-primaryB">
-                    {route.name}
-                  </p>
-                  <p className="font-brown text-xs text-primaryB/60">
+                  <p className="font-brown text-sm text-ink">{route.name}</p>
+                  <p className="font-brown text-xs text-ink-soft">
                     {sector?.name ?? "Sector"}
                   </p>
                 </div>
-                <span className="rounded border border-secondaryA/40 px-2 py-1 text-xs font-brown text-secondaryA">
+                <span className="font-brown text-xs text-ink-soft">
                   {route.grade}
                 </span>
               </button>

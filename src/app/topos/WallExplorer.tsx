@@ -143,9 +143,9 @@ export default function WallExplorer({
       const element = document.createElement("button");
       element.type = "button";
       element.className =
-        "y2k-marker flex flex-col items-center gap-1 rounded-full px-3 py-2 text-[9px] font-brown text-secondaryA shadow-lg transition hover:border-secondaryB hover:text-secondaryB";
+        "topo-marker flex flex-col items-center gap-1 px-3 py-2 font-brown text-[9px]";
       element.setAttribute("aria-label", `${route.name} ${route.grade}`);
-      element.innerHTML = `<span class=\"rounded-full border border-secondaryA/60 px-2 py-[2px] text-[8px] text-primaryB/80\">${route.grade}</span><span class=\"text-[9px] text-secondaryA\">${route.name}</span>`;
+      element.innerHTML = `<span class=\"border border-white/40 px-2 py-[2px] text-[8px] text-white/80\">${route.grade}</span><span class=\"text-[9px] text-canvas-ink\">${route.name}</span>`;
       element.onclick = () => onSelectRoute(route.id);
 
       const rect = viewer.viewport.imageToViewportRectangle(
@@ -170,35 +170,33 @@ export default function WallExplorer({
     if (!viewer || !image) return;
 
     if (!selectedRouteId) {
-      overlayMapRef.current.forEach((element) => {
-        element.style.borderColor = "";
-        element.style.color = "";
-      });
-      return;
-    }
-
-    const route = visibleRouteMap.get(selectedRouteId);
-    if (!route) return;
-
-    const targetPoint = viewer.viewport.imageToViewportCoordinates(
-      route.marker.x,
-      route.marker.y,
-    );
-    const maxZoom = viewer.viewport.getMaxZoom();
-    const targetZoom = Math.min(maxZoom, 2.2);
-
-    viewer.viewport.zoomTo(targetZoom, targetPoint, true);
-    viewer.viewport.panTo(targetPoint, true);
-
-    overlayMapRef.current.forEach((element, id) => {
-      element.style.borderColor = id === selectedRouteId ? "#FF5964" : "";
-      element.style.color = id === selectedRouteId ? "#FF5964" : "";
+    overlayMapRef.current.forEach((element) => {
+      element.dataset.selected = "false";
     });
+    return;
+  }
+
+  const route = visibleRouteMap.get(selectedRouteId);
+  if (!route) return;
+
+  const targetPoint = viewer.viewport.imageToViewportCoordinates(
+    route.marker.x,
+    route.marker.y,
+  );
+  const maxZoom = viewer.viewport.getMaxZoom();
+  const targetZoom = Math.min(maxZoom, 2.2);
+
+  viewer.viewport.zoomTo(targetZoom, targetPoint, true);
+  viewer.viewport.panTo(targetPoint, true);
+
+  overlayMapRef.current.forEach((element, id) => {
+    element.dataset.selected = id === selectedRouteId ? "true" : "false";
+  });
   }, [selectedRouteId, visibleRouteMap, image]);
 
   if (error) {
     return (
-      <div className="font-brown text-secondaryB flex h-full items-center justify-center p-6 text-center text-xs">
+      <div className="flex h-full items-center justify-center p-6 text-center font-brown text-xs text-signal">
         {error}
       </div>
     );
@@ -206,7 +204,7 @@ export default function WallExplorer({
 
   if (!image) {
     return (
-      <div className="font-brown text-primaryB/60 flex h-full items-center justify-center p-6 text-center text-xs">
+      <div className="flex h-full items-center justify-center p-6 text-center font-brown text-xs text-white/50">
         Cargando topo...
       </div>
     );
@@ -214,11 +212,9 @@ export default function WallExplorer({
 
   if (viewerError) {
     return (
-      <div className="font-brown text-secondaryB flex h-full flex-col items-center justify-center gap-2 p-6 text-center text-xs">
+      <div className="flex h-full flex-col items-center justify-center gap-2 p-6 text-center font-brown text-xs text-signal">
         <p>{viewerError}</p>
-        <p className="text-primaryB/60">
-          Se mostrará el topo descargable abajo.
-        </p>
+        <p className="text-white/50">Se mostrará el topo descargable abajo.</p>
       </div>
     );
   }
@@ -241,29 +237,29 @@ export default function WallExplorer({
     <div className="relative h-full w-full">
       <div ref={containerRef} className="h-full w-full" />
       <div className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-3">
-        <div className="y2k-panel y2k-noise pointer-events-auto flex items-center gap-2 px-3 py-2">
-          <span className="text-[10px] font-brown uppercase tracking-[0.2em] text-secondaryA/70">
+        <div className="pointer-events-auto flex items-center gap-3 border border-white/25 bg-canvas/80 px-3 py-2 backdrop-blur-sm">
+          <span className="font-brown text-[10px] tracking-[0.18em] text-white/55 uppercase">
             Controles
           </span>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               type="button"
               onClick={() => handleZoom(1.2)}
-              className="rounded border border-secondaryA/60 px-2 py-1 text-[10px] font-brown text-secondaryA hover:border-secondaryB hover:text-secondaryB"
+              className="font-brown text-[10px] text-canvas-ink hover:text-white"
             >
               Zoom +
             </button>
             <button
               type="button"
               onClick={() => handleZoom(0.85)}
-              className="rounded border border-secondaryA/60 px-2 py-1 text-[10px] font-brown text-secondaryA hover:border-secondaryB hover:text-secondaryB"
+              className="font-brown text-[10px] text-canvas-ink hover:text-white"
             >
               Zoom -
             </button>
             <button
               type="button"
               onClick={handleReset}
-              className="rounded border border-secondaryA/60 px-2 py-1 text-[10px] font-brown text-secondaryA hover:border-secondaryB hover:text-secondaryB"
+              className="font-brown text-[10px] text-canvas-ink hover:text-white"
             >
               Reset
             </button>

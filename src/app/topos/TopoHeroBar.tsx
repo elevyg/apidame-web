@@ -6,29 +6,26 @@ export default function TopoHeroBar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="pointer-events-auto inline-flex max-w-[240px] flex-col gap-2 rounded border border-secondaryA/60 bg-primaryA/90 px-3 py-2 text-xs text-primaryB shadow-[0_0_18px_rgba(89,248,232,0.25)] backdrop-blur sm:max-w-[320px]">
+    <div className="pointer-events-auto max-w-[320px] border border-white/25 bg-canvas/80 px-4 py-3 text-canvas-ink backdrop-blur-sm">
       <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-secondaryA/70" />
-          <h2 className="font-forgen text-base text-primaryB">
-            Proa &amp; Repisa Central
+        <div>
+          <p className="kicker text-white/55">Cerro Apidame</p>
+          <h2 className="font-display mt-1 text-lg text-canvas-ink">
+            Proa y Repisa Central
           </h2>
         </div>
         <button
           type="button"
           onClick={() => setOpen((current) => !current)}
-          className="rounded border border-secondaryA/60 px-2 py-1 text-[10px] font-brown uppercase tracking-[0.2em] text-secondaryA hover:border-secondaryB hover:text-secondaryB"
+          className="font-brown text-[10px] tracking-[0.18em] text-white/70 uppercase hover:text-canvas-ink"
         >
           {open ? "Cerrar" : "Ayuda"}
         </button>
       </div>
-      <p className="font-brown text-[10px] text-primaryB/60">
-        Piedra fría, líneas claras, decisiones rápidas.
-      </p>
       {open ? (
-        <div className="flex flex-wrap items-center gap-3 text-[10px] font-brown uppercase tracking-[0.2em] text-secondaryA/80">
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-brown text-[10px] tracking-[0.16em] text-white/70 uppercase">
           <span>Arrastra</span>
-          <span>Pinch/Scroll</span>
+          <span>Pinch / scroll</span>
           <span>Doble tap</span>
         </div>
       ) : null}

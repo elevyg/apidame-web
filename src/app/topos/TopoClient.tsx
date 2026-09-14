@@ -41,23 +41,18 @@ export default function TopoClient() {
   const routes: TopoRoute[] = data?.routes ?? [];
 
   return (
-    <section className="flex min-h-0 flex-1 flex-col gap-4">
-      <div className="y2k-panel y2k-noise flex min-h-[520px] flex-1 flex-col">
-        <div className="relative flex min-h-0 flex-1">
-          <div className="pointer-events-auto absolute right-3 top-3 z-10 md:left-4 md:right-auto md:top-4">
-            <TopoHeroBar />
-          </div>
-
-          <div className="y2k-panel-sunken h-full w-full">
-            <WallExplorer
-              data={data}
-              visibleRoutes={routes}
-              selectedRouteId={selectedRouteId}
-              onSelectRoute={setSelectedRouteId}
-              error={error}
-            />
-          </div>
-        </div>
+    <section className="relative min-h-0 flex-1 bg-canvas">
+      <div className="pointer-events-auto absolute top-4 left-4 z-10 right-4 md:right-auto">
+        <TopoHeroBar />
+      </div>
+      <div className="h-full min-h-0">
+        <WallExplorer
+          data={data}
+          visibleRoutes={routes}
+          selectedRouteId={selectedRouteId}
+          onSelectRoute={setSelectedRouteId}
+          error={error}
+        />
       </div>
     </section>
   );

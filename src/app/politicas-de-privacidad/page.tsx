@@ -1,80 +1,81 @@
-import Link from "next/link";
+import SiteFooter from "@/components/SiteFooter";
+import SiteHeader from "@/components/SiteHeader";
 
 export default function PrivacyPolicy() {
   return (
-    <div className="container mx-auto px-4 py-8 font-forgen text-black">
-      <h1 className="mb-6 text-3xl font-bold">Privacy Policy</h1>
-      <p className="mb-4">Last updated: {new Date().toLocaleDateString()}</p>
+    <main className="flex min-h-screen flex-col">
+      <SiteHeader />
+      <article className="page-shell measure py-12 font-brown md:py-16">
+        <p className="kicker">Legal</p>
+        <h1 className="font-display mt-3 text-4xl">Política de privacidad</h1>
 
-      <section className="mb-6">
-        <h2 className="mb-3 text-2xl font-semibold">1. Introduction</h2>
-        <p>
-          Welcome to Apidame Boulder. We respect your privacy and are committed
-          to protecting your personal data.
-        </p>
-      </section>
+        <section className="mt-10">
+          <h2 className="font-display text-2xl">1. Introducción</h2>
+          <p className="mt-3 leading-relaxed text-ink-soft">
+            Bienvenido a Apidame Boulder. Respetamos tu privacidad y nos
+            comprometemos a proteger tus datos personales.
+          </p>
+        </section>
 
-      <section className="mb-6">
-        <h2 className="mb-3 text-2xl font-semibold">
-          2. Information We Collect
-        </h2>
-        <p>
-          We may collect, use, store and transfer different kinds of personal
-          data about you, including:
-        </p>
-        <ul className="ml-4 list-inside list-disc">
-          <li>Identity Data</li>
-          <li>Contact Data</li>
-          <li>Technical Data</li>
-          <li>Usage Data</li>
-        </ul>
-      </section>
+        <section className="mt-8">
+          <h2 className="font-display text-2xl">2. Información que reunimos</h2>
+          <p className="mt-3 leading-relaxed text-ink-soft">
+            Podemos reunir, usar, almacenar y transferir distintos tipos de
+            datos personales, incluyendo:
+          </p>
+          <ul className="mt-3 list-disc space-y-1 pl-5 text-ink-soft">
+            <li>Datos de identidad</li>
+            <li>Datos de contacto</li>
+            <li>Datos técnicos</li>
+            <li>Datos de uso</li>
+          </ul>
+        </section>
 
-      <section className="mb-6">
-        <h2 className="mb-3 text-2xl font-semibold">
-          3. How We Use Your Information
-        </h2>
-        <p>We use your personal data for various purposes, including:</p>
-        <ul className="ml-4 list-inside list-disc">
-          <li>To provide and maintain our service</li>
-          <li>To notify you about changes to our service</li>
-          <li>
-            To allow you to participate in interactive features of our service
-          </li>
-          <li>To provide customer support</li>
-        </ul>
-      </section>
+        <section className="mt-8">
+          <h2 className="font-display text-2xl">3. Cómo usamos la información</h2>
+          <p className="mt-3 leading-relaxed text-ink-soft">
+            Usamos tus datos personales para, entre otras cosas:
+          </p>
+          <ul className="mt-3 list-disc space-y-1 pl-5 text-ink-soft">
+            <li>Prestar y mantener el servicio</li>
+            <li>Avisarte de cambios en el servicio</li>
+            <li>Permitir el uso de funciones interactivas</li>
+            <li>Dar soporte</li>
+          </ul>
+        </section>
 
-      <section className="mb-6">
-        <h2 className="mb-3 text-2xl font-semibold">4. Data Security</h2>
-        <p>
-          We have implemented appropriate security measures to prevent your
-          personal data from being accidentally lost, used, or accessed in an
-          unauthorized way.
-        </p>
-      </section>
+        <section className="mt-8">
+          <h2 className="font-display text-2xl">4. Seguridad de los datos</h2>
+          <p className="mt-3 leading-relaxed text-ink-soft">
+            Implementamos medidas de seguridad para evitar que tus datos
+            personales se pierdan, se usen o se accedan de forma no autorizada.
+          </p>
+        </section>
 
-      <section className="mb-6">
-        <h2 className="mb-3 text-2xl font-semibold">5. Your Rights</h2>
-        <p>
-          Under certain circumstances, you have rights under data protection
-          laws in relation to your personal data, including the right to access,
-          correct, or erase your personal data.
-        </p>
-      </section>
+        <section className="mt-8">
+          <h2 className="font-display text-2xl">5. Tus derechos</h2>
+          <p className="mt-3 leading-relaxed text-ink-soft">
+            En ciertas circunstancias tienes derechos sobre tus datos
+            personales, incluyendo el derecho a acceder, corregir o eliminar esa
+            información.
+          </p>
+        </section>
 
-      <section className="mb-6">
-        <h2 className="mb-3 text-2xl font-semibold">6. Contact Us</h2>
-        <p>
-          If you have any questions about this Privacy Policy, please contact us
-          at:
-        </p>
-        <p>Email: privacy@apidameboulder.com</p>
-      </section>
-
-      <Link href="/" className="text-blue-600 hover:text-blue-800">
-        Back to Home
-      </Link>
-    </div>
+        <section className="mt-8">
+          <h2 className="font-display text-2xl">6. Contacto</h2>
+          <p className="mt-3 leading-relaxed text-ink-soft">
+            Si tienes preguntas sobre esta política, escribe a{" "}
+            <a
+              className="text-ink underline decoration-from-font underline-offset-4"
+              href="mailto:privacy@apidameboulder.com"
+            >
+              privacy@apidameboulder.com
+            </a>
+            .
+          </p>
+        </section>
+      </article>
+      <SiteFooter />
+    </main>
   );
 }

@@ -27,7 +27,11 @@ export default function QuienesSomosPage() {
               layout="photo-end"
               thumbDock="foot"
               priority
-              body="Somos Cami y Eyal. No nacimos escalando ni en Chile Chico: la escalada y el Apidame fueron una elección. Hace cinco años vimos un pueblo, un cerro y una forma de vivir, y lo quisimos apadrinar. Con el tiempo nos transformamos en quienes más vuelven a la tradicional en el Cerro Apidame. El sello es ese trabajo: el muro, la deportiva, los topos, y la guía que estamos dejando para que se pueda escalar bien por mucho tiempo. Chile Chico es el origen, no el techo."
+              body={`Somos Cami y Eyal. Dos escaladores que descubrimos la escalada y las montañas en la universidad. El 2021 nos mudamos a Chile Chico enamorados de sus montañas, paredes, su microclima y sus lechugas.
+
+Con el tiempo desarrollamos un cariño especial por el Cerro Apidame, convirtiéndolo en nuestro segundo hogar. Nos encanta crear cosas en torno a la escalada, ya sea construyendo y renovando el muro, abriendo rutas nuevas, explorando rincones del Parque Patagonia o diseñando guías de escalada.
+
+Nuestra pasión por la escalada nace de poder expresar nuestra curiosidad y conectar con el entorno.`}
               primary={{
                 src: "/estetica/quienes-somos/eyal-cami-1.jpg",
                 alt: "Cami y Eyal en Chile Chico",

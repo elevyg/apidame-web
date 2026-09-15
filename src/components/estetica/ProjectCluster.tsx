@@ -156,11 +156,16 @@ export default function ProjectCluster({
           />
         </span>
       ) : null}
-      {body ? (
-        <p className="mt-6 font-brown text-base leading-relaxed text-ink-soft md:text-lg">
-          {body}
-        </p>
-      ) : null}
+      {body
+        ? body.split(/\n\n+/).map((paragraph, index) => (
+            <p
+              key={paragraph}
+              className={`${index === 0 ? "mt-6" : "mt-4"} font-brown text-base leading-relaxed text-ink-soft md:text-lg`}
+            >
+              {paragraph}
+            </p>
+          ))
+        : null}
       {cta ? <Action cta={cta} /> : null}
     </div>
   ) : null;

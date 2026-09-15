@@ -605,6 +605,7 @@ export default function FeedPost({
   return (
     <main
       ref={scroller}
+      data-feed-scroller
       className="bg-canvas h-full snap-y snap-mandatory overflow-x-hidden overflow-y-auto overscroll-y-contain"
     >
       {cards.map((card, index) => (

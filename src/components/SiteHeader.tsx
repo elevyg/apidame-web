@@ -10,6 +10,7 @@ type SiteHeaderProps = {
   tone?: "paper" | "canvas";
   pinned?: boolean;
   overlay?: boolean;
+  autoHide?: boolean;
   local?: boolean;
   markHref?: string;
 };
@@ -41,21 +42,25 @@ export default function SiteHeader({
   tone = "paper",
   pinned = false,
   overlay = false,
+  autoHide = false,
   local = false,
   markHref = "/",
 }: SiteHeaderProps) {
   const paper = tone === "paper";
+  const floats = overlay || autoHide;
   const [open, setOpen] = useState(false);
-  const [revealed, setRevealed] = useState(!overlay);
-  const [revealReady, setRevealReady] = useState(!overlay);
+  const [revealed, setRevealed] = useState(!floats);
+  const [revealReady, setRevealReady] = useState(!floats);
   const headerRef = useRef<HTMLElement>(null);
+  const openRef = useRef(false);
   const menuId = useId();
   const close = () => setOpen(false);
+  openRef.current = open;
 
   const chrome = paper
     ? "border-rule bg-paper/95 backdrop-blur-sm"
     : "border-white/20 bg-canvas text-paper";
-  const position = overlay
+  const position = floats
     ? `fixed inset-x-0 top-0 z-40 ${
         revealReady
           ? "transition-[opacity,translate] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none motion-reduce:translate-y-0"
@@ -114,6 +119,67 @@ export default function SiteHeader({
     };
   }, [overlay]);
 
+  useLayoutEffect(() => {
+    if (!autoHide) return;
+
+    const el = document.querySelector("[data-feed-scroller]");
+    if (!(el instanceof HTMLElement)) return;
+
+    let last = el.scrollTop;
+    let touchY = 0;
+    const show = () => setRevealed(true);
+    const hide = () => {
+      if (!openRef.current) setRevealed(false);
+    };
+
+    const onWheel = (event: WheelEvent) => {
+      if (event.deltaY < -8) show();
+      else if (event.deltaY > 8) hide();
+    };
+    const onScroll = () => {
+      const y = el.scrollTop;
+      if (y < last - 2) show();
+      else if (y > last + 2) hide();
+      last = y;
+    };
+    const onTouchStart = (event: TouchEvent) => {
+      touchY = event.touches[0]?.clientY ?? 0;
+    };
+    const onTouchMove = (event: TouchEvent) => {
+      const y = event.touches[0]?.clientY ?? touchY;
+      if (y - touchY > 14) show();
+      else if (touchY - y > 14) hide();
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "ArrowUp" || event.key === "ArrowLeft" || event.key === "PageUp") {
+        show();
+      }
+      if (
+        event.key === "ArrowDown" ||
+        event.key === "ArrowRight" ||
+        event.key === "PageDown" ||
+        event.key === " "
+      ) {
+        hide();
+      }
+    };
+
+    const frame = window.requestAnimationFrame(() => setRevealReady(true));
+    el.addEventListener("wheel", onWheel, { passive: true });
+    el.addEventListener("scroll", onScroll, { passive: true });
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("scroll", onScroll);
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [autoHide]);
+
   useEffect(() => {
     if (!open) return;
 
@@ -153,8 +219,8 @@ export default function SiteHeader({
   return (
     <header
       ref={headerRef}
-      inert={overlay && !revealed ? true : undefined}
-      aria-hidden={overlay && !revealed ? true : undefined}
+      inert={floats && !revealed ? true : undefined}
+      aria-hidden={floats && !revealed ? true : undefined}
       className={`${position} border-b ${chrome}`}
     >
       <div className="page-shell flex h-14 items-center justify-between gap-4 md:h-16">

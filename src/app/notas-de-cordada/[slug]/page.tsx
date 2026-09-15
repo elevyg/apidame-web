@@ -67,11 +67,9 @@ export default async function NotaDeCordadaPage({
   if (!post) notFound();
 
   return (
-    <div className="bg-canvas flex h-dvh flex-col overflow-hidden">
-      <SiteHeader current="notas-de-cordada" pinned />
-      <div className="min-h-0 flex-1">
-        <FeedPost post={post} closeHref="/notas-de-cordada" />
-      </div>
+    <div className="bg-canvas h-dvh overflow-hidden">
+      <SiteHeader current="notas-de-cordada" autoHide />
+      <FeedPost post={post} closeHref="/notas-de-cordada" />
     </div>
   );
 }

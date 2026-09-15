@@ -1,10 +1,9 @@
 import Logo from "assets/svgs/icon-solo.svg";
 
 const prices = [
-  { label: "Diario", value: "$6.000" },
-  { label: "Estudiantes y menores de 18 años*", value: "$4.000" },
-  { label: "3 días", value: "$15.000" },
-  { label: "1 semana", value: "$20.000" },
+  { label: "Diario", value: "$5.000" },
+  { label: "Socios CACHCH", value: "$2.000" },
+  { label: "Mensualidad", value: "$25.000" },
 ];
 
 export default function GymAccess() {

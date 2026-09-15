@@ -1,0 +1,18 @@
+{
+  "name": "Apidame Web",
+  "install": "yarn install --frozen-lockfile",
+  "start": "true",
+  "terminals": [
+    {
+      "name": "next-dev",
+      "command": "yarn dev",
+      "description": "Next.js on port 4000 for cloud previews of Notas de cordada"
+    }
+  ],
+  "ports": [
+    {
+      "name": "web",
+      "port": 4000
+    }
+  ]
+}

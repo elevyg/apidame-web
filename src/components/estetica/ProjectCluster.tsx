@@ -14,18 +14,27 @@ export type Plate = {
   height: number;
 };
 
+type ThumbDock = "corners" | "foot";
+
 type ProjectClusterProps = {
   id?: string;
-  name: string;
+  name?: string;
   kicker?: string;
-  cta: { label: string; href?: string };
+  cta?: { label: string; href?: string };
+  body?: string;
+  heading?: "h1" | "h2";
   primary: Plate;
   thumbs?: Plate[];
+  thumbDock?: ThumbDock;
   layout: "photo-end" | "photo-start" | "banner";
   priority?: boolean;
 };
 
-function Action({ cta }: { cta: ProjectClusterProps["cta"] }) {
+function Action({
+  cta,
+}: {
+  cta: NonNullable<ProjectClusterProps["cta"]>;
+}) {
   const className =
     "mt-5 inline-flex min-h-11 items-center font-brown text-sm tracking-[0.16em] uppercase";
 
@@ -79,13 +88,22 @@ function thumbClass(layout: "photo-end" | "photo-start", index: number) {
     : "pointer-events-none absolute w-[34%] max-w-[8.5rem] -right-2 top-[28%] md:w-[36%] md:max-w-[9.5rem] md:-right-10 md:top-[22%]";
 }
 
+function footThumbClass(index: number) {
+  return index === 0
+    ? "pointer-events-none w-[36%] max-w-[8.5rem] md:w-[38%] md:max-w-[9.5rem]"
+    : "pointer-events-none w-[28%] max-w-[7rem] translate-y-3 md:w-[30%] md:max-w-[8rem]";
+}
+
 export default function ProjectCluster({
   id,
   name,
   kicker,
   cta,
+  body,
+  heading = "h2",
   primary,
   thumbs = [],
+  thumbDock = "corners",
   layout,
   priority = false,
 }: ProjectClusterProps) {
@@ -110,21 +128,42 @@ export default function ProjectCluster({
     setOffset({ x: 0, y: 0 });
   }
 
-  const copy = (
-    <div className={layout === "banner" ? "" : "md:w-[13.5rem] md:shrink-0"}>
+  const Title = heading === "h1" ? "h1" : "h2";
+  const hasCopy = Boolean(name || kicker || cta || body);
+  const copy = hasCopy ? (
+    <div
+      className={
+        layout === "banner"
+          ? ""
+          : body
+            ? "md:w-[22rem] md:shrink-0"
+            : "md:w-[13.5rem] md:shrink-0"
+      }
+    >
       {kicker ? <p className="kicker mb-3">{kicker}</p> : null}
-      <h2 className="font-display text-3xl leading-[0.9] md:text-5xl">{name}</h2>
-      <span className="mt-4 block h-px w-16 md:mt-5">
-        <motion.span
-          className="block h-px bg-ink"
-          initial={false}
-          animate={{ width: awake || reduce ? 64 : 16 }}
-          transition={{ duration: 0.6, ease }}
-        />
-      </span>
-      <Action cta={cta} />
+      {name ? (
+        <Title className="font-display text-3xl leading-[0.9] md:text-5xl">
+          {name}
+        </Title>
+      ) : null}
+      {name || kicker ? (
+        <span className="mt-4 block h-px w-16 md:mt-5">
+          <motion.span
+            className="block h-px bg-ink"
+            initial={false}
+            animate={{ width: awake || reduce ? 64 : 16 }}
+            transition={{ duration: 0.6, ease }}
+          />
+        </span>
+      ) : null}
+      {body ? (
+        <p className="mt-6 font-brown text-base leading-relaxed text-ink-soft md:text-lg">
+          {body}
+        </p>
+      ) : null}
+      {cta ? <Action cta={cta} /> : null}
     </div>
-  );
+  ) : null;
 
   const photos = (
     <div className={layout === "banner" ? "w-full" : "min-w-0 flex-1"}>
@@ -132,7 +171,11 @@ export default function ProjectCluster({
         className={
           layout === "banner"
             ? "w-full"
-            : `relative w-full max-w-full md:w-fit ${thumbs.length > 0 ? "pb-10 md:pb-12" : ""}`
+            : `relative w-full max-w-full md:w-fit ${
+                thumbs.length > 0 && thumbDock === "corners"
+                  ? "pb-10 md:pb-12"
+                  : ""
+              }`
         }
       >
         <div
@@ -166,7 +209,7 @@ export default function ProjectCluster({
           </motion.div>
         </div>
 
-        {layout !== "banner"
+        {layout !== "banner" && thumbDock === "corners"
           ? thumbs.map((thumb, index) => (
               <motion.div
                 key={thumb.src}
@@ -191,6 +234,35 @@ export default function ProjectCluster({
                 <PlateImage plate={{ ...thumb, alt: "" }} sizes="180px" />
               </motion.div>
             ))
+          : null}
+
+        {layout !== "banner" && thumbDock === "foot"
+          ? (
+              <div
+                className={`relative z-10 -mt-3 flex items-start justify-between md:-mt-4 ${
+                  layout === "photo-start" ? "flex-row-reverse" : ""
+                }`}
+              >
+                {thumbs.map((thumb, index) => (
+                  <motion.div
+                    key={thumb.src}
+                    className={footThumbClass(index)}
+                    initial={false}
+                    animate={{
+                      opacity: showThumbs ? 1 : 0,
+                      y: reduce || showThumbs ? 0 : 12,
+                    }}
+                    transition={{
+                      duration: 0.55,
+                      delay: showThumbs ? 0.08 + index * 0.08 : 0,
+                      ease,
+                    }}
+                  >
+                    <PlateImage plate={{ ...thumb, alt: "" }} sizes="180px" />
+                  </motion.div>
+                ))}
+              </div>
+            )
           : null}
       </div>
     </div>

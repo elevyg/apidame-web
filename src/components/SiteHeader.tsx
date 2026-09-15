@@ -1,52 +1,128 @@
+"use client";
+
 import Link from "next/link";
-import Logo from "assets/svgs/icon-solo.svg";
+import { useEffect, useId, useRef, useState } from "react";
+import ApidameMark from "@/components/estetica/ApidameMark";
+import { siteNav, type SiteNavId } from "@/components/siteNav";
 
 type SiteHeaderProps = {
-  current?: "topos" | "gimnasio";
+  current?: SiteNavId;
+  tone?: "paper" | "canvas";
+  pinned?: boolean;
+  local?: boolean;
+  markHref?: string;
 };
 
-const nav = [
-  { href: "/topos", label: "Topos", id: "topos" as const },
-  { href: "/#gimnasio", label: "Gimnasio", id: "gimnasio" as const },
-];
+function navClass(
+  paper: boolean,
+  active: boolean,
+  variant: "inline" | "panel",
+) {
+  if (variant === "panel") {
+    return `block py-4 font-brown text-xs tracking-[0.2em] uppercase ${
+      paper ? "text-ink" : "text-paper"
+    }`;
+  }
 
-export default function SiteHeader({ current }: SiteHeaderProps) {
+  return `font-brown text-[10px] tracking-[0.12em] uppercase whitespace-nowrap transition md:text-xs md:tracking-[0.18em] ${
+    paper
+      ? active
+        ? "text-ink"
+        : "text-ink-soft hover:text-ink"
+      : active
+        ? "text-paper"
+        : "text-white/70 hover:text-paper"
+  }`;
+}
+
+export default function SiteHeader({
+  current,
+  tone = "paper",
+  pinned = false,
+  local = false,
+  markHref = "/",
+}: SiteHeaderProps) {
+  const paper = tone === "paper";
+  const [open, setOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+  const menuId = useId();
+  const close = () => setOpen(false);
+
+  const chrome = paper
+    ? "border-rule bg-paper/95 backdrop-blur-sm"
+    : "border-white/20 bg-canvas text-paper";
+  const position = pinned ? "" : "sticky top-0 z-30";
+  const mark = (
+    <>
+      <ApidameMark tone={paper ? "ink" : "paper"} />
+      <span className="sr-only">Apidame</span>
+    </>
+  );
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    const onPointerDown = (event: PointerEvent) => {
+      if (!headerRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onResize = () => {
+      if (window.matchMedia("(min-width: 768px)").matches) setOpen(false);
+    };
+
+    const onScroll = () => setOpen(false);
+
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [open]);
+
+  const items = siteNav.map((item) => {
+    const href = local ? item.homeHref : item.href;
+    const active = current === item.id;
+    return { ...item, href, active };
+  });
+
   return (
-    <header className="sticky top-0 z-30 border-b border-rule bg-paper/95 backdrop-blur-sm">
+    <header
+      ref={headerRef}
+      className={`${position} relative border-b ${chrome}`}
+    >
       <div className="page-shell flex h-14 items-center justify-between gap-4 md:h-16">
-        <Link href="/" className="flex items-center gap-3">
-          <Logo
-            height={28}
-            width={30}
-            className="h-6 w-6 fill-ink md:h-7 md:w-7"
-            aria-hidden
-          />
-          <span className="flex flex-col leading-none">
-            <span className="font-brand text-[11px] tracking-[0.34em] md:text-sm">
-              APIDAME
-            </span>
-            <span className="font-brand text-[8px] tracking-[0.42em] text-ink-soft md:text-[10px]">
-              BOULDER
-            </span>
-          </span>
-          <span className="sr-only">Apidame Boulder, inicio</span>
-        </Link>
+        {markHref.startsWith("#") ? (
+          <a href={markHref} className="shrink-0" onClick={close}>
+            {mark}
+          </a>
+        ) : (
+          <Link href={markHref} className="shrink-0" onClick={close}>
+            {mark}
+          </Link>
+        )}
 
-        <nav className="flex items-center gap-5 md:gap-8">
-          {nav.map((item) => {
-            const active = current === item.id;
-            const className = `font-brown text-[11px] tracking-[0.18em] uppercase transition md:text-xs ${
-              active ? "text-ink" : "text-ink-soft hover:text-ink"
-            }`;
-            if (item.href.startsWith("/#")) {
+        <nav className="hidden min-w-0 items-center justify-end gap-8 md:flex">
+          {items.map((item) => {
+            const className = navClass(paper, item.active, "inline");
+            if (item.href.startsWith("#") || item.href.startsWith("/#")) {
               return (
-                <a key={item.href} href={item.href} className={className}>
+                <a key={item.id} href={item.href} className={className}>
                   {item.label}
                 </a>
               );
             }
             return (
-              <Link key={item.href} href={item.href} className={className}>
+              <Link key={item.id} href={item.href} className={className}>
                 {item.label}
               </Link>
             );
@@ -55,12 +131,99 @@ export default function SiteHeader({ current }: SiteHeaderProps) {
             href="https://www.instagram.com/apidameboulder/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden font-brown text-[11px] tracking-[0.18em] text-ink-soft uppercase transition hover:text-ink md:inline md:text-xs"
+            className={`font-brown text-[10px] tracking-[0.16em] uppercase transition md:text-xs md:tracking-[0.18em] ${
+              paper
+                ? "text-ink-soft hover:text-ink"
+                : "hover:text-paper text-white/70"
+            }`}
           >
             Instagram
           </a>
         </nav>
+
+        <button
+          type="button"
+          className="relative flex h-10 w-10 shrink-0 items-center justify-center md:hidden"
+          aria-expanded={open}
+          aria-controls={menuId}
+          aria-label={open ? "Cerrar" : "Menú"}
+          onClick={() => setOpen((value) => !value)}
+        >
+          <span aria-hidden className="relative block h-3 w-5">
+            <span
+              className={`absolute top-0 left-0 h-px w-full origin-center transition duration-200 ${
+                paper ? "bg-ink" : "bg-paper"
+              } ${open ? "top-1.5 rotate-45" : ""}`}
+            />
+            <span
+              className={`absolute bottom-0 left-0 h-px w-full origin-center transition duration-200 ${
+                paper ? "bg-ink" : "bg-paper"
+              } ${open ? "bottom-1.5 -rotate-45" : ""}`}
+            />
+          </span>
+        </button>
       </div>
+
+      {open ? (
+        <div className="md:hidden">
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-hidden
+            className={`absolute inset-x-0 top-full z-10 h-dvh touch-none ${
+              paper ? "bg-ink/30" : "bg-black/55"
+            }`}
+            onClick={close}
+          />
+          <nav
+            id={menuId}
+            className={`absolute inset-x-0 top-full z-20 border-b ${
+              paper ? "border-rule bg-paper" : "bg-canvas border-white/20"
+            }`}
+          >
+            <div
+              className={`page-shell divide-y ${
+                paper ? "divide-rule" : "divide-white/20"
+              }`}
+            >
+              {items.map((item) => {
+                const className = navClass(paper, item.active, "panel");
+                if (item.href.startsWith("#") || item.href.startsWith("/#")) {
+                  return (
+                    <a
+                      key={item.id}
+                      href={item.href}
+                      className={className}
+                      onClick={close}
+                    >
+                      {item.label}
+                    </a>
+                  );
+                }
+                return (
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    className={className}
+                    onClick={close}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+              <a
+                href="https://www.instagram.com/apidameboulder/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={navClass(paper, false, "panel")}
+                onClick={close}
+              >
+                Instagram
+              </a>
+            </div>
+          </nav>
+        </div>
+      ) : null}
     </header>
   );
 }

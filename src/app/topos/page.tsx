@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import FeaturedRoutesGallery from "./FeaturedRoutesGallery";
@@ -6,6 +7,12 @@ import type { FeaturedRoute } from "./types";
 import Notice from "@/components/Notice";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
+
+export const metadata: Metadata = {
+  title: "Topos",
+  description:
+    "Topos del Cerro Apidame en el Parque Nacional Patagonia. Proa y Repisa Central, equipo y acceso desde Chile Chico.",
+};
 
 export default function Topos() {
   const routes = featuredRoutes as FeaturedRoute[];
@@ -30,11 +37,11 @@ export default function Topos() {
 
         <div className="border-b border-rule">
           <Image
-            src="/topos/proa-repisa-thumb.jpg"
-            alt="Proa y Repisa Central del Cerro Apidame"
-            width={1600}
-            height={900}
-            className="h-[42vh] min-h-[16rem] w-full object-cover md:h-[56vh]"
+            src="/estetica/presentacion/proa-aerea.jpg"
+            alt="Cerro Apidame, Proa"
+            width={2400}
+            height={1600}
+            className="h-[42vh] min-h-[16rem] w-full object-cover object-[50%_42%] md:h-[56vh]"
             priority
           />
         </div>

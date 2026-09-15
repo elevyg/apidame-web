@@ -8,7 +8,11 @@ import ProjectCluster from "@/components/estetica/ProjectCluster";
 const portrait = { width: 1800, height: 2400 } as const;
 const landscape = { width: 2400, height: 1800 } as const;
 
-export default function ProjectField() {
+type ProjectFieldProps = {
+  lab?: boolean;
+};
+
+export default function ProjectField({ lab = false }: ProjectFieldProps) {
   const heroRef = useRef<HTMLElement>(null);
   const [pastHero, setPastHero] = useState(false);
 
@@ -30,14 +34,17 @@ export default function ProjectField() {
   return (
     <>
       <EsteticaBar visible={pastHero} />
-      <EsteticaHero ref={heroRef} />
+      <EsteticaHero ref={heroRef} lab={lab} />
 
       <section className="px-5 pt-8 pb-24 md:px-16 md:pt-16 md:pb-40 lg:px-24">
         <div className="flex flex-col gap-24 md:gap-36 lg:gap-44">
           <ProjectCluster
             id="muro"
             name="Muro"
-            cta={{ label: "Horarios y acceso", href: "/#gimnasio" }}
+            cta={{
+              label: "Horarios y acceso",
+              href: lab ? "/#gimnasio" : "#gimnasio",
+            }}
             layout="photo-end"
             priority
             primary={{

@@ -7,7 +7,7 @@ import SiteHeader from "@/components/SiteHeader";
 export default function TallerEscaladaKids() {
   return (
     <main className="flex min-h-screen flex-col">
-      <SiteHeader current="gimnasio" />
+      <SiteHeader current="muro" />
       <article className="page-shell grid gap-10 py-12 md:grid-cols-2 md:gap-16 md:py-16">
         <CldImage
           src="apidame-web/taller_de_escalada_kids_uzwz5q"
@@ -18,7 +18,7 @@ export default function TallerEscaladaKids() {
           sizes="(max-width: 768px) 100vw, 50vw"
         />
         <div className="flex flex-col gap-6 font-brown text-base leading-relaxed">
-          <p className="kicker">Gimnasio</p>
+          <p className="kicker">Muro</p>
           <h1 className="font-display text-3xl md:text-5xl">
             Taller de escalada kids
           </h1>

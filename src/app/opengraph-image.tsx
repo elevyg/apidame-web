@@ -17,7 +17,7 @@ export default function OpenGraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#F3EFE8",
+          background: "#FFFFFF",
           color: "#1C1916",
           padding: "64px 72px",
         }}
@@ -28,7 +28,7 @@ export default function OpenGraphImage() {
             fontSize: 18,
             letterSpacing: 6,
             textTransform: "uppercase",
-            color: "#6A645C",
+            color: "#5A5550",
           }}
         >
           Desde 2021 · Chile Chico
@@ -41,10 +41,10 @@ export default function OpenGraphImage() {
               textTransform: "uppercase",
             }}
           >
-            APIDAME BOULDER
+            APIDAME
           </div>
-          <div style={{ fontSize: 32, color: "#6A645C" }}>
-            Topos y escalada en el Parque Nacional Patagonia
+          <div style={{ fontSize: 32, color: "#5A5550" }}>
+            Muro, cerro y escalada deportiva
           </div>
         </div>
         <div
@@ -52,12 +52,12 @@ export default function OpenGraphImage() {
             display: "flex",
             justifyContent: "space-between",
             fontSize: 22,
-            color: "#6A645C",
+            color: "#5A5550",
             letterSpacing: 2,
             textTransform: "uppercase",
           }}
         >
-          <div>Cerro Apidame</div>
+          <div>Chile Chico</div>
           <div>apidameboulder.com</div>
         </div>
       </div>

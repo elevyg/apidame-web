@@ -17,28 +17,26 @@ export const viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Apidame Boulder | Escalada en Chile Chico",
-    template: "%s | Apidame Boulder",
+    default: "Apidame | Chile Chico",
+    template: "%s | Apidame",
   },
   description:
-    "Gimnasio de escalada y boulder en Chile Chico, Aysén. Horarios, precios, ubicación y topos del Cerro Apidame.",
+    "Muro, topos del Cerro Apidame y escalada deportiva en Chile Chico, Aysén.",
   icons: { icon: "/favicon.ico" },
   keywords: [
-    "Apidame Boulder",
+    "Apidame",
     "escalada Chile Chico",
-    "boulder Aysén",
+    "muro Chile Chico",
     "topos cerro apidame",
+    "escalada deportiva Aysén",
     "patagonia chilena",
   ],
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
-    title: "Apidame Boulder | Escalada en Chile Chico",
+    title: "Apidame | Chile Chico",
     description:
-      "Escala con nosotros en Chile Chico. Revisa horarios, precios y los topos del Cerro Apidame.",
+      "Muro, topos del Cerro Apidame y escalada deportiva en Chile Chico.",
     url: "/",
-    siteName: "Apidame Boulder",
+    siteName: "Apidame",
     locale: "es_CL",
     type: "website",
     images: [
@@ -46,15 +44,15 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Apidame Boulder en Chile Chico",
+        alt: "Apidame en Chile Chico",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Apidame Boulder | Escalada en Chile Chico",
+    title: "Apidame | Chile Chico",
     description:
-      "Escala con nosotros en Chile Chico. Horarios, precios y topos del Cerro Apidame.",
+      "Muro, topos del Cerro Apidame y escalada deportiva en Chile Chico.",
     images: ["/opengraph-image"],
   },
   robots: {

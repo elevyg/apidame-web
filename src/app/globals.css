@@ -79,19 +79,19 @@ body {
 }
 
 .topo-marker {
-  border: 1px solid rgba(243, 239, 232, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.85);
   background: rgba(18, 17, 15, 0.78);
-  color: #f3efe8;
+  color: #ffffff;
   backdrop-filter: blur(8px);
 }
 
 .topo-marker[data-selected="true"] {
-  border-color: #f3efe8;
+  border-color: #ffffff;
   background: #1c1916;
 }
 
 .openseadragon-container .navigator {
-  border: 1px solid rgba(243, 239, 232, 0.35) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
   box-shadow: none !important;
   border-radius: 0 !important;
   overflow: hidden;

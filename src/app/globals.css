@@ -9,6 +9,7 @@
   --color-canvas: #12110f;
   --color-canvas-ink: #ffffff;
   --color-signal: #9c3b1e;
+  --color-beige: #e8e2d4;
 
   --color-primaryA: #1c1916;
   --color-primaryB: #ffffff;
@@ -59,6 +60,116 @@ body {
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--color-ink-soft);
+}
+
+.feed-cover-heading {
+  container-type: inline-size;
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 1;
+  padding: max(4.25rem, 8cqw) 4.5cqw max(1.6rem, 4cqw);
+  background: var(--color-canvas);
+  color: var(--color-paper);
+  font-family: var(--font-brown), ui-sans-serif, system-ui, sans-serif;
+}
+
+.feed-cover-title {
+  font-size: clamp(2.1rem, 9cqw, 3.25rem);
+  font-style: italic;
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.feed-cover-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: clamp(0.9rem, 3cqw, 1.25rem);
+}
+
+.feed-cover-kicker {
+  min-width: 0;
+  font-size: clamp(0.625rem, 2.2cqw, 0.75rem);
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.feed-cover-papeo {
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: var(--color-paper);
+  color: var(--color-canvas);
+  padding: 0.65rem 0.9rem;
+  font-size: clamp(0.55rem, 1.9cqw, 0.65rem);
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+}
+
+.feed-cover-papeo:focus-visible {
+  outline: 2px solid var(--color-paper);
+  outline-offset: 3px;
+}
+
+.feed-editorial-page {
+  container-type: inline-size;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+  padding: max(3.75rem, 5cqw) 4.5cqw max(3.5rem, 4cqw);
+  font-family: var(--font-brown), ui-sans-serif, system-ui, sans-serif;
+}
+
+.feed-editorial-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.feed-editorial-question {
+  max-width: 90%;
+  font-size: 1.35em;
+  font-style: italic;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+
+.feed-editorial-feature {
+  margin-top: 0.5em;
+  font-size: 3.15em;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+}
+
+.feed-editorial-answer {
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+  margin-top: 0.9em;
+  font-size: 1em;
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+}
+
+.feed-editorial-meta {
+  align-self: end;
+  margin-top: 3.5cqw;
+  border-top: 1px solid currentColor;
+  padding-top: 2cqw;
+  overflow: hidden;
+  font-size: clamp(0.55rem, 2.45cqw, 0.875rem);
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .measure {

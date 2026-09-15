@@ -10,15 +10,6 @@ const config = {
     });
     return config;
   },
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-        pathname: "/**",
-      },
-    ],
-  },
 };
 
 export default config;

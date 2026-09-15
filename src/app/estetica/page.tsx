@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import ArchivoFotos from "@/components/estetica/ArchivoFotos";
 import ProjectField from "@/components/estetica/ProjectField";
 
@@ -58,6 +59,30 @@ export default function EsteticaPage() {
             <p className="mt-2 text-ink-soft">
               Sigue con la guía. El aéreo de Sergi ahora vive en el
               hero. ¿Hay que repetirlo abajo?
+            </p>
+          </li>
+          <li>
+            <p className="text-ink">La story</p>
+            <p className="mt-2 text-ink-soft">
+              Maqueta de entregas en tarjetas 9:16.{" "}
+              <Link
+                href="/estetica/story"
+                className="underline underline-offset-4"
+              >
+                Abrir
+              </Link>
+            </p>
+          </li>
+          <li>
+            <p className="text-ink">El feed</p>
+            <p className="mt-2 text-ink-soft">
+              El mismo tema, como post en un scroll.{" "}
+              <Link
+                href="/estetica/feed"
+                className="underline underline-offset-4"
+              >
+                Abrir
+              </Link>
             </p>
           </li>
         </ol>

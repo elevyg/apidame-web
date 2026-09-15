@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { posts } from "@/components/estetica/feed/posts";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -15,6 +16,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 1,
     },
+    {
+      url: `${siteUrl}/notas-de-cordada`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    ...posts.map((post) => ({
+      url: `${siteUrl}/notas-de-cordada/${post.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
     {
       url: `${siteUrl}/topos`,
       lastModified: now,

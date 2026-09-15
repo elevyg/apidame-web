@@ -1,45 +1,32 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
 import EsteticaBar from "@/components/estetica/EsteticaBar";
 import EsteticaHero from "@/components/estetica/EsteticaHero";
+import HomePanel from "@/components/estetica/HomePanel";
+import NotasHomeSection from "@/components/estetica/NotasHomeSection";
 import ProjectCluster from "@/components/estetica/ProjectCluster";
 
 const portrait = { width: 1800, height: 2400 } as const;
 const landscape = { width: 2400, height: 1800 } as const;
+const clusterShell =
+  "flex flex-1 flex-col justify-center px-5 py-8 md:px-16 md:py-10 lg:px-24";
 
 type ProjectFieldProps = {
   lab?: boolean;
 };
 
 export default function ProjectField({ lab = false }: ProjectFieldProps) {
-  const heroRef = useRef<HTMLElement>(null);
-  const [pastHero, setPastHero] = useState(false);
-
-  useEffect(() => {
-    const hero = heroRef.current;
-    if (!hero) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setPastHero(!entry.isIntersecting);
-      },
-      { threshold: 0, rootMargin: "-1px 0px 0px 0px" },
-    );
-
-    observer.observe(hero);
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <>
-      <EsteticaBar visible={pastHero} />
-      <EsteticaHero ref={heroRef} lab={lab} />
+      <EsteticaBar />
+      <HomePanel hero as="div" className="bg-ink">
+        <EsteticaHero lab={lab} />
+      </HomePanel>
+      <HomePanel className="bg-canvas">
+        <NotasHomeSection />
+      </HomePanel>
 
-      <section className="px-5 pt-8 pb-24 md:px-16 md:pt-16 md:pb-40 lg:px-24">
-        <div className="flex flex-col gap-24 md:gap-36 lg:gap-44">
+      <HomePanel id="muro" className="bg-paper">
+        <div className={clusterShell}>
           <ProjectCluster
-            id="muro"
             name="Muro"
             cta={{
               label: "Horarios y acceso",
@@ -65,9 +52,12 @@ export default function ProjectField({ lab = false }: ProjectFieldProps) {
               },
             ]}
           />
+        </div>
+      </HomePanel>
 
+      <HomePanel id="cerro" className="bg-paper">
+        <div className={clusterShell}>
           <ProjectCluster
-            id="cerro"
             name="Cerro Apidame"
             kicker="Parque Nacional Patagonia"
             cta={{ label: "Ver topos", href: "/topos" }}
@@ -79,9 +69,12 @@ export default function ProjectField({ lab = false }: ProjectFieldProps) {
               height: 3024,
             }}
           />
+        </div>
+      </HomePanel>
 
+      <HomePanel id="deportiva" className="bg-paper">
+        <div className={clusterShell}>
           <ProjectCluster
-            id="deportiva"
             name="Escalada deportiva"
             kicker="El Indio · Pared Burgos"
             cta={{ label: "Pronto" }}
@@ -105,7 +98,7 @@ export default function ProjectField({ lab = false }: ProjectFieldProps) {
             ]}
           />
         </div>
-      </section>
+      </HomePanel>
     </>
   );
 }

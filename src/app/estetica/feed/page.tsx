@@ -7,5 +7,9 @@ export const metadata: Metadata = {
 };
 
 export default function FeedMaquetaPage() {
-  return <FeedPost />;
+  return (
+    <div className="h-dvh">
+      <FeedPost />
+    </div>
+  );
 }

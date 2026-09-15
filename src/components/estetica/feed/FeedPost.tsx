@@ -12,7 +12,12 @@ import {
   type RefObject,
 } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { cards, papeoIndex, type Card, type CardTone } from "./posts";
+import {
+  cuerdasPost,
+  type Card,
+  type CardTone,
+  type FeedPostData,
+} from "./posts";
 
 const tones: Record<
   CardTone,
@@ -81,7 +86,7 @@ async function waitForImages(element: HTMLElement) {
   );
 }
 
-async function createJpeg(card: Card, element: HTMLElement) {
+async function createJpeg(postId: string, card: Card, element: HTMLElement) {
   await Promise.all([document.fonts.ready, waitForImages(element)]);
   const { toJpeg } = await import("html-to-image");
   const editorial = isEditorial(card);
@@ -100,7 +105,7 @@ async function createJpeg(card: Card, element: HTMLElement) {
   const response = await fetch("/api/estetica/feed/share", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ postId: card.id, image }),
+    body: JSON.stringify({ postId, cardId: card.id, image }),
   });
   if (!response.ok) {
     throw new Error(`No se pudo generar el JPEG (${response.status})`);
@@ -123,8 +128,8 @@ function downloadFile(file: File) {
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-async function shareCard(card: Card, element: HTMLElement) {
-  const file = await createJpeg(card, element);
+async function shareCard(postId: string, card: Card, element: HTMLElement) {
+  const file = await createJpeg(postId, card, element);
   const shareData: ShareData = {
     files: [file],
     text: card.share,
@@ -333,12 +338,18 @@ function CardFace({
   );
 }
 
-function CoverPapeoCta({ onJump }: { onJump: (to: number) => void }) {
+function CoverPapeoCta({
+  onJump,
+  to,
+}: {
+  onJump: (to: number) => void;
+  to: number;
+}) {
   return (
     <button
       type="button"
       className="feed-cover-papeo"
-      onClick={() => onJump(papeoIndex)}
+      onClick={() => onJump(to)}
       data-share-ignore
     >
       Directo al papeo
@@ -389,11 +400,17 @@ function Slide({
   index,
   total,
   onJump,
+  closeHref,
+  papeoIndex,
+  postId,
 }: {
   card: Card;
   index: number;
   total: number;
   onJump?: (to: number) => void;
+  closeHref: string;
+  papeoIndex: number;
+  postId: string;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const editorialRef = useRef<HTMLDivElement>(null);
@@ -409,7 +426,7 @@ function Slide({
   const mark = "font-brown text-[0.65rem] tracking-[0.16em] uppercase";
 
   return (
-    <section className="flex h-dvh w-full shrink-0 snap-start snap-always items-center justify-center px-3 py-3">
+    <section className="flex h-full min-h-full w-full shrink-0 snap-start snap-always items-center justify-center px-3 py-3">
       <div
         ref={cardRef}
         className={`relative flex h-full w-full max-w-[36rem] flex-col overflow-hidden ${
@@ -432,7 +449,7 @@ function Slide({
           </p>
           {index === 0 ? (
             <Link
-              href="/estetica"
+              href={closeHref}
               className={`pointer-events-auto ${mark} ${ink}`}
               data-share-ignore
             >
@@ -448,11 +465,11 @@ function Slide({
             shareRef={editorial ? editorialRef : undefined}
             coverCta={
               index === 0 && onJump && papeoIndex >= 0 ? (
-                <CoverPapeoCta onJump={onJump} />
+                <CoverPapeoCta onJump={onJump} to={papeoIndex} />
               ) : undefined
             }
             coverNavigation={
-              index === 0 && onJump && papeoIndex >= 0 ? (
+              index === 0 && onJump ? (
                 <CoverNavigation onJump={onJump} />
               ) : undefined
             }
@@ -478,7 +495,7 @@ function Slide({
               if (!element || shareStatus === "generating") return;
               setShareStatus("generating");
               try {
-                const shared = await shareCard(card, element);
+                const shared = await shareCard(postId, card, element);
                 setShareStatus(shared ? "done" : "idle");
               } catch (error) {
                 console.error("No se pudo compartir la tarjeta", error);
@@ -503,10 +520,18 @@ function Slide({
   );
 }
 
-export default function FeedPost() {
+export default function FeedPost({
+  post = cuerdasPost,
+  closeHref = "/estetica",
+}: {
+  post?: FeedPostData;
+  closeHref?: string;
+}) {
   const scroller = useRef<HTMLElement>(null);
   const page = useRef(0);
   const reduce = useReducedMotion();
+  const cards = post.cards;
+  const papeoIndex = cards.findIndex((card) => card.id === "papeo");
 
   const jumpTo = useCallback(
     (to: number) => {
@@ -520,7 +545,7 @@ export default function FeedPost() {
         behavior: reduce || far ? "auto" : "smooth",
       });
     },
-    [reduce],
+    [cards, reduce],
   );
 
   useEffect(() => {
@@ -580,7 +605,7 @@ export default function FeedPost() {
   return (
     <main
       ref={scroller}
-      className="bg-canvas h-dvh snap-y snap-mandatory overflow-y-auto overscroll-y-contain"
+      className="bg-canvas h-full snap-y snap-mandatory overflow-x-hidden overflow-y-auto overscroll-y-contain"
     >
       {cards.map((card, index) => (
         <Slide
@@ -589,6 +614,9 @@ export default function FeedPost() {
           index={index}
           total={cards.length}
           onJump={jumpTo}
+          closeHref={closeHref}
+          papeoIndex={papeoIndex}
+          postId={post.slug}
         />
       ))}
     </main>

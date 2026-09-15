@@ -37,7 +37,19 @@ export type Card = {
   share: string;
 } & (TitleCard | FieldCard | PhotoCard);
 
-export const cards: Card[] = [
+export type FeedPostData = {
+  slug: string;
+  title: string;
+  description: string;
+  og: {
+    title: string;
+    subtitle: string;
+    imageAlt: string;
+  };
+  cards: readonly Card[];
+};
+
+const postCards: Card[] = [
   {
     id: "titulo",
     type: "title",
@@ -194,4 +206,48 @@ export const cards: Card[] = [
   },
 ];
 
+export const cuerdasPost: FeedPostData = {
+  slug: "cuerdas-dobles-o-simple-y-tagline",
+  title: "¿Cuerdas dobles o cuerda simple y tagline?",
+  description:
+    "Una nota personal sobre elegir y gestionar cuerdas dobles o cuerda simple con tagline en multilargos, aproximaciones y rapeles.",
+  og: {
+    title: "¿Dobles o simple + tagline?",
+    subtitle: "Criterios de cordada para multilargos y rapeles",
+    imageAlt:
+      "Notas de cordada de Apidame: cuerdas dobles o cuerda simple y tagline",
+  },
+  cards: postCards,
+};
+
+export const posts: readonly FeedPostData[] = [cuerdasPost];
+export const cards = cuerdasPost.cards;
 export const papeoIndex = cards.findIndex((card) => card.id === "papeo");
+
+export type PostCover = {
+  src: string;
+  alt: string;
+  object: string;
+};
+
+export function getFeedPost(slug: string) {
+  return posts.find((post) => post.slug === slug);
+}
+
+export function getPostCover(post: FeedPostData): PostCover | undefined {
+  const title = post.cards.find((card) => card.type === "title");
+  if (!title || title.type !== "title" || !title.art) return undefined;
+  return {
+    src: title.art,
+    alt: title.artAlt ?? post.title,
+    object: title.object ?? "object-center",
+  };
+}
+
+export function findShareCard(cardId: string, postId?: string) {
+  if (postId) {
+    const post = getFeedPost(postId);
+    return post?.cards.find((card) => card.id === cardId);
+  }
+  return posts.flatMap((post) => post.cards).find((card) => card.id === cardId);
+}

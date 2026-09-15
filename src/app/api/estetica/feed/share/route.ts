@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import { cards } from "@/components/estetica/feed/posts";
+import { findShareCard } from "@/components/estetica/feed/posts";
 
 export const runtime = "nodejs";
 
@@ -57,15 +57,25 @@ export async function POST(request: Request) {
   if (
     typeof payload !== "object" ||
     payload === null ||
-    !("postId" in payload) ||
     !("image" in payload) ||
-    typeof payload.postId !== "string" ||
     typeof payload.image !== "string"
   ) {
-    return errorResponse("Faltan postId o image", 400);
+    return errorResponse("Falta image", 400);
   }
 
-  const card = cards.find((candidate) => candidate.id === payload.postId);
+  const postId =
+    "postId" in payload && typeof payload.postId === "string"
+      ? payload.postId
+      : undefined;
+  const cardId =
+    "cardId" in payload && typeof payload.cardId === "string"
+      ? payload.cardId
+      : postId;
+  if (!cardId) {
+    return errorResponse("Faltan postId o cardId", 400);
+  }
+
+  const card = findShareCard(cardId, postId === cardId ? undefined : postId);
   if (!card) {
     return errorResponse("La tarjeta no existe", 404);
   }
@@ -121,7 +131,7 @@ export async function POST(request: Request) {
     return new Response(new Uint8Array(jpeg), {
       headers: {
         "Cache-Control": "no-store",
-        "Content-Disposition": `inline; filename="apidame-${payload.postId}.jpg"`,
+        "Content-Disposition": `inline; filename="apidame-${cardId}.jpg"`,
         "Content-Type": "image/jpeg",
         "X-Content-Type-Options": "nosniff",
       },

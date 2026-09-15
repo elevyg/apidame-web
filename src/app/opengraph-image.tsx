@@ -17,48 +17,87 @@ export default function OpenGraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#FFFFFF",
-          color: "#1C1916",
-          padding: "64px 72px",
+          background: "#12110F",
+          color: "#FFFFFF",
+          padding: "52px 60px",
         }}
       >
         <div
           style={{
             display: "flex",
-            fontSize: 18,
-            letterSpacing: 6,
+            justifyContent: "space-between",
+            fontSize: 16,
+            letterSpacing: 4,
             textTransform: "uppercase",
-            color: "#5A5550",
+            color: "#E8E2D4",
           }}
         >
-          Desde 2021 · Chile Chico
+          <div style={{ display: "flex" }}>
+            Gimnasio / Escuela de escalada
+          </div>
+          <div style={{ display: "flex" }}>Chile Chico · Aysén</div>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
           <div
             style={{
-              fontSize: 72,
-              letterSpacing: 8,
+              display: "flex",
+              fontSize: 148,
+              lineHeight: 0.82,
+              letterSpacing: -7,
               textTransform: "uppercase",
             }}
           >
             APIDAME
           </div>
-          <div style={{ fontSize: 32, color: "#5A5550" }}>
-            Muro, cerro y escalada deportiva
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginTop: 42,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                width: 170,
+                height: 12,
+                background: "#E8E2D4",
+              }}
+            />
+            <div
+              style={{
+                display: "flex",
+                marginLeft: 24,
+                fontSize: 47,
+                fontStyle: "italic",
+                letterSpacing: -2,
+              }}
+            >
+              Escalada en Chile Chico
+            </div>
           </div>
         </div>
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
-            fontSize: 22,
-            color: "#5A5550",
-            letterSpacing: 2,
+            borderTop: "2px solid #E8E2D4",
+            paddingTop: 20,
+            fontSize: 17,
+            color: "#E8E2D4",
+            letterSpacing: 3,
             textTransform: "uppercase",
           }}
         >
-          <div>Chile Chico</div>
-          <div>apidameboulder.com</div>
+          <div style={{ display: "flex" }}>Muro / Cerro / Deportiva</div>
+          <div style={{ display: "flex" }}>apidameboulder.com</div>
         </div>
       </div>
     ),

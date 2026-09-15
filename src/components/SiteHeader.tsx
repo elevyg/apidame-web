@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import ApidameMark from "@/components/estetica/ApidameMark";
 import { siteNav, type SiteNavId } from "@/components/siteNav";
 
@@ -9,6 +9,7 @@ type SiteHeaderProps = {
   current?: SiteNavId;
   tone?: "paper" | "canvas";
   pinned?: boolean;
+  overlay?: boolean;
   local?: boolean;
   markHref?: string;
 };
@@ -39,11 +40,14 @@ export default function SiteHeader({
   current,
   tone = "paper",
   pinned = false,
+  overlay = false,
   local = false,
   markHref = "/",
 }: SiteHeaderProps) {
   const paper = tone === "paper";
   const [open, setOpen] = useState(false);
+  const [revealed, setRevealed] = useState(!overlay);
+  const [revealReady, setRevealReady] = useState(!overlay);
   const headerRef = useRef<HTMLElement>(null);
   const menuId = useId();
   const close = () => setOpen(false);
@@ -51,13 +55,64 @@ export default function SiteHeader({
   const chrome = paper
     ? "border-rule bg-paper/95 backdrop-blur-sm"
     : "border-white/20 bg-canvas text-paper";
-  const position = pinned ? "" : "sticky top-0 z-30";
+  const position = overlay
+    ? `fixed inset-x-0 top-0 z-40 ${
+        revealReady
+          ? "transition-[opacity,translate] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none motion-reduce:translate-y-0"
+          : ""
+      } ${
+        revealed
+          ? "translate-y-0 opacity-100"
+          : "pointer-events-none -translate-y-3 opacity-0 motion-reduce:translate-y-0"
+      }`
+    : pinned
+      ? "relative"
+      : "sticky top-0 z-30 relative";
   const mark = (
     <>
       <ApidameMark tone={paper ? "ink" : "paper"} />
       <span className="sr-only">Apidame</span>
     </>
   );
+
+  useLayoutEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+
+    const apply = () => {
+      document.documentElement.style.setProperty(
+        "--site-header-h",
+        `${el.getBoundingClientRect().height}px`,
+      );
+    };
+
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!overlay) return;
+
+    const read = () => {
+      const hero = document.querySelector("[data-home-hero]");
+      const next = hero
+        ? hero.getBoundingClientRect().top < -64
+        : window.scrollY > 64;
+      setRevealed((prev) => (prev === next ? prev : next));
+    };
+
+    read();
+    const frame = window.requestAnimationFrame(() => setRevealReady(true));
+    window.addEventListener("scroll", read, { passive: true });
+    window.addEventListener("resize", read);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", read);
+      window.removeEventListener("resize", read);
+    };
+  }, [overlay]);
 
   useEffect(() => {
     if (!open) return;
@@ -98,7 +153,9 @@ export default function SiteHeader({
   return (
     <header
       ref={headerRef}
-      className={`${position} relative border-b ${chrome}`}
+      inert={overlay && !revealed ? true : undefined}
+      aria-hidden={overlay && !revealed ? true : undefined}
+      className={`${position} border-b ${chrome}`}
     >
       <div className="page-shell flex h-14 items-center justify-between gap-4 md:h-16">
         {markHref.startsWith("#") ? (
@@ -111,7 +168,7 @@ export default function SiteHeader({
           </Link>
         )}
 
-        <nav className="hidden min-w-0 items-center justify-end gap-8 md:flex">
+        <nav className="hidden min-w-0 items-center justify-end gap-3 md:flex lg:gap-5 xl:gap-8">
           {items.map((item) => {
             const className = navClass(paper, item.active, "inline");
             if (item.href.startsWith("#") || item.href.startsWith("/#")) {

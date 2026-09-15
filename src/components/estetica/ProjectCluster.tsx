@@ -274,7 +274,7 @@ export default function ProjectCluster({
   );
 
   return (
-    <article ref={ref} id={id} className="scroll-mt-16">
+    <article ref={ref} id={id}>
       {layout === "banner" ? (
         <div className="flex flex-col gap-6 md:gap-8">
           {copy}

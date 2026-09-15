@@ -2,12 +2,15 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { foregen, brown, holluise } from "./fonts";
 import GoogleAnalytics from "./GoogleAnalytics";
+import {
+  siteDescription,
+  siteName,
+  siteOgImage,
+  siteTitle,
+  siteUrl,
+} from "./site";
 import "./globals.css";
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  process.env.SITE_URL ??
-  "https://apidameboulder.com";
 const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 export const viewport = {
@@ -16,15 +19,17 @@ export const viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  applicationName: siteName,
   title: {
-    default: "Apidame | Chile Chico",
+    default: siteTitle,
     template: "%s | Apidame",
   },
-  description:
-    "Muro, topos del Cerro Apidame y escalada deportiva en Chile Chico, Aysén.",
+  description: siteDescription,
   icons: { icon: "/favicon.ico" },
   keywords: [
     "Apidame",
+    "gimnasio de escalada Chile Chico",
+    "escuela de escalada Chile Chico",
     "escalada Chile Chico",
     "muro Chile Chico",
     "topos cerro apidame",
@@ -32,28 +37,19 @@ export const metadata: Metadata = {
     "patagonia chilena",
   ],
   openGraph: {
-    title: "Apidame | Chile Chico",
-    description:
-      "Muro, topos del Cerro Apidame y escalada deportiva en Chile Chico.",
+    title: siteTitle,
+    description: siteDescription,
     url: "/",
-    siteName: "Apidame",
+    siteName,
     locale: "es_CL",
     type: "website",
-    images: [
-      {
-        url: "/opengraph-image",
-        width: 1200,
-        height: 630,
-        alt: "Apidame en Chile Chico",
-      },
-    ],
+    images: [siteOgImage],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Apidame | Chile Chico",
-    description:
-      "Muro, topos del Cerro Apidame y escalada deportiva en Chile Chico.",
-    images: ["/opengraph-image"],
+    title: siteTitle,
+    description: siteDescription,
+    images: [siteOgImage.url],
   },
   robots: {
     index: true,
@@ -75,7 +71,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
+    <html lang="es-CL">
       <body
         className={`${foregen.variable} ${brown.variable} ${holluise.variable} bg-paper text-ink antialiased`}
       >

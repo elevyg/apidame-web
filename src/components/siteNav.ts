@@ -3,9 +3,17 @@ export type SiteNavId =
   | "cerro"
   | "deportiva"
   | "topos"
-  | "quienes-somos";
+  | "quienes-somos"
+  | "notas-de-cordada";
 
-export const siteNav = [
+type SiteNavItem = {
+  id: SiteNavId;
+  label: string;
+  homeHref: string;
+  href: string;
+};
+
+export const siteNav: readonly SiteNavItem[] = [
   { id: "muro" as const, label: "Muro", homeHref: "#muro", href: "/#muro" },
   { id: "cerro" as const, label: "Cerro", homeHref: "#cerro", href: "/#cerro" },
   {
@@ -20,5 +28,11 @@ export const siteNav = [
     label: "Quiénes somos",
     homeHref: "/quienes-somos",
     href: "/quienes-somos",
+  },
+  {
+    id: "notas-de-cordada",
+    label: "Notas de cordada",
+    homeHref: "/notas-de-cordada",
+    href: "/notas-de-cordada",
   },
 ];

@@ -44,7 +44,7 @@ const EsteticaHero = forwardRef<HTMLElement, EsteticaHeroProps>(
     return (
       <section
         ref={ref}
-        className="relative flex min-h-[100svh] flex-col overflow-hidden bg-ink text-paper"
+        className="relative flex h-full min-h-0 flex-col overflow-hidden bg-ink text-paper"
       >
         <div className="absolute inset-0 bg-ink">
           {plates.map((plate, i) => {

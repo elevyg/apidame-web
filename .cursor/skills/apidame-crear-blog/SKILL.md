@@ -1,32 +1,68 @@
 ---
 name: apidame-crear-blog
 description: >-
-  Crea posts, blogs y feeds de Apidame a partir de dictado mediante conversación
-  y destile editorial. Úsala cuando el usuario quiera convertir una idea hablada
-  en field cards mobile-first, con fotos reales, sección local o papeo y cards
-  compartibles, en vez de un artículo tipo Medium.
+  Crea otra Nota de cordada de Apidame a partir de dictado, fotos reales y
+  destile editorial. Úsala para agregar un post al índice y a su URL canónica,
+  compuesto por field cards mobile-first, papeo opcional y JPEG compartibles.
 ---
 
-# Crear un post de Apidame
+# Crear otra Nota de cordada
 
-Convierte el dictado en una pieza editorial de Apidame. La secuencia es
-**capturar → conversar → destilar → probar la forma con el usuario → compartir**.
-No conviertas el dictado directamente en slides ni lo fuerces a una plantilla de
-blog.
+Agrega un post al formato editorial **Notas de cordada**. No es un blog tipo
+Medium ni un feed social. La secuencia es **leer el contrato actual → capturar →
+conversar → destilar → integrar → verificar**.
 
-## Antes de empezar
+Las URLs canónicas son:
 
-Si trabajas en `apidame-web`, revisa primero el estado actual de:
+- índice: `/notas-de-cordada`;
+- post: `/notas-de-cordada/[slug]`;
+- primer post: `/notas-de-cordada/cuerdas-dobles-o-simple-y-tagline`.
 
-- `src/components/estetica/feed/FeedPost.tsx`
+`/estetica/feed` es un lab, no una URL canónica. No enlaces, publiques metadata ni
+armes navegación nueva sobre ese path.
+
+## Leer el contrato actual
+
+Antes de escribir copy o tocar archivos, lee completos:
+
 - `src/components/estetica/feed/posts.ts`
-- `src/components/estetica/feed/cuerdas.md`, si existe
-- `src/app/estetica/feed/`
-- `src/app/api/estetica/feed/share/route.ts`
+- el renderer que importe esos posts;
+- `src/app/notas-de-cordada/` y su route dinámica;
+- el endpoint actual de Compartir;
+- los estilos de `FillType` y de las field cards.
 
-No reemplaces decisiones vigentes por un sistema nuevo. El feed es un lab:
-mantén el copy en TypeScript o Markdown. No agregues un CMS salvo que el usuario
-lo pida.
+**`posts.ts` es la fuente de verdad.** Su schema puede cambiar mientras otros
+agents trabajan. Usa siempre el shape que encuentres en el working tree, aunque
+no coincida con el snapshot de esta skill.
+
+Al escribir esta versión, el archivo ya tiene un registry y este shape:
+
+```ts
+type Card = { id: string; share: string } & (
+  | { type: "title"; kicker: string; text: string; tone: CardTone; art?: string; artAlt?: string; object?: string }
+  | { type: "field"; kicker: string; paras: string[]; tone: CardTone; feature?: string; meta?: string[] }
+  | { type: "photo"; src: string; alt: string; caption: string; object?: string }
+);
+
+type FeedPostData = {
+  slug: string;
+  title: string;
+  description: string;
+  og: { title: string; subtitle: string; imageAlt: string };
+  cards: readonly Card[];
+};
+
+export const posts: readonly FeedPostData[];
+export function getFeedPost(slug: string): FeedPostData | undefined;
+```
+
+El papeo es opcional y, en este snapshot, se representa con field cards
+editoriales; el renderer busca la primera card cuyo `id` sea `"papeo"` para
+mostrar el CTA. Copia el patrón real del registry o tipo actual, no este ejemplo.
+Si faltan el registry o las routes canónicas, avisa que el soporte multi-post no
+está completo en el working tree antes de inventar una arquitectura paralela.
+
+No agregues un CMS ni rediseñes el sistema para publicar una sola nota.
 
 ## 1. Capturar el dictado
 
@@ -40,7 +76,7 @@ persona piensa, no como límites de oración ni de card.
 4. Señala términos inciertos y confirma la corrección; no adivines técnica.
 5. Devuelve primero una versión continua y legible del relato.
 
-No uses cada frase dictada como una slide. Primero recupera el argumento; después
+No uses cada frase dictada como una card. Primero recupera el argumento; después
 encuentra sus unidades editoriales.
 
 ## 2. Conversar antes de destilar
@@ -52,26 +88,38 @@ resuelve:
   recortar?»
 - **Jerarquía:** «De este bloque, ¿qué es contexto y qué idea quieres que alguien
   se lleve?»
-- **Sección local:** «¿Hay un papeo para el Cerro Apidame, o esta pieza queda como
-  ensayo general?»
+- **Papeo:** «¿Hay una recomendación específica para el Cerro Apidame, o esta
+  nota queda sin papeo?»
 - **Precisión:** confirma nombres, lugares, equipo y técnicas que el dictado haya
   deformado.
 
-No conviertas esto en un formulario. Pregunta durante la conversación y muestra
-cómo cada respuesta cambia la pieza. Si el usuario pide conversar sobre una
-dirección visual, no la implementes antes de que la elija.
+Pide también un título de trabajo y confirma el slug. No conviertas la
+conversación en un formulario ni rellenes vacíos técnicos por tu cuenta.
 
-## 3. Destilar en field cards
+## 3. Crear la entrada en `posts.ts`
 
-Medium es el anti-modelo. Tampoco construyas IG Stories con auto-advance,
-temporizador o navegación a taps.
+Agrega un post al registry actual, sin modificar el primero. Completa según el
+shape vigente:
+
+- `slug`: ASCII, minúsculas, kebab-case y único;
+- `title`: título editorial visible;
+- `description`: resumen fiel y útil para índice, metadata y OG;
+- `og`: title, subtitle e imageAlt específicos para compartir;
+- `cards`: secuencia completa del post;
+- cards de papeo: sólo cuando existe una recomendación local confirmada.
+
+No dupliques `cuerdas-dobles-o-simple-y-tagline`. Los `id` de las cards deben ser
+estables y cumplir el alcance de unicidad que exijan el renderer y el endpoint
+de Compartir. `share` debe conservar el sentido de la card, no convertirse en
+copy promocional.
+
+## 4. Destilar en field cards
 
 La unidad es una **field card full-viewport con scroll-snap vertical**. Cada card
-contiene un takeaway que alguien podría «llevarse» o compartir. Un takeaway suele
-ser un párrafo, o varios párrafos que sostienen el mismo pensamiento; no es un
-poster de una oración.
+contiene un takeaway completo. Puede tener un párrafo o varios que sostienen el
+mismo pensamiento; no es un poster de una oración.
 
-Propón al usuario un orden breve:
+Ordena la nota así:
 
 1. portada;
 2. contexto necesario;
@@ -79,19 +127,22 @@ Propón al usuario un orden breve:
 4. fotos reales cuando aporten evidencia o ritmo;
 5. papeo local, si existe.
 
-Explica por qué cada corte corresponde a un cambio de idea. Une cards débiles en
-vez de inflar el conteo. Mantén separado el relato general del consejo local.
+Usa los tipos y campos existentes en `posts.ts`; no agregues variantes para
+resolver diferencias menores de copy. Une cards débiles. Mantén separado el
+relato general del papeo.
 
-## 4. Usar fotos sin inventar técnica
+La experiencia debe seguir siendo scroll vertical con snap. No agregues
+auto-advance, temporizador, navegación por taps ni layout de artículo largo.
+
+## 5. Usar fotos sin inventar técnica
 
 Usa solamente fotos reales entregadas o aprobadas por el usuario. Pregunta por el
 encuadre, el punto focal y un alt text fiel.
 
-Si el usuario adjunta una foto, entrega un path local, un archivo en Downloads o
-assets del chat, cópiala siempre a `public/` del repo (convención actual:
-`public/estetica/feed/` o la carpeta del post) y referencia la URL pública
-(`/estetica/feed/...`). No dejes el path temporal del adjunto, no hotlinkees
-archivos fuera del repo ni uses la imagen del chat sin copiarla al repo.
+Si el usuario entrega una foto, cópiala a `public/`. Para posts nuevos, prefiere
+`public/notas-de-cordada/<slug>/` salvo que el repo ya tenga otra convención
+canónica. Referencia su URL pública desde `/`, no el path del filesystem. No
+hotlinkees un adjunto ni lo dejes en Downloads.
 
 Nunca generes diagramas AI de maniobras de escalada. No inventes Grigri, anclajes,
 recorridos de cuerda, reuniones ni hardware que no aparezcan en la foto. Si no
@@ -100,7 +151,7 @@ foto.
 
 La paleta base de fondos es **blanco, negro y beige**.
 
-## 5. Resolver la portada
+## 6. Resolver portada, papeo y tipo
 
 La portada usa una foto real a sangre. El chrome de la app va **sobre el bleed**,
 no en una barra que reduzca o tape la foto.
@@ -112,51 +163,50 @@ no en una barra que reduzca o tape la foto.
   vertical sutil.
 - No ocupes el cielo o la zona visual más limpia con controles.
 
-El CTA debe leerse como interfaz. No lo disfraces de foil, souvenir ni parte del
+Si hay papeo, usa la dirección **editorial flat** ya existente: planos duros,
+pregunta italic, respuesta regular y metadata chica. No uses foil, linen, stamps,
+bordes de carta ni paletas ajenas. El CTA de portada es interfaz, no parte del
 objeto compartible.
 
-## 6. Iterar la forma con el usuario
+`FillType` debe medir el espacio útil real después de padding, footer, chrome y
+safe areas. Ajusta el rango tipográfico o el espacio reservado si falta contenido.
+Nunca cortes texto, uses ellipsis ni escondas el último párrafo.
 
-Separa contenido y forma: valida primero la reconstrucción y los takeaways;
-después prueba el lenguaje visual. Presenta experimentos como hipótesis y
-pregunta qué sensación producen en lectura real.
-
-En esta exploración se descartaron dos metáforas:
-
-- el foil holográfico no consiguió que la pieza pesara como objeto;
-- el linen, el stamp y los bordes de «carta física» no servían cuando el usuario
-  quería una página flat.
-
-Para slides especiales de papeo, la dirección que sí cerró fue **editorial flat**:
-planos duros, pregunta italic, respuesta regular, metadata chica y una paleta
-propia de Apidame. El chrome queda fuera de esa página impresa. No copies colores
-de campañas o referencias ajenas; toma su gramática, no su identidad.
-
-Descarta una propuesta cuando no logra la sensación buscada. No sigas
-perfeccionando un efecto sólo porque ya está implementado.
-
-## 7. Hacer compartible cada card
+## 7. Mantener Compartir JPEG
 
 La acción visible se llama **Compartir**. Debe generar un JPEG de esa card, no una
 captura del viewport completo.
 
-1. Captura el objeto de la card en el cliente.
-2. Envía la imagen y el `postId` a una server function que valide y produzca
-   `image/jpeg`.
-3. Usa Web Share con el archivo cuando esté disponible.
-4. Si Web Share no funciona, descarga el JPEG.
-5. Incluye el ícono de Apidame y `apidame.com` en una esquina del JPEG.
-6. Excluye contador, Cerrar, CTA, estado del botón y demás chrome de app.
+Integra las cards nuevas con el mecanismo existente. Verifica que la identidad
+enviada al endpoint sea inequívoca para el post y la card; sigue el contrato
+actual si usa `postId`, `cardId` u otro shape. No abras un segundo endpoint sólo
+para el post nuevo.
 
-La versión compartida debe conservar la jerarquía de la card. Verifica el JPEG
-real, no sólo el DOM.
+El JPEG debe incluir el ícono de Apidame y `apidame.com`, y excluir contador,
+Cerrar, CTA, estado del botón y demás chrome. Usa Web Share cuando acepte el
+archivo y descarga como fallback. Verifica el JPEG real, no sólo el DOM.
 
-## 8. Verificar mobile y voz
+## 8. Publicar metadata y OG
 
-Prueba al menos un viewport mobile realista. `FillType` debe medir el espacio
-útil después de márgenes, padding, footer, chrome y safe areas. Si faltan líneas,
-reduce el tipo o reserva más espacio; nunca cortes, uses ellipsis ni ocultes el
-último párrafo.
+El índice y cada post deben exponer metadata canónica. Sigue el patrón actual de
+Next.js y deriva los datos del registry, no de parámetros sin validar.
+
+Para `/notas-de-cordada/[slug]`, verifica:
+
+- `title` y `description` del post;
+- `alternates.canonical` con `/notas-de-cordada/<slug>`;
+- `openGraph.title`, `openGraph.description`, `openGraph.url` e imagen real de
+  portada con alt fiel;
+- comportamiento de slug inexistente según la route actual.
+
+La metadata, los OG assets y los links del índice nunca deben apuntar a
+`/estetica/feed`.
+
+## 9. Verificar mobile y voz
+
+Prueba el índice, la URL directa del post y Compartir en un viewport mobile
+realista. Revisa snap, safe areas, portada, `FillType`, scroll completo y el JPEG
+resultante. Ejecuta los checks de lint y TypeScript que ya use el repo.
 
 Escribe en español chileno con tuteo, sin voseo. Mantén el vocabulario técnico en
 inglés cuando así lo use el equipo. Escribe **Apidame**, con i latina. Corrige el
@@ -166,23 +216,26 @@ dictado sin borrar la voz de la persona.
 
 - [ ] El dictado quedó reconstruido por sentido, no por puntuación automática.
 - [ ] Cada field card contiene un takeaway completo y no una frase decorativa.
-- [ ] El usuario distinguió contexto, takeaway y papeo local.
+- [ ] `posts.ts` se leyó como fuente de verdad y el post respeta su shape actual.
+- [ ] El slug es único y la descripción sirve para índice, metadata y OG.
 - [ ] Todas las fotos son reales, aprobadas y técnicamente honestas.
 - [ ] La portada respeta el bleed, el punto focal y el cue de scroll.
-- [ ] Las cards de papeo usan editorial flat si esa sigue siendo la dirección
-      aprobada.
-- [ ] En mobile no se corta ninguna línea ni el footer.
+- [ ] El papeo es opcional y, si existe, usa editorial flat.
+- [ ] La URL canónica vive bajo `/notas-de-cordada`.
+- [ ] En mobile no se corta ninguna línea ni el footer, y el snap funciona.
 - [ ] Compartir genera el JPEG de la card correcta.
 - [ ] El JPEG lleva ícono, `apidame.com` y no incluye chrome de la app.
+- [ ] Metadata y OG usan el post y su portada real.
 - [ ] La voz suena chilena, usa tuteo y escribe Apidame correctamente.
 
-## Anti-patrones de esta exploración
+## Anti-patrones
 
+- Publicar o enlazar `/estetica/feed` como destino final.
+- Copiar el singleton antiguo sin leer el registry vigente.
 - Demasiadas cards de una oración.
 - Portada AI con técnica de escalada inventada.
-- Foil holográfico usado como CTA.
-- Linen fingiendo carta cuando el usuario pidió una página flat.
+- Diagramas de gear o maniobras no confirmadas por el usuario.
+- Foil, linen o bordes que rompen el lenguaje editorial flat.
 - Chrome arriba tapando la foto o el cielo.
 - Copiar la paleta de una campaña usada sólo como referencia.
-- Implementar un efecto mientras el usuario todavía quiere conversar la forma.
-- Agregar CMS, auto-advance o arquitectura editorial que el lab no necesita.
+- Agregar CMS, auto-advance o una arquitectura paralela para un post.

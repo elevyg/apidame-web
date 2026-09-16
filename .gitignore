@@ -24,6 +24,7 @@ next-env.d.ts
 .DS_Store
 *.pem
 .secrets/
+.tmp/
 
 # debug
 npm-debug.log*

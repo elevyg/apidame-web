@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import GymAccess from "@/components/GymAccess";
+import MuroAccess from "@/components/MuroAccess";
 import HomePanel from "@/components/estetica/HomePanel";
 import ProjectField from "@/components/estetica/ProjectField";
 import SiteFooter from "@/components/SiteFooter";
@@ -36,7 +36,7 @@ const structuredData = {
   "@context": "https://schema.org",
   "@type": "SportsActivityLocation",
   name: siteName,
-  alternateName: "Apidame Boulder",
+  alternateName: ["Apidame Boulder", "Muro de escalada"],
   image: `${siteUrl}${siteOgImage.url}`,
   description: siteDescription,
   address: {
@@ -54,8 +54,8 @@ export default function Home() {
   return (
     <main>
       <ProjectField />
-      <HomePanel id="gimnasio" className="bg-paper">
-        <GymAccess />
+      <HomePanel id="muro-de-escalada" className="bg-paper">
+        <MuroAccess />
       </HomePanel>
       <SiteFooter />
       <script

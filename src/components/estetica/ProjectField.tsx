@@ -30,7 +30,7 @@ export default function ProjectField({ lab = false }: ProjectFieldProps) {
             name="Muro"
             cta={{
               label: "Horarios y acceso",
-              href: lab ? "/#gimnasio" : "#gimnasio",
+              href: lab ? "/#muro-de-escalada" : "#muro-de-escalada",
             }}
             layout="photo-end"
             priority

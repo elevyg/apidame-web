@@ -3,7 +3,7 @@ name: apidame-crear-blog
 description: >-
   Crea otra Nota de cordada de Apidame a partir de dictado, fotos reales y
   destile editorial. Úsala para agregar un post al índice y a su URL canónica,
-  compuesto por field cards mobile-first, papeo opcional y JPEG compartibles.
+  compuesto por field cards mobile-first, papeo opcional y OG para redes.
 ---
 
 # Crear otra Nota de cordada
@@ -172,19 +172,18 @@ objeto compartible.
 safe areas. Ajusta el rango tipográfico o el espacio reservado si falta contenido.
 Nunca cortes texto, uses ellipsis ni escondas el último párrafo.
 
-## 7. Mantener Compartir JPEG
+## 7. Compartir la nota
 
-La acción visible se llama **Compartir**. Debe generar un JPEG de esa card, no una
-captura del viewport completo.
+La acción visible se llama **Compartir**. Comparte la URL canónica del post
+(`/notas-de-cordada/<slug>`), no un JPEG de la card.
 
-Integra las cards nuevas con el mecanismo existente. Verifica que la identidad
-enviada al endpoint sea inequívoca para el post y la card; sigue el contrato
-actual si usa `postId`, `cardId` u otro shape. No abras un segundo endpoint sólo
-para el post nuevo.
+Usa Web Share con `title` + `url` para que WhatsApp, iMessage y Telegram
+desplieguen el OG (portada + título). Si el navegador no tiene share sheet,
+copia el link al clipboard. No adjuntes archivos: el preview lo arma la
+plataforma con `opengraph-image`.
 
-El JPEG debe incluir el ícono de Apidame y `apidame.com`, y excluir contador,
-Cerrar, CTA, estado del botón y demás chrome. Usa Web Share cuando acepte el
-archivo y descarga como fallback. Verifica el JPEG real, no sólo el DOM.
+No abras un endpoint de captura para esto. El OG de cada slug es el asset
+compartible.
 
 ## 8. Publicar metadata y OG
 
@@ -205,8 +204,8 @@ La metadata, los OG assets y los links del índice nunca deben apuntar a
 ## 9. Verificar mobile y voz
 
 Prueba el índice, la URL directa del post y Compartir en un viewport mobile
-realista. Revisa snap, safe areas, portada, `FillType`, scroll completo y el JPEG
-resultante. Ejecuta los checks de lint y TypeScript que ya use el repo.
+realista. Revisa snap, safe areas, portada, `FillType`, scroll completo y que
+Compartir entregue la URL de la nota. Ejecuta los checks de lint y TypeScript que ya use el repo.
 
 Escribe en español chileno con tuteo, sin voseo. Mantén el vocabulario técnico en
 inglés cuando así lo use el equipo. Escribe **Apidame**, con i latina. Corrige el
@@ -223,8 +222,8 @@ dictado sin borrar la voz de la persona.
 - [ ] El papeo es opcional y, si existe, usa editorial flat.
 - [ ] La URL canónica vive bajo `/notas-de-cordada`.
 - [ ] En mobile no se corta ninguna línea ni el footer, y el snap funciona.
-- [ ] Compartir genera el JPEG de la card correcta.
-- [ ] El JPEG lleva ícono, `apidame.com` y no incluye chrome de la app.
+- [ ] Compartir manda la URL de la nota (share sheet o link copiado).
+- [ ] No se genera JPEG de la card.
 - [ ] Metadata y OG usan el post y su portada real.
 - [ ] La voz suena chilena, usa tuteo y escribe Apidame correctamente.
 

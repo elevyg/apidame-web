@@ -9,14 +9,14 @@ const prices = [
   { label: "Mensualidad", value: "$25.000" },
 ];
 
-export default function GymAccess() {
+export default function MuroAccess() {
   const [mapLive, setMapLive] = useState(false);
 
   return (
     <div className="border-rule flex flex-1 flex-col justify-center border-t">
       <div className="page-shell grid gap-12 py-14 md:grid-cols-2 md:gap-16 md:py-20">
         <div>
-          <p className="kicker">Muro</p>
+          <p className="kicker">Muro de escalada</p>
           <h2 className="font-display mt-3 text-3xl md:text-5xl">
             Horarios y acceso
           </h2>
@@ -79,7 +79,7 @@ export default function GymAccess() {
             allowFullScreen={true}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            title="Mapa de Apidame"
+            title="Mapa del muro de escalada Apidame"
           />
           {mapLive ? null : (
             <button

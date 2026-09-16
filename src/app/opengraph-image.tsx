@@ -33,7 +33,7 @@ export default function OpenGraphImage() {
           }}
         >
           <div style={{ display: "flex" }}>
-            Gimnasio / Escuela de escalada
+            Escalar / Entrenar / Crear
           </div>
           <div style={{ display: "flex" }}>Chile Chico · Aysén</div>
         </div>

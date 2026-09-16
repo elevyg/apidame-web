@@ -9,7 +9,6 @@ import {
   useRef,
   useState,
   type ReactNode,
-  type RefObject,
 } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
@@ -60,7 +59,7 @@ const tones: Record<
   },
 };
 
-type ShareStatus = "idle" | "generating" | "done" | "error";
+type ShareStatus = "idle" | "sharing" | "shared" | "copied" | "error";
 
 type EditorialCard = Card & {
   type: "field";
@@ -74,89 +73,50 @@ function isEditorial(card: Card): card is EditorialCard {
   );
 }
 
-async function waitForImages(element: HTMLElement) {
-  const images = Array.from(element.querySelectorAll("img"));
-  await Promise.all(
-    images.map(async (image) => {
-      if (!image.complete) {
-        await new Promise<void>((resolve) => {
-          image.addEventListener("load", () => resolve(), { once: true });
-          image.addEventListener("error", () => resolve(), { once: true });
-        });
-      }
-      if (image.decode) {
-        await image.decode().catch(() => undefined);
-      }
-    }),
-  );
+function noteUrl(slug: string) {
+  return new URL(`/notas-de-cordada/${slug}`, window.location.origin).href;
 }
 
-async function createJpeg(postId: string, card: Card, element: HTMLElement) {
-  await Promise.all([document.fonts.ready, waitForImages(element)]);
-  const { toJpeg } = await import("html-to-image");
-  const editorial = isEditorial(card);
-  const image = await toJpeg(element, {
-    backgroundColor:
-      card.type === "photo" || card.tone === "editorial-dark"
-        ? "#12110f"
-        : undefined,
-    cacheBust: true,
-    pixelRatio: editorial ? 3 : Math.min(window.devicePixelRatio || 1, 2),
-    quality: 0.94,
-    filter: (node) =>
-      !(node instanceof HTMLCanvasElement) &&
-      (!(node instanceof HTMLElement) || node.dataset.shareIgnore !== "true"),
-  });
-  const response = await fetch("/api/estetica/feed/share", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ postId, cardId: card.id, image }),
-  });
-  if (!response.ok) {
-    throw new Error(`No se pudo generar el JPEG (${response.status})`);
-  }
-  const blob = await response.blob();
-  if (blob.type !== "image/jpeg") {
-    throw new Error("La respuesta no es un JPEG");
-  }
-  return new File([blob], `apidame-${card.id}.jpg`, {
-    type: "image/jpeg",
-  });
+function copyLink(url: string) {
+  const input = document.createElement("textarea");
+  input.value = url;
+  input.setAttribute("readonly", "");
+  input.style.position = "fixed";
+  input.style.left = "-9999px";
+  document.body.appendChild(input);
+  input.select();
+  const ok = document.execCommand("copy");
+  input.remove();
+  if (!ok) throw new Error("No se pudo copiar el link");
 }
 
-function downloadFile(file: File) {
-  const url = URL.createObjectURL(file);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = file.name;
-  anchor.click();
-  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-async function shareCard(postId: string, card: Card, element: HTMLElement) {
-  const file = await createJpeg(postId, card, element);
-  const shareData: ShareData = {
-    files: [file],
-    text: card.share,
-    title: `Apidame · ${card.type === "photo" ? card.caption : card.kicker}`,
-  };
-  const canShare =
-    typeof navigator.share === "function" &&
-    (typeof navigator.canShare !== "function" ||
-      navigator.canShare({ files: [file] }));
-
-  if (canShare) {
+async function shareNote(slug: string, title: string) {
+  const url = noteUrl(slug);
+  if (typeof navigator.share === "function") {
     try {
-      await navigator.share(shareData);
-      return true;
+      await navigator.share({ title, url });
+      return "shared" as const;
     } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") return false;
+      if (error instanceof Error && error.name === "AbortError") {
+        return "abort" as const;
+      }
     }
   }
-
-  downloadFile(file);
-  await navigator.clipboard?.writeText(card.share).catch(() => undefined);
-  return true;
+  try {
+    if (navigator.clipboard?.writeText) {
+      await Promise.race([
+        navigator.clipboard.writeText(url),
+        new Promise<never>((_, reject) => {
+          window.setTimeout(() => reject(new Error("clipboard timeout")), 800);
+        }),
+      ]);
+      return "copied" as const;
+    }
+  } catch {
+    /* fallback */
+  }
+  copyLink(url);
+  return "copied" as const;
 }
 
 function FillType({
@@ -234,12 +194,10 @@ function CardFace({
   card,
   coverCta,
   coverNavigation,
-  shareRef,
 }: {
   card: Card;
   coverCta?: ReactNode;
   coverNavigation?: ReactNode;
-  shareRef?: RefObject<HTMLDivElement | null>;
 }) {
   if (card.type === "photo") {
     return (
@@ -305,10 +263,7 @@ function CardFace({
   const tone = tones[card.tone];
   if (isEditorial(card)) {
     return (
-      <div
-        ref={shareRef}
-        className={`feed-editorial-page ${tone.bg} ${tone.fg}`}
-      >
+      <div className={`feed-editorial-page ${tone.bg} ${tone.fg}`}>
         <FillType min={16} max={42} className="feed-editorial-body">
           <p className="feed-editorial-question">{card.kicker}</p>
           {card.feature ? (
@@ -471,6 +426,7 @@ function Slide({
   closeHref,
   papeoIndex,
   postId,
+  postTitle,
   onDevEdit,
 }: {
   card: Card;
@@ -480,10 +436,9 @@ function Slide({
   closeHref: string;
   papeoIndex: number;
   postId: string;
+  postTitle: string;
   onDevEdit?: () => void;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const editorialRef = useRef<HTMLDivElement>(null);
   const [shareStatus, setShareStatus] = useState<ShareStatus>("idle");
   const bleed = isBleed(card);
   const editorial = isEditorial(card);
@@ -498,7 +453,6 @@ function Slide({
   return (
     <section className="flex h-full min-h-full w-full shrink-0 snap-start snap-always items-center justify-center px-3 py-3">
       <div
-        ref={cardRef}
         className={`relative flex h-full w-full max-w-[36rem] flex-col overflow-hidden ${
           editorial
             ? "items-center justify-center"
@@ -552,7 +506,6 @@ function Slide({
         <div className="contents">
           <CardFace
             card={card}
-            shareRef={editorial ? editorialRef : undefined}
             coverCta={
               index === 0 && onJump && papeoIndex >= 0 ? (
                 <CoverPapeoCta onJump={onJump} to={papeoIndex} />
@@ -579,30 +532,29 @@ function Slide({
               floatingChrome ? ink : ""
             }`}
             onClick={async () => {
-              const element = editorial
-                ? editorialRef.current
-                : cardRef.current;
-              if (!element || shareStatus === "generating") return;
-              setShareStatus("generating");
+              if (shareStatus === "sharing") return;
+              setShareStatus("sharing");
               try {
-                const shared = await shareCard(postId, card, element);
-                setShareStatus(shared ? "done" : "idle");
+                const result = await shareNote(postId, postTitle);
+                setShareStatus(result === "abort" ? "idle" : result);
               } catch (error) {
-                console.error("No se pudo compartir la tarjeta", error);
+                console.error("No se pudo compartir la nota", error);
                 setShareStatus("error");
               }
               window.setTimeout(() => setShareStatus("idle"), 1800);
             }}
-            disabled={shareStatus === "generating"}
+            disabled={shareStatus === "sharing"}
             data-share-ignore
           >
-            {shareStatus === "generating"
-              ? "Generando"
-              : shareStatus === "done"
+            {shareStatus === "sharing"
+              ? "Compartir"
+              : shareStatus === "shared"
                 ? "Listo"
-                : shareStatus === "error"
-                  ? "Error"
-                  : "Compartir"}
+                : shareStatus === "copied"
+                  ? "Link copiado"
+                  : shareStatus === "error"
+                    ? "Error"
+                    : "Compartir"}
           </button>
         </div>
       </div>
@@ -716,6 +668,7 @@ export default function FeedPost({
           closeHref={closeHref}
           papeoIndex={papeoIndex}
           postId={draft.slug}
+          postTitle={draft.title}
           onDevEdit={
             isDev
               ? () => {

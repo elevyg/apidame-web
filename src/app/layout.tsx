@@ -28,9 +28,8 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.ico" },
   keywords: [
     "Apidame",
-    "gimnasio de escalada Chile Chico",
-    "escuela de escalada Chile Chico",
     "escalada Chile Chico",
+    "muro de escalada Chile Chico",
     "muro Chile Chico",
     "topos cerro apidame",
     "escalada deportiva Aysén",

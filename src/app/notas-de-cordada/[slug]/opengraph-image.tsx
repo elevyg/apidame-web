@@ -3,15 +3,24 @@ import { notFound } from "next/navigation";
 import NotesOgImage from "@/components/estetica/feed/NotesOgImage";
 import { loadOgCover } from "@/components/estetica/feed/ogCover";
 import { ogImageOptions } from "@/components/estetica/feed/ogFont";
-import { getFeedPost, getPostCover } from "@/components/estetica/feed/posts";
+import {
+  getFeedPost,
+  getPostCover,
+  posts,
+} from "@/components/estetica/feed/posts";
 
 export const runtime = "nodejs";
+export const dynamic = "force-static";
 export const alt = "Notas de cordada de Apidame";
 export const size = {
   width: 1200,
   height: 630,
 };
 export const contentType = "image/png";
+
+export function generateStaticParams() {
+  return posts.map((post) => ({ slug: post.slug }));
+}
 
 export default async function OpenGraphImage({
   params,

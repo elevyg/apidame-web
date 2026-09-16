@@ -1,4 +1,4 @@
 # Apidame Boulder Website
 
-Website for climbing gym based in Chile Chico, Chilean patagonia. 
+Website for a climbing wall (muro de escalada) in Chile Chico, Chilean Patagonia. 
 

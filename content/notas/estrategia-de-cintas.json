@@ -1,19 +1,19 @@
 {
   "slug": "estrategia-de-cintas",
-  "title": "Estrategia de cintas",
+  "title": "¿Cintas express o runners?",
   "description": "Cuántas express, cuántas runners y cómo ponérselas en el arnés: primero la estrategia de la ruta, no un rack mecánico.",
   "og": {
-    "title": "Estrategia de cintas",
+    "title": "¿Cintas express o runners?",
     "subtitle": "Mirar arriba, no repetir el mismo rack",
     "imageAlt": "Notas de cordada de Apidame: estrategia de cintas"
   },
   "cards": [
     {
       "id": "titulo",
-      "share": "Estrategia de cintas",
+      "share": "¿Cintas express o runners?",
       "type": "title",
       "kicker": "Notas de cordada",
-      "text": "Estrategia de cintas",
+      "text": "¿Cintas express o runners?",
       "tone": "paper",
       "art": "/notas-de-cordada/estrategia-de-cintas/pool/foto-10.jpg",
       "artAlt": "Vista hacia abajo en chimenea de granito: escaladora sonriendo a cámara",
@@ -21,11 +21,11 @@
     },
     {
       "id": "demasiadas",
-      "share": "Al principio llevaba demasiadas cintas: algunas a la izquierda, otras a la derecha, y algunas cruzadas como bandolera. Eso era lo que más convenía en los Gunks donde aprendí a escalar trad, porque había que extender mucho las piezas y se ponían muchos stoppers o material variado.",
+      "share": "Al principio llevaba demasiadas cintas: algunas a la izquierda, otras a la derecha, y algunas cruzadas como bandolera. Eso era lo que más convenía donde aprendí a escalar trad, porque había que extender mucho las piezas y se ponían muchos stoppers o material variado.",
       "type": "field",
       "kicker": "Al principio",
       "paras": [
-        "Al principio llevaba demasiadas cintas: algunas a la izquierda, otras a la derecha, y algunas cruzadas como bandolera. Eso era lo que más convenía en los Gunks donde aprendí a escalar trad, porque había que extender mucho las piezas y se ponían muchos stoppers o material variado."
+        "Al principio llevaba demasiadas cintas: algunas a la izquierda, otras a la derecha, y algunas cruzadas como bandolera. Eso era lo que más convenía donde aprendí a escalar trad, porque había que extender mucho las piezas y se ponían muchos stoppers o material variado."
       ],
       "tone": "beige"
     },

@@ -528,13 +528,23 @@ function Slide({
                 Editar
               </button>
             ) : null}
-            {index === 0 ? (
+            {index === total - 1 && onJump ? (
+              <button
+                type="button"
+                className={`${mark} ${ink}`}
+                onClick={() => onJump(0)}
+                data-share-ignore
+              >
+                Al principio
+              </button>
+            ) : null}
+            {index === 0 || index === total - 1 ? (
               <Link
                 href={closeHref}
                 className={`${mark} ${ink}`}
                 data-share-ignore
               >
-                Cerrar
+                Todas las notas
               </Link>
             ) : null}
           </div>

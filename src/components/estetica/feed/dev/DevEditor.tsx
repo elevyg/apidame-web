@@ -459,7 +459,17 @@ export function DevEditorChrome({
       setBusy(true);
       setStatus(null);
       try {
-        const next = replaceCard(post, card);
+        let next = replaceCard(post, card);
+        if (card.type === "title") {
+          next = {
+            ...next,
+            title: card.text,
+            og: {
+              ...next.og,
+              title: card.text,
+            },
+          };
+        }
         const saved = await savePost(next);
         onPostChange(saved);
         onEditCardId(null);

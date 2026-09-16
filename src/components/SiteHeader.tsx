@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import ApidameMark from "@/components/estetica/ApidameMark";
+import TrackedLink from "@/components/TrackedLink";
 import { siteNav, type SiteNavId } from "@/components/siteNav";
 
 type SiteHeaderProps = {
@@ -288,8 +289,10 @@ export default function SiteHeader({
               </Link>
             );
           })}
-          <a
+          <TrackedLink
             href="https://www.instagram.com/apidameboulder/"
+            event="instagram_clicked"
+            properties={{ source: "header", handle: "apidameboulder" }}
             target="_blank"
             rel="noopener noreferrer"
             className={`font-brown text-[10px] tracking-[0.16em] uppercase transition md:text-xs md:tracking-[0.18em] ${
@@ -299,7 +302,7 @@ export default function SiteHeader({
             }`}
           >
             Instagram
-          </a>
+          </TrackedLink>
         </nav>
 
         <button
@@ -372,15 +375,20 @@ export default function SiteHeader({
                   </Link>
                 );
               })}
-              <a
+              <TrackedLink
                 href="https://www.instagram.com/apidameboulder/"
+                event="instagram_clicked"
+                properties={{
+                  source: "header_mobile",
+                  handle: "apidameboulder",
+                }}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={navClass(paper, false, "panel")}
                 onClick={close}
               >
                 Instagram
-              </a>
+              </TrackedLink>
             </div>
           </nav>
         </div>

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import posthog from "posthog-js";
 import Logo from "assets/svgs/icon-solo.svg";
+import TrackedLink from "@/components/TrackedLink";
 
 const prices = [
   { label: "Diario", value: "$5.000" },
@@ -23,14 +25,16 @@ export default function MuroAccess() {
           <p className="font-brown text-ink-soft mt-5 text-base leading-relaxed">
             Camino Internacional, a 200 metros del límite urbano de Chile Chico.
             Agenda por Instagram:{" "}
-            <a
+            <TrackedLink
               className="text-ink underline decoration-from-font underline-offset-4"
               href="https://www.instagram.com/apidameboulder/"
+              event="instagram_clicked"
+              properties={{ source: "muro", handle: "apidameboulder" }}
               target="_blank"
               rel="noopener noreferrer"
             >
               @apidameboulder
-            </a>
+            </TrackedLink>
           </p>
 
           <dl className="divide-rule border-rule mt-8 divide-y border-y">
@@ -51,12 +55,14 @@ export default function MuroAccess() {
               <dt className="font-brown text-sm md:text-base">Membresía</dt>
               <dd className="font-brown text-ink-soft text-sm">
                 Escribe a{" "}
-                <a
+                <TrackedLink
                   className="text-ink underline decoration-from-font underline-offset-4"
                   href="mailto:hola@apidame.com"
+                  event="contact_email_clicked"
+                  properties={{ source: "membership" }}
                 >
                   hola@apidame.com
-                </a>
+                </TrackedLink>
               </dd>
             </div>
           </dl>
@@ -86,7 +92,10 @@ export default function MuroAccess() {
               type="button"
               className="absolute inset-0 z-10 cursor-pointer"
               aria-label="Activar el mapa"
-              onClick={() => setMapLive(true)}
+              onClick={() => {
+                setMapLive(true);
+                posthog.capture("muro_map_activated");
+              }}
             />
           )}
         </div>

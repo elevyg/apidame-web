@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import posthog from "posthog-js";
 import type { TopoData, TopoRoute } from "./types";
 import WallExplorer from "./WallExplorer";
 import TopoHeroBar from "./TopoHeroBar";
@@ -11,6 +12,10 @@ export default function TopoClient() {
   const [data, setData] = useState<TopoData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
+
+  useEffect(() => {
+    posthog.capture("topo_explorer_opened", { wall: "proa-repisa" });
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -29,6 +34,7 @@ export default function TopoClient() {
       })
       .catch((err) => {
         if (active) {
+          posthog.captureException(err);
           setError(err instanceof Error ? err.message : "Error desconocido");
         }
       });
@@ -40,9 +46,21 @@ export default function TopoClient() {
 
   const routes: TopoRoute[] = data?.routes ?? [];
 
+  const handleSelectRoute = (id: string) => {
+    setSelectedRouteId(id);
+    const route = routes.find((item) => item.id === id);
+    posthog.capture("topo_route_selected", {
+      route_id: id,
+      route_name: route?.name,
+      grade: route?.grade,
+      sector_id: route?.sectorId,
+      wall: "proa-repisa",
+    });
+  };
+
   return (
-    <section className="relative min-h-0 flex-1 bg-canvas">
-      <div className="pointer-events-auto absolute top-4 left-4 z-10 right-4 md:right-auto">
+    <section className="bg-canvas relative min-h-0 flex-1">
+      <div className="pointer-events-auto absolute top-4 right-4 left-4 z-10 md:right-auto">
         <TopoHeroBar />
       </div>
       <div className="h-full min-h-0">
@@ -50,7 +68,7 @@ export default function TopoClient() {
           data={data}
           visibleRoutes={routes}
           selectedRouteId={selectedRouteId}
-          onSelectRoute={setSelectedRouteId}
+          onSelectRoute={handleSelectRoute}
           error={error}
         />
       </div>

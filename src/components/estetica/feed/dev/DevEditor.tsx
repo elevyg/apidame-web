@@ -9,16 +9,26 @@ import {
   type ReactNode,
 } from "react";
 import type { Card, FeedPostData } from "../posts";
+import posthog from "posthog-js";
 
 type PhotosPayload = {
   pool: string[];
   used: string[];
 };
 
+function analyticsHeaders(): Record<string, string> {
+  const distinctId = posthog.get_distinct_id();
+  const sessionId = posthog.get_session_id();
+  const headers: Record<string, string> = {};
+  if (distinctId) headers["X-POSTHOG-DISTINCT-ID"] = distinctId;
+  if (sessionId) headers["X-POSTHOG-SESSION-ID"] = sessionId;
+  return headers;
+}
+
 async function savePost(post: FeedPostData) {
   const response = await fetch("/api/dev/posts", {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...analyticsHeaders() },
     body: JSON.stringify(post),
   });
   if (!response.ok) {
@@ -57,16 +67,16 @@ function ModalShell({
       data-share-ignore
     >
       <div
-        className="max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-lg bg-paper text-ink shadow-xl"
+        className="bg-paper text-ink max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-lg shadow-xl"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-rule px-4 py-3">
+        <div className="border-rule flex items-center justify-between border-b px-4 py-3">
           <p className="font-brown text-xs tracking-[0.16em] uppercase">
             {title}
           </p>
           <button
             type="button"
-            className="font-brown text-xs tracking-[0.14em] uppercase text-ink-soft"
+            className="font-brown text-ink-soft text-xs tracking-[0.14em] uppercase"
             onClick={onClose}
           >
             Cerrar
@@ -111,34 +121,34 @@ function TitleForm({
         );
       }}
     >
-      <label className="flex flex-col gap-1 font-brown text-sm">
+      <label className="font-brown flex flex-col gap-1 text-sm">
         Kicker
         <input
-          className="border border-rule bg-white px-3 py-2"
+          className="border-rule border bg-white px-3 py-2"
           value={kicker}
           onChange={(event) => setKicker(event.target.value)}
         />
       </label>
-      <label className="flex flex-col gap-1 font-brown text-sm">
+      <label className="font-brown flex flex-col gap-1 text-sm">
         Título
         <input
-          className="border border-rule bg-white px-3 py-2"
+          className="border-rule border bg-white px-3 py-2"
           value={text}
           onChange={(event) => setText(event.target.value)}
         />
       </label>
-      <label className="flex flex-col gap-1 font-brown text-sm">
+      <label className="font-brown flex flex-col gap-1 text-sm">
         Subtítulo OG
         <input
-          className="border border-rule bg-white px-3 py-2"
+          className="border-rule border bg-white px-3 py-2"
           value={subtitle}
           onChange={(event) => setSubtitle(event.target.value)}
         />
       </label>
-      <label className="flex flex-col gap-1 font-brown text-sm">
+      <label className="font-brown flex flex-col gap-1 text-sm">
         Alt de portada
         <input
-          className="border border-rule bg-white px-3 py-2"
+          className="border-rule border bg-white px-3 py-2"
           value={artAlt}
           onChange={(event) => setArtAlt(event.target.value)}
         />
@@ -146,7 +156,7 @@ function TitleForm({
       <button
         type="submit"
         disabled={busy}
-        className="bg-canvas px-4 py-2 font-brown text-xs tracking-[0.16em] text-paper uppercase disabled:opacity-50"
+        className="bg-canvas font-brown text-paper px-4 py-2 text-xs tracking-[0.16em] uppercase disabled:opacity-50"
       >
         {busy ? "Guardando…" : "Guardar"}
       </button>
@@ -183,18 +193,18 @@ function FieldForm({
         });
       }}
     >
-      <label className="flex flex-col gap-1 font-brown text-sm">
+      <label className="font-brown flex flex-col gap-1 text-sm">
         Kicker
         <input
-          className="border border-rule bg-white px-3 py-2"
+          className="border-rule border bg-white px-3 py-2"
           value={kicker}
           onChange={(event) => setKicker(event.target.value)}
         />
       </label>
-      <label className="flex flex-col gap-1 font-brown text-sm">
+      <label className="font-brown flex flex-col gap-1 text-sm">
         Texto (párrafos separados por línea en blanco)
         <textarea
-          className="min-h-48 border border-rule bg-white px-3 py-2 font-brown leading-relaxed"
+          className="border-rule font-brown min-h-48 border bg-white px-3 py-2 leading-relaxed"
           value={body}
           onChange={(event) => setBody(event.target.value)}
         />
@@ -202,7 +212,7 @@ function FieldForm({
       <button
         type="submit"
         disabled={busy}
-        className="bg-canvas px-4 py-2 font-brown text-xs tracking-[0.16em] text-paper uppercase disabled:opacity-50"
+        className="bg-canvas font-brown text-paper px-4 py-2 text-xs tracking-[0.16em] uppercase disabled:opacity-50"
       >
         {busy ? "Guardando…" : "Guardar"}
       </button>
@@ -235,18 +245,18 @@ function PhotoForm({
         });
       }}
     >
-      <label className="flex flex-col gap-1 font-brown text-sm">
+      <label className="font-brown flex flex-col gap-1 text-sm">
         Caption
         <input
-          className="border border-rule bg-white px-3 py-2"
+          className="border-rule border bg-white px-3 py-2"
           value={caption}
           onChange={(event) => setCaption(event.target.value)}
         />
       </label>
-      <label className="flex flex-col gap-1 font-brown text-sm">
+      <label className="font-brown flex flex-col gap-1 text-sm">
         Alt
         <input
-          className="border border-rule bg-white px-3 py-2"
+          className="border-rule border bg-white px-3 py-2"
           value={alt}
           onChange={(event) => setAlt(event.target.value)}
         />
@@ -254,7 +264,7 @@ function PhotoForm({
       <button
         type="submit"
         disabled={busy}
-        className="bg-canvas px-4 py-2 font-brown text-xs tracking-[0.16em] text-paper uppercase disabled:opacity-50"
+        className="bg-canvas font-brown text-paper px-4 py-2 text-xs tracking-[0.16em] uppercase disabled:opacity-50"
       >
         {busy ? "Guardando…" : "Guardar"}
       </button>
@@ -280,6 +290,7 @@ function PhotosPanel({
       try {
         const response = await fetch(
           `/api/dev/photos?slug=${encodeURIComponent(post.slug)}`,
+          { headers: analyticsHeaders() },
         );
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = (await response.json()) as PhotosPayload;
@@ -330,7 +341,11 @@ function PhotosPanel({
   };
 
   const addPhoto = async (src: string) => {
-    const name = src.split("/").pop()?.replace(/\.\w+$/, "") ?? "foto";
+    const name =
+      src
+        .split("/")
+        .pop()
+        ?.replace(/\.\w+$/, "") ?? "foto";
     const id = `foto-${name}-${Date.now().toString(36)}`;
     const card: Card = {
       id,
@@ -346,18 +361,20 @@ function PhotosPanel({
 
   return (
     <div className="flex flex-col gap-5">
-      {error ? <p className="font-brown text-sm text-red-700">{error}</p> : null}
+      {error ? (
+        <p className="font-brown text-sm text-red-700">{error}</p>
+      ) : null}
       <section>
-        <p className="mb-2 font-brown text-xs tracking-[0.14em] uppercase text-ink-soft">
+        <p className="font-brown text-ink-soft mb-2 text-xs tracking-[0.14em] uppercase">
           En el post
         </p>
         <ul className="flex flex-col gap-2">
           {photoCards.map((card) => (
             <li
               key={card.id}
-              className="flex items-center gap-3 border border-rule p-2"
+              className="border-rule flex items-center gap-3 border p-2"
             >
-              <div className="relative h-14 w-10 shrink-0 overflow-hidden bg-canvas">
+              <div className="bg-canvas relative h-14 w-10 shrink-0 overflow-hidden">
                 <Image
                   src={card.src}
                   alt={card.alt}
@@ -367,8 +384,8 @@ function PhotosPanel({
                 />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate font-brown text-sm">{card.caption}</p>
-                <p className="truncate font-brown text-[0.65rem] text-ink-soft">
+                <p className="font-brown truncate text-sm">{card.caption}</p>
+                <p className="font-brown text-ink-soft truncate text-[0.65rem]">
                   {card.id}
                 </p>
               </div>
@@ -392,7 +409,7 @@ function PhotosPanel({
                 <button
                   type="button"
                   disabled={busy}
-                  className="font-brown text-[0.65rem] uppercase text-red-700"
+                  className="font-brown text-[0.65rem] text-red-700 uppercase"
                   onClick={() => void removePhoto(card.id)}
                 >
                   Quitar
@@ -403,15 +420,15 @@ function PhotosPanel({
         </ul>
       </section>
       <section>
-        <p className="mb-2 font-brown text-xs tracking-[0.14em] uppercase text-ink-soft">
+        <p className="font-brown text-ink-soft mb-2 text-xs tracking-[0.14em] uppercase">
           Pool del álbum
         </p>
         {!photos ? (
-          <p className="font-brown text-sm text-ink-soft">Cargando…</p>
+          <p className="font-brown text-ink-soft text-sm">Cargando…</p>
         ) : (
           <div className="grid grid-cols-3 gap-2">
             {photos.pool.map((src) => (
-              <div key={src} className="relative aspect-[3/4] bg-canvas">
+              <div key={src} className="bg-canvas relative aspect-[3/4]">
                 <Image
                   src={src}
                   alt=""
@@ -423,7 +440,7 @@ function PhotosPanel({
                   <button
                     type="button"
                     disabled={busy}
-                    className="flex-1 font-brown text-[0.55rem] tracking-[0.08em] text-paper uppercase"
+                    className="font-brown text-paper flex-1 text-[0.55rem] tracking-[0.08em] uppercase"
                     onClick={() => void setCover(src)}
                   >
                     Cover
@@ -431,7 +448,7 @@ function PhotosPanel({
                   <button
                     type="button"
                     disabled={busy}
-                    className="flex-1 font-brown text-[0.55rem] tracking-[0.08em] text-paper uppercase"
+                    className="font-brown text-paper flex-1 text-[0.55rem] tracking-[0.08em] uppercase"
                     onClick={() => void addPhoto(src)}
                   >
                     + Card
@@ -525,13 +542,13 @@ export function DevEditorChrome({
         data-share-ignore
       >
         {status ? (
-          <p className="pointer-events-none max-w-xs rounded bg-canvas/90 px-3 py-2 font-brown text-[0.65rem] tracking-[0.12em] text-paper uppercase">
+          <p className="bg-canvas/90 font-brown text-paper pointer-events-none max-w-xs rounded px-3 py-2 text-[0.65rem] tracking-[0.12em] uppercase">
             {status}
           </p>
         ) : null}
         <button
           type="button"
-          className="pointer-events-auto rounded bg-accent px-3 py-2 font-brown text-[0.65rem] tracking-[0.16em] text-ink uppercase shadow"
+          className="bg-accent font-brown text-ink pointer-events-auto rounded px-3 py-2 text-[0.65rem] tracking-[0.16em] uppercase shadow"
           onClick={() => {
             onEditCardId(null);
             onPhotosOpen(true);

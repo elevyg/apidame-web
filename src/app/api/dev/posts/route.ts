@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { assertDev } from "@/lib/dev/guard";
+import { getPostHogServer } from "@/lib/posthog-server";
 import {
   feedPostSchema,
   listNotaSlugs,
@@ -23,7 +24,10 @@ export async function GET(request: Request) {
       const post = await readNotaJson(slug);
       return NextResponse.json(post);
     } catch {
-      return NextResponse.json({ error: "Post no encontrado" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Post no encontrado" },
+        { status: 404 },
+      );
     }
   }
 
@@ -53,6 +57,17 @@ export async function PUT(request: Request) {
     );
   }
 
-  const saved = await writeNotaJson(parsed.data);
-  return NextResponse.json(saved);
+  try {
+    const saved = await writeNotaJson(parsed.data);
+    return NextResponse.json(saved);
+  } catch (error) {
+    const posthog = getPostHogServer();
+    if (posthog) {
+      await posthog.captureExceptionImmediate(
+        error,
+        request.headers.get("x-posthog-distinct-id") ?? undefined,
+      );
+    }
+    throw error;
+  }
 }

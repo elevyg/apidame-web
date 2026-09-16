@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import posthog from "posthog-js";
 import {
   cuerdasPost,
   getFeedPost,
@@ -326,7 +327,7 @@ function RelatedNoteCard({
       href={href}
       className={`mt-5 flex shrink-0 items-stretch gap-3 border p-2 transition ${
         onDark
-          ? "border-white/20 bg-canvas hover:border-accent"
+          ? "bg-canvas hover:border-accent border-white/20"
           : "border-rule bg-paper hover:border-accent"
       }`}
       data-share-ignore
@@ -475,7 +476,7 @@ function Slide({
             {onDevEdit ? (
               <button
                 type="button"
-                className={`${mark} rounded bg-accent px-2 py-1 text-ink [text-shadow:none]`}
+                className={`${mark} bg-accent text-ink rounded px-2 py-1 [text-shadow:none]`}
                 onClick={onDevEdit}
                 data-share-ignore
               >
@@ -536,8 +537,15 @@ function Slide({
               setShareStatus("sharing");
               try {
                 const result = await shareNote(postId, postTitle);
+                if (result !== "abort") {
+                  posthog.capture("note_shared", {
+                    slug: postId,
+                    method: result,
+                  });
+                }
                 setShareStatus(result === "abort" ? "idle" : result);
               } catch (error) {
+                posthog.captureException(error);
                 console.error("No se pudo compartir la nota", error);
                 setShareStatus("error");
               }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import posthog from "posthog-js";
 import type { OpenSeadragonViewer } from "./openseadragon.d";
 import type { TopoData, TopoRoute } from "./types";
 
@@ -71,7 +72,8 @@ export default function WallExplorer({
           throw new Error("OpenSeadragon no disponible");
         });
       })
-      .catch(() => {
+      .catch((err) => {
+        posthog.captureException(err);
         setViewerError(
           "No se pudo cargar OpenSeadragon. Revisa el bundle local o la conexión al CDN.",
         );
@@ -83,6 +85,11 @@ export default function WallExplorer({
     if (!image) return;
     if (!containerRef.current) return;
     if (!window.OpenSeadragon) {
+      posthog.captureException(
+        new Error(
+          "OpenSeadragon no está disponible después de cargar el script",
+        ),
+      );
       setViewerError(
         "OpenSeadragon no está disponible. Revisa el bundle local o la carga desde CDN.",
       );
@@ -170,33 +177,33 @@ export default function WallExplorer({
     if (!viewer || !image) return;
 
     if (!selectedRouteId) {
-    overlayMapRef.current.forEach((element) => {
-      element.dataset.selected = "false";
+      overlayMapRef.current.forEach((element) => {
+        element.dataset.selected = "false";
+      });
+      return;
+    }
+
+    const route = visibleRouteMap.get(selectedRouteId);
+    if (!route) return;
+
+    const targetPoint = viewer.viewport.imageToViewportCoordinates(
+      route.marker.x,
+      route.marker.y,
+    );
+    const maxZoom = viewer.viewport.getMaxZoom();
+    const targetZoom = Math.min(maxZoom, 2.2);
+
+    viewer.viewport.zoomTo(targetZoom, targetPoint, true);
+    viewer.viewport.panTo(targetPoint, true);
+
+    overlayMapRef.current.forEach((element, id) => {
+      element.dataset.selected = id === selectedRouteId ? "true" : "false";
     });
-    return;
-  }
-
-  const route = visibleRouteMap.get(selectedRouteId);
-  if (!route) return;
-
-  const targetPoint = viewer.viewport.imageToViewportCoordinates(
-    route.marker.x,
-    route.marker.y,
-  );
-  const maxZoom = viewer.viewport.getMaxZoom();
-  const targetZoom = Math.min(maxZoom, 2.2);
-
-  viewer.viewport.zoomTo(targetZoom, targetPoint, true);
-  viewer.viewport.panTo(targetPoint, true);
-
-  overlayMapRef.current.forEach((element, id) => {
-    element.dataset.selected = id === selectedRouteId ? "true" : "false";
-  });
   }, [selectedRouteId, visibleRouteMap, image]);
 
   if (error) {
     return (
-      <div className="flex h-full items-center justify-center p-6 text-center font-brown text-xs text-signal">
+      <div className="font-brown text-signal flex h-full items-center justify-center p-6 text-center text-xs">
         {error}
       </div>
     );
@@ -204,7 +211,7 @@ export default function WallExplorer({
 
   if (!image) {
     return (
-      <div className="flex h-full items-center justify-center p-6 text-center font-brown text-xs text-white/50">
+      <div className="font-brown flex h-full items-center justify-center p-6 text-center text-xs text-white/50">
         Cargando topo...
       </div>
     );
@@ -212,7 +219,7 @@ export default function WallExplorer({
 
   if (viewerError) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-2 p-6 text-center font-brown text-xs text-signal">
+      <div className="font-brown text-signal flex h-full flex-col items-center justify-center gap-2 p-6 text-center text-xs">
         <p>{viewerError}</p>
         <p className="text-white/50">Se mostrará el topo descargable abajo.</p>
       </div>
@@ -237,7 +244,7 @@ export default function WallExplorer({
     <div className="relative h-full w-full">
       <div ref={containerRef} className="h-full w-full" />
       <div className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-3">
-        <div className="pointer-events-auto flex items-center gap-3 border border-white/25 bg-canvas/80 px-3 py-2 backdrop-blur-sm">
+        <div className="bg-canvas/80 pointer-events-auto flex items-center gap-3 border border-white/25 px-3 py-2 backdrop-blur-sm">
           <span className="font-brown text-[10px] tracking-[0.18em] text-white/55 uppercase">
             Controles
           </span>
@@ -245,21 +252,21 @@ export default function WallExplorer({
             <button
               type="button"
               onClick={() => handleZoom(1.2)}
-              className="font-brown text-[10px] text-canvas-ink hover:text-white"
+              className="font-brown text-canvas-ink text-[10px] hover:text-white"
             >
               Zoom +
             </button>
             <button
               type="button"
               onClick={() => handleZoom(0.85)}
-              className="font-brown text-[10px] text-canvas-ink hover:text-white"
+              className="font-brown text-canvas-ink text-[10px] hover:text-white"
             >
               Zoom -
             </button>
             <button
               type="button"
               onClick={handleReset}
-              className="font-brown text-[10px] text-canvas-ink hover:text-white"
+              className="font-brown text-canvas-ink text-[10px] hover:text-white"
             >
               Reset
             </button>

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
+import posthog from "posthog-js";
 import type { FeaturedRoute } from "./types";
 import PdfViewerModal from "./PdfViewerModal";
 
@@ -32,7 +33,7 @@ export default function FeaturedRoutesGallery({
 
   if (displayedRoutes.length === 0) {
     return (
-      <div className="page-shell py-16 font-brown text-sm text-ink-soft">
+      <div className="page-shell font-brown text-ink-soft py-16 text-sm">
         Pronto habrá rutas destacadas aquí.
       </div>
     );
@@ -45,10 +46,16 @@ export default function FeaturedRoutesGallery({
           <button
             key={route.id}
             type="button"
-            onClick={() => setActiveRoute(route)}
+            onClick={() => {
+              setActiveRoute(route);
+              posthog.capture("topo_pdf_opened", {
+                route_name: displayName(route.name),
+                file_id: route.id,
+              });
+            }}
             className="w-[220px] shrink-0 text-left md:w-[260px]"
           >
-            <div className="relative aspect-[4/3] overflow-hidden bg-paper-deep">
+            <div className="bg-paper-deep relative aspect-[4/3] overflow-hidden">
               {route.thumbnail ? (
                 <Image
                   src={route.thumbnail}
@@ -58,12 +65,12 @@ export default function FeaturedRoutesGallery({
                   sizes="260px"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center font-brown text-xs text-ink-soft">
+                <div className="font-brown text-ink-soft flex h-full items-center justify-center text-xs">
                   Topo PDF
                 </div>
               )}
             </div>
-            <p className="mt-3 font-brown text-sm leading-snug">
+            <p className="font-brown mt-3 text-sm leading-snug">
               {displayName(route.name)}
             </p>
             <p className="kicker mt-2">{formatUpdated(route.modifiedTime)}</p>

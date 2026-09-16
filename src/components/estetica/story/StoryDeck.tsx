@@ -10,6 +10,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { useReducedMotion } from "framer-motion";
+import posthog from "posthog-js";
 import { stories, type Beat, type Story } from "./stories";
 
 const SOLID_MS = 4200;
@@ -37,7 +38,7 @@ function BeatView({
     const ink = beat.tone === "ink";
     return (
       <div
-        className={`flex h-full flex-col justify-end px-6 pb-14 pt-24 ${
+        className={`flex h-full flex-col justify-end px-6 pt-24 pb-14 ${
           ink ? "bg-canvas text-canvas-ink" : "bg-paper text-ink"
         }`}
       >
@@ -48,12 +49,12 @@ function BeatView({
             {beat.kicker}
           </p>
         ) : null}
-        <p className="font-display mt-5 whitespace-pre-line text-[2.35rem] leading-[1.05] tracking-tight md:text-5xl">
+        <p className="font-display mt-5 text-[2.35rem] leading-[1.05] tracking-tight whitespace-pre-line md:text-5xl">
           {beat.text}
         </p>
         {beat.note ? (
           <p
-            className={`mt-8 font-brown text-sm ${
+            className={`font-brown mt-8 text-sm ${
               ink ? "text-canvas-ink/55" : "text-ink-soft"
             }`}
           >
@@ -68,7 +69,7 @@ function BeatView({
   const isVideo = beat.type === "video" && beat.src;
 
   return (
-    <div className="relative h-full bg-canvas">
+    <div className="bg-canvas relative h-full">
       {isVideo ? (
         <video
           className="absolute inset-0 h-full w-full object-cover"
@@ -95,7 +96,7 @@ function BeatView({
         />
       )}
       {beat.caption ? (
-        <p className="absolute inset-x-0 bottom-0 bg-canvas px-6 py-4 font-brown text-sm tracking-[0.14em] text-canvas-ink uppercase">
+        <p className="bg-canvas font-brown text-canvas-ink absolute inset-x-0 bottom-0 px-6 py-4 text-sm tracking-[0.14em] uppercase">
           {beat.caption}
         </p>
       ) : null}
@@ -175,12 +176,9 @@ export default function StoryDeck() {
         setBeatIndex(nextBeat);
         return;
       }
-      const nextStory =
-        (storyIndex + dir + stories.length) % stories.length;
+      const nextStory = (storyIndex + dir + stories.length) % stories.length;
       setStoryIndex(nextStory);
-      setBeatIndex(
-        dir === 1 ? 0 : stories[nextStory]!.beats.length - 1,
-      );
+      setBeatIndex(dir === 1 ? 0 : stories[nextStory]!.beats.length - 1);
     },
     [beatIndex, story.beats.length, storyIndex],
   );
@@ -197,6 +195,10 @@ export default function StoryDeck() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [go]);
+
+  useEffect(() => {
+    posthog.capture("story_started");
+  }, []);
 
   useEffect(() => {
     remain.current = durationFor(beat);
@@ -237,7 +239,7 @@ export default function StoryDeck() {
   const chromeLink = light ? "text-ink/70" : "text-white/70";
 
   return (
-    <div className="flex min-h-dvh flex-col bg-canvas text-canvas-ink md:items-center md:justify-center md:py-8">
+    <div className="bg-canvas text-canvas-ink flex min-h-dvh flex-col md:items-center md:justify-center md:py-8">
       <style>{`
         @keyframes story-fill {
           from { transform: scaleX(0); }
@@ -252,7 +254,7 @@ export default function StoryDeck() {
         }
       `}</style>
 
-      <div className="relative h-dvh w-full overflow-hidden md:h-auto md:max-h-[min(90dvh,52rem)] md:w-[min(100%,28rem)] md:aspect-[9/16] md:border md:border-white/15">
+      <div className="relative h-dvh w-full overflow-hidden md:aspect-[9/16] md:h-auto md:max-h-[min(90dvh,52rem)] md:w-[min(100%,28rem)] md:border md:border-white/15">
         <BeatView beat={beat} paused={paused} reduce={reduce} />
 
         <div className="absolute inset-x-0 top-0 z-30 px-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
@@ -280,7 +282,7 @@ export default function StoryDeck() {
         </div>
 
         <div
-          className="absolute inset-x-0 bottom-0 top-16 z-20 touch-none"
+          className="absolute inset-x-0 top-16 bottom-0 z-20 touch-none"
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
           onPointerCancel={() => {
@@ -291,14 +293,14 @@ export default function StoryDeck() {
 
         {hint ? (
           <p
-            className={`pointer-events-none absolute left-0 right-0 top-16 z-30 text-center font-brown text-[0.65rem] tracking-[0.2em] uppercase ${chromeLink}`}
+            className={`font-brown pointer-events-none absolute top-16 right-0 left-0 z-30 text-center text-[0.65rem] tracking-[0.2em] uppercase ${chromeLink}`}
           >
             Toca a la derecha · mantén para pausar
           </p>
         ) : null}
       </div>
 
-      <p className="mt-4 hidden font-brown text-[0.65rem] tracking-[0.2em] text-white/40 uppercase md:block">
+      <p className="font-brown mt-4 hidden text-[0.65rem] tracking-[0.2em] text-white/40 uppercase md:block">
         Maqueta · 9:16 · {storyIndex + 1}/{stories.length} entregas · flechas
       </p>
     </div>

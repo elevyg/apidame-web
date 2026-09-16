@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import FeaturedRoutesGallery from "./FeaturedRoutesGallery";
 import featuredRoutes from "./featuredRoutes.json";
 import type { FeaturedRoute } from "./types";
 import Notice from "@/components/Notice";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
+import TrackedLink from "@/components/TrackedLink";
 
 export const metadata: Metadata = {
   title: "Topos",
@@ -22,12 +22,12 @@ export default function Topos() {
       <SiteHeader current="topos" />
 
       <article>
-        <header className="page-shell border-b border-rule py-12 md:py-16">
+        <header className="page-shell border-rule border-b py-12 md:py-16">
           <p className="kicker">Parque Nacional Patagonia · Chile Chico</p>
           <h1 className="font-display mt-4 text-4xl md:text-6xl">
             Cerro Apidame
           </h1>
-          <p className="measure mt-6 font-brown text-base leading-relaxed text-ink-soft md:text-lg">
+          <p className="measure font-brown text-ink-soft mt-6 text-base leading-relaxed md:text-lg">
             Destino de fisura en uno de los extremos del parque más cercanos a
             Chile Chico. Rutas de un largo y multilargos en estilo tradicional,
             con un microclima que permite escalar cuando el resto de la región
@@ -35,7 +35,7 @@ export default function Topos() {
           </p>
         </header>
 
-        <div className="border-b border-rule">
+        <div className="border-rule border-b">
           <Image
             src="/estetica/presentacion/proa-aerea.jpg"
             alt="Cerro Apidame, Proa"
@@ -46,11 +46,11 @@ export default function Topos() {
           />
         </div>
 
-        <section className="page-shell grid gap-12 border-b border-rule py-12 md:grid-cols-[1.2fr_0.8fr] md:gap-16 md:py-16">
+        <section className="page-shell border-rule grid gap-12 border-b py-12 md:grid-cols-[1.2fr_0.8fr] md:gap-16 md:py-16">
           <div className="flex flex-col gap-10">
             <div>
               <h2 className="font-display text-2xl md:text-3xl">Equipo</h2>
-              <p className="mt-4 font-brown text-sm leading-relaxed text-ink-soft md:text-base">
+              <p className="font-brown text-ink-soft mt-4 text-sm leading-relaxed md:text-base">
                 Dos cuerdas de 60m son imprescindibles. Un rack doble de #2 a #3
                 más un juego de stoppers pequeños resuelve la mayoría de las
                 rutas. Uno o dos #4 ayudan en algunos largos, y conviene llevar
@@ -59,22 +59,24 @@ export default function Topos() {
             </div>
             <div>
               <h2 className="font-display text-2xl md:text-3xl">Acceso</h2>
-              <p className="mt-4 font-brown text-sm leading-relaxed text-ink-soft md:text-base">
+              <p className="font-brown text-ink-soft mt-4 text-sm leading-relaxed md:text-base">
                 Estamos trabajando en hacer la aproximación más amigable. Hoy
                 puedes contactar a{" "}
-                <a
+                <TrackedLink
                   href="https://www.instagram.com/rocapampa"
+                  event="topo_access_contact_clicked"
+                  properties={{ handle: "rocapampa" }}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-ink underline decoration-from-font underline-offset-4"
                 >
                   @rocapampa
-                </a>{" "}
+                </TrackedLink>{" "}
                 para ingresar. Ofrece acceso público, estacionamiento (con
                 cobro) y porteo.
               </p>
             </div>
-            <p className="font-brown text-sm text-ink-soft">
+            <p className="font-brown text-ink-soft text-sm">
               En Chile Chico no hay helicóptero ni equipo de rescate.
             </p>
           </div>
@@ -86,14 +88,15 @@ export default function Topos() {
               <span className="break-words">benjamin.molina@conaf.cl</span>.
             </p>
             <p className="mt-3">
-              <a
+              <TrackedLink
                 href="https://docs.google.com/document/d/16ZBggnYo3Cg7VmkN_L8jqPqSJbxMjvb8/edit"
+                event="conaf_form_clicked"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline decoration-from-font underline-offset-4"
               >
                 Ver ficha CONAF
-              </a>
+              </TrackedLink>
             </p>
             <p className="mt-3">
               Si ocurre un accidente y no completaste la ficha, el ingreso se
@@ -104,33 +107,36 @@ export default function Topos() {
 
         <section
           id="topos-interactivos"
-          className="page-shell border-b border-rule py-12 md:py-16"
+          className="page-shell border-rule border-b py-12 md:py-16"
         >
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="kicker">Interactivo</p>
-              <h2 className="font-display mt-2 text-3xl md:text-4xl">
-                Topos
-              </h2>
+              <h2 className="font-display mt-2 text-3xl md:text-4xl">Topos</h2>
             </div>
-            <p className="font-brown text-sm text-ink-soft">
+            <p className="font-brown text-ink-soft text-sm">
               Escudo y Pared Norte vienen después.
             </p>
           </div>
 
-          <Link href="/topos/proa-repisa" className="group mt-10 block max-w-xl">
+          <TrackedLink
+            href="/topos/proa-repisa"
+            event="topo_interactive_opened"
+            properties={{ wall: "proa-repisa" }}
+            className="group mt-10 block max-w-xl"
+          >
             <p className="kicker">Disponible</p>
             <h3 className="font-display mt-2 text-2xl md:text-3xl">
               Proa y Repisa Central
             </h3>
-            <p className="mt-3 font-brown text-sm leading-relaxed text-ink-soft">
+            <p className="font-brown text-ink-soft mt-3 text-sm leading-relaxed">
               Explora la pared con zoom y detalle. Ideal para planificar la
               sesión.
             </p>
-            <span className="mt-4 inline-block font-brown text-sm tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4">
+            <span className="font-brown mt-4 inline-block text-sm tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4">
               Abrir topo
             </span>
-          </Link>
+          </TrackedLink>
         </section>
 
         <section id="rutas-destacadas" className="py-12 md:py-16">
@@ -139,7 +145,7 @@ export default function Topos() {
             <h2 className="font-display mt-2 text-3xl md:text-4xl">
               Rutas destacadas
             </h2>
-            <p className="mt-3 font-brown text-sm text-ink-soft">
+            <p className="font-brown text-ink-soft mt-3 text-sm">
               Topos en PDF para revisar línea por línea.
             </p>
           </div>

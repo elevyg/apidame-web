@@ -76,8 +76,8 @@ export default function ProjectField({ lab = false }: ProjectFieldProps) {
         <div className={clusterShell}>
           <ProjectCluster
             name="Escalada deportiva"
-            kicker="El Indio · Pared Burgos"
-            cta={{ label: "Pronto" }}
+            kicker="El Indio · Pared Burgos · Cerro Azul"
+            cta={{ label: "Ver topos", href: "/deportiva" }}
             layout="photo-start"
             primary={{
               src: "/estetica/deportiva/lago.jpg",

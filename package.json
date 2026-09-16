@@ -7,17 +7,25 @@
     "dev": "next dev --port 4000",
     "fetch:topos": "node scripts/fetch-drive-topos.mjs",
     "lint": "next lint",
-    "start": "next start --port 4000"
+    "start": "next start --port 4000",
+    "test": "vitest run",
+    "db:push": "drizzle-kit push",
+    "db:seed": "node --env-file=.env.local --import tsx scripts/seed-deportiva.ts"
   },
   "dependencies": {
+    "@libsql/client": "^0.18.0",
     "@posthog/nextjs-config": "^1.11.1",
     "@svgr/webpack": "^8.1.0",
+    "drizzle-orm": "^0.45.2",
     "framer-motion": "^11.15.0",
     "next": "^15.1.0",
+    "next-auth": "5.0.0-beta.32",
+    "pdf-lib": "^1.17.1",
     "posthog-js": "^1.433.6",
     "posthog-node": "^5.52.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-zoom-pan-pinch": "^4.2.0",
     "sharp": "0.33.5",
     "zod": "^3.24.0"
   },
@@ -26,6 +34,8 @@
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "dotenv": "^17.4.2",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^9.17.0",
     "eslint-config-next": "^15.1.0",
     "googleapis": "^144.0.0",
@@ -33,6 +43,9 @@
     "prettier": "^3.4.0",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "^4.0.0",
-    "typescript": "^5.7.0"
+    "tsx": "^4.23.13",
+    "typescript": "^5.7.0",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
   }
 }

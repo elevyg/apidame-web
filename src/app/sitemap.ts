@@ -29,6 +29,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     })),
     {
+      url: `${siteUrl}/deportiva`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    ...["cerro-azul", "pared-burgos", "cerro-el-indio"].map((slug) => ({
+      url: `${siteUrl}/deportiva/${slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })),
+    {
       url: `${siteUrl}/topos`,
       lastModified: now,
       changeFrequency: "weekly",

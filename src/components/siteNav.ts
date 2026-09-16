@@ -19,8 +19,8 @@ export const siteNav: readonly SiteNavItem[] = [
   {
     id: "deportiva" as const,
     label: "Deportiva",
-    homeHref: "#deportiva",
-    href: "/#deportiva",
+    homeHref: "/deportiva",
+    href: "/deportiva",
   },
   { id: "topos" as const, label: "Topos", homeHref: "/topos", href: "/topos" },
   {

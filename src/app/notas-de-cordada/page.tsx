@@ -41,20 +41,36 @@ export default function NotasDeCordadaPage() {
   return (
     <main className="bg-paper text-ink min-h-dvh overflow-x-hidden">
       <SiteHeader current="notas-de-cordada" />
-      <section className="border-paper bg-canvas text-paper border-b">
-        <div className="page-shell flex min-h-[68svh] w-full min-w-0 flex-col justify-end py-7 md:py-10">
-          <div className="w-full max-w-5xl min-w-0 py-16 md:py-24">
-            <p className="text-[0.7rem] tracking-[0.22em] uppercase">
-              Equipo / oficio / terreno
+      <section className="border-paper relative isolate overflow-hidden border-b bg-canvas text-paper">
+        <div className="pointer-events-none absolute inset-0 md:inset-y-0 md:left-auto md:right-0 md:w-[min(42%,34rem)]">
+          <Image
+            src="/notas-de-cordada/reunion.jpg"
+            alt="Cordada en reunión: dos escaladores en una fisura sobre el valle"
+            fill
+            priority
+            quality={92}
+            sizes="(max-width: 767px) 100vw, 34rem"
+            className="object-cover object-[72%_42%] md:object-[48%_40%]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-canvas/15 via-canvas/45 via-58% to-canvas md:bg-gradient-to-l md:from-transparent md:from-50% md:via-canvas/20 md:via-85% md:to-canvas" />
+        </div>
+        <div className="relative flex min-h-[68svh] flex-col justify-end md:min-h-[72svh] md:flex-row">
+          <div className="page-shell flex w-full min-w-0 flex-1 flex-col justify-end py-7 md:max-w-none md:py-10">
+            <div className="w-full max-w-5xl min-w-0 py-16 md:py-24">
+              <h1 className="w-full max-w-4xl min-w-0 text-[clamp(2.7rem,12vw,8rem)] leading-[0.86] font-normal tracking-[-0.065em] italic">
+                Notas de cordada
+              </h1>
+            </div>
+            <p className="border-paper max-w-xl border-t pt-5 text-base leading-snug md:text-xl">
+              Apuntes personales sobre las decisiones que se toman antes,
+              durante y después de un largo. Sigue estos consejos bajo tu
+              propio riesgo.
             </p>
-            <h1 className="mt-5 w-full max-w-4xl min-w-0 text-[clamp(2.7rem,12vw,8rem)] leading-[0.86] font-normal tracking-[-0.065em] italic">
-              Notas de cordada
-            </h1>
           </div>
-          <p className="border-paper max-w-xl border-t pt-5 text-base leading-snug md:text-xl">
-            Apuntes personales sobre las decisiones que se toman antes, durante
-            y después de un largo.
-          </p>
+          <div
+            className="hidden md:block md:w-[min(42%,34rem)] md:shrink-0"
+            aria-hidden
+          />
         </div>
       </section>
 

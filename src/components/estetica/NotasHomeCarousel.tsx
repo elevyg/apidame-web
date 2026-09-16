@@ -99,18 +99,16 @@ export default function NotasHomeCarousel({ notes }: NotasHomeCarouselProps) {
       >
         <div className="page-shell flex min-w-0 flex-col gap-4 py-4 md:flex-row md:items-end md:justify-between md:gap-10 md:py-5">
           <div className="min-w-0">
-            <p className="text-[0.65rem] tracking-[0.18em] uppercase">
-              Equipo / oficio / terreno
-            </p>
             <h2
               id="notas-home-title"
-              className="mt-2 w-full max-w-4xl min-w-0 text-[clamp(1.7rem,5vw,2.85rem)] leading-[0.86] font-normal tracking-[-0.065em] italic"
+              className="w-full max-w-4xl min-w-0 text-[clamp(1.7rem,5vw,2.85rem)] leading-[0.86] font-normal tracking-[-0.065em] italic"
             >
               Notas de cordada
             </h2>
             <p className="mt-3 max-w-xl text-sm leading-snug md:text-base">
               Apuntes personales sobre las decisiones que se toman antes,
-              durante y después de un largo.
+              durante y después de un largo. Sigue estos consejos bajo tu
+              propio riesgo.
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap items-center gap-x-8 gap-y-2">
@@ -118,7 +116,7 @@ export default function NotasHomeCarousel({ notes }: NotasHomeCarouselProps) {
               href="/notas-de-cordada"
               className="focus-visible:outline-paper text-[0.68rem] tracking-[0.16em] uppercase hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"
             >
-              Ir al índice ↗
+              Ver todas ↗
             </Link>
             <div className="hidden md:flex gap-8">
               <button

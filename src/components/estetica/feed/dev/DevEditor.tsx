@@ -80,15 +80,18 @@ function ModalShell({
 
 function TitleForm({
   card,
+  ogSubtitle,
   onSave,
   busy,
 }: {
   card: Extract<Card, { type: "title" }>;
-  onSave: (card: Card) => Promise<void>;
+  ogSubtitle: string;
+  onSave: (card: Card, nextOgSubtitle: string) => Promise<void>;
   busy: boolean;
 }) {
   const [kicker, setKicker] = useState(card.kicker);
   const [text, setText] = useState(card.text);
+  const [subtitle, setSubtitle] = useState(ogSubtitle);
   const [artAlt, setArtAlt] = useState(card.artAlt ?? "");
 
   return (
@@ -96,13 +99,16 @@ function TitleForm({
       className="flex flex-col gap-3"
       onSubmit={(event: FormEvent) => {
         event.preventDefault();
-        void onSave({
-          ...card,
-          kicker,
-          text,
-          artAlt: artAlt || undefined,
-          share: text,
-        });
+        void onSave(
+          {
+            ...card,
+            kicker,
+            text,
+            artAlt: artAlt || undefined,
+            share: text,
+          },
+          subtitle,
+        );
       }}
     >
       <label className="flex flex-col gap-1 font-brown text-sm">
@@ -119,6 +125,14 @@ function TitleForm({
           className="border border-rule bg-white px-3 py-2"
           value={text}
           onChange={(event) => setText(event.target.value)}
+        />
+      </label>
+      <label className="flex flex-col gap-1 font-brown text-sm">
+        Subtítulo OG
+        <input
+          className="border border-rule bg-white px-3 py-2"
+          value={subtitle}
+          onChange={(event) => setSubtitle(event.target.value)}
         />
       </label>
       <label className="flex flex-col gap-1 font-brown text-sm">
@@ -455,7 +469,7 @@ export function DevEditorChrome({
   const closeEdit = () => onEditCardId(null);
 
   const persistCard = useCallback(
-    async (card: Card) => {
+    async (card: Card, nextOgSubtitle?: string) => {
       setBusy(true);
       setStatus(null);
       try {
@@ -467,6 +481,7 @@ export function DevEditorChrome({
             og: {
               ...next.og,
               title: card.text,
+              subtitle: nextOgSubtitle ?? next.og.subtitle,
             },
           };
         }
@@ -527,7 +542,12 @@ export function DevEditorChrome({
       </div>
       {editing?.type === "title" ? (
         <ModalShell title="Editar título" onClose={closeEdit}>
-          <TitleForm card={editing} onSave={persistCard} busy={busy} />
+          <TitleForm
+            card={editing}
+            ogSubtitle={post.og.subtitle}
+            onSave={persistCard}
+            busy={busy}
+          />
         </ModalShell>
       ) : null}
       {editing?.type === "field" ? (

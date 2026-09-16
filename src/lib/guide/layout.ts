@@ -51,3 +51,32 @@ export function wrapWords(text: string, maxChars: number): string[] {
   if (current) lines.push(current);
   return lines;
 }
+
+export function wrapMeasured(
+  text: string,
+  maxWidth: number,
+  widthOf: (line: string) => number,
+): string[] {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let current = "";
+  for (const word of words) {
+    const next = current ? `${current} ${word}` : word;
+    if (current && widthOf(next) > maxWidth) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = next;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
+export function formatGuideDate(date: Date): string {
+  return new Intl.DateTimeFormat("es-CL", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}

@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { fitRect, sanitizePdfText, wrapWords } from "./layout";
+import {
+  fitRect,
+  formatGuideDate,
+  sanitizePdfText,
+  wrapMeasured,
+  wrapWords,
+} from "./layout";
 
 describe("fitRect", () => {
   it("fits a landscape topo into a portrait phone page", () => {
@@ -28,6 +34,23 @@ describe("sanitizePdfText", () => {
   it("keeps spanish accents that WinAnsi supports", () => {
     expect(sanitizePdfText("Mañera Nocturna · Corazón")).toBe(
       "Mañera Nocturna · Corazón",
+    );
+  });
+});
+
+describe("wrapMeasured", () => {
+  it("breaks when the measured width exceeds the budget", () => {
+    expect(wrapMeasured("uno dos tres", 7, (line) => line.length)).toEqual([
+      "uno dos",
+      "tres",
+    ]);
+  });
+});
+
+describe("formatGuideDate", () => {
+  it("formats a date in es-CL", () => {
+    expect(formatGuideDate(new Date("2026-09-16T12:00:00.000Z"))).toMatch(
+      /2026/,
     );
   });
 });

@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
+import RouteMarkers from "@/components/climbing/RouteMarkers";
 import { DIMMED_COLOR, SELECTED_COLOR, routeColor } from "@/lib/climbing/colors";
 import { optimizedImageUrl } from "@/lib/climbing/cloudinary";
 import { parsePath, strokeWidthPx } from "@/lib/climbing/path";
@@ -126,33 +127,14 @@ export default function TopoCanvas({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
-                    {!item.hideStart && start ? (
-                      <g>
-                        <circle
-                          cx={start.x}
-                          cy={start.y}
-                          r={stroke * 1.15}
-                          fill={color}
-                        />
-                        <text
-                          x={start.x}
-                          y={start.y}
-                          textAnchor="middle"
-                          dominantBaseline="central"
-                          fill="#fff"
-                          fontSize={stroke * 1.1}
-                          fontFamily="ui-sans-serif, system-ui, sans-serif"
-                        >
-                          {item.route.position}
-                        </text>
-                      </g>
-                    ) : null}
-                    {end ? (
-                      <circle
-                        cx={end.x}
-                        cy={end.y}
-                        r={stroke * 0.55}
-                        fill={color}
+                    {!item.hideStart || end ? (
+                      <RouteMarkers
+                        start={start}
+                        end={end}
+                        hideStart={item.hideStart}
+                        label={item.route.position}
+                        color={color}
+                        routeStrokeWidth={topo.routeStrokeWidth}
                       />
                     ) : null}
                   </g>

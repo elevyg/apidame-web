@@ -13,5 +13,5 @@ export function pdfImageUrl(
   image: { url: string; publicId?: string | null },
 ): string {
   if (!image.publicId) return image.url;
-  return `https://${CLOUDINARY_HOST}/${CLOUD_NAME}/image/upload/w_1600,c_limit,q_80,f_jpg/${image.publicId}.jpg`;
+  return `https://${CLOUDINARY_HOST}/${CLOUD_NAME}/image/upload/w_1200,c_limit,q_70,f_jpg/${image.publicId}.jpg`;
 }

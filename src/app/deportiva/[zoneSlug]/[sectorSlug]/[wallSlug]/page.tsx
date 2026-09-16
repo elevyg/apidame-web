@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import TrackedLink from "@/components/TrackedLink";
+import DownloadPdfLink from "@/components/DownloadPdfLink";
 import SiteHeader from "@/components/SiteHeader";
 import WallTopoExplorer from "@/components/climbing/WallTopoExplorer";
 import { requireWallGuide } from "@/lib/guide/queries";
+import { formatGuideDate } from "@/lib/guide/layout";
+import { getStoredPdf, wallPdfId } from "@/lib/guide/store";
 
 type WallPageProps = {
   params: Promise<{
@@ -30,6 +32,7 @@ export default async function WallPage({ params }: WallPageProps) {
     sectorSlug,
     wallSlug,
   );
+  const storedPdf = await getStoredPdf(wallPdfId(wall.id));
 
   return (
     <main className="flex h-dvh flex-col overflow-hidden">
@@ -41,14 +44,21 @@ export default async function WallPage({ params }: WallPageProps) {
           </p>
           <h1 className="font-display mt-2 text-3xl md:text-5xl">{wall.name}</h1>
         </div>
-        <TrackedLink
-          href={`/deportiva/${zone.slug}/${sector.slug}/${wall.slug}/pdf`}
-          event="deportiva_wall_pdf"
-          properties={{ zone: zone.slug, wall: wall.slug }}
-          className="font-brown text-sm tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
-        >
-          PDF de esta pared
-        </TrackedLink>
+        <div className="text-left md:text-right">
+          <DownloadPdfLink
+            href={`/deportiva/${zone.slug}/${sector.slug}/${wall.slug}/pdf`}
+            event="deportiva_wall_pdf"
+            properties={{ zone: zone.slug, wall: wall.slug }}
+            className="font-brown text-sm tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
+          >
+            PDF de esta pared
+          </DownloadPdfLink>
+          {storedPdf ? (
+            <p className="font-brown text-ink-soft mt-1 text-xs tracking-[0.08em] uppercase">
+              Generado {formatGuideDate(storedPdf.generatedAt)}
+            </p>
+          ) : null}
+        </div>
       </header>
       <WallTopoExplorer topos={topos} routes={routes} paths={paths} />
     </main>

@@ -1,5 +1,5 @@
-import { requireWallGuide } from "@/lib/guide/queries";
-import { buildWallPdf } from "@/lib/guide/pdf";
+import { notFound } from "next/navigation";
+import { loadWallPdfBytes } from "@/lib/guide/store";
 
 type PdfProps = {
   params: Promise<{
@@ -11,13 +11,14 @@ type PdfProps = {
 
 export async function GET(_request: Request, { params }: PdfProps) {
   const { zoneSlug, sectorSlug, wallSlug } = await params;
-  const guide = await requireWallGuide(zoneSlug, sectorSlug, wallSlug);
-  const bytes = await buildWallPdf(guide);
-  return new Response(Buffer.from(bytes), {
+  const stored = await loadWallPdfBytes(zoneSlug, sectorSlug, wallSlug);
+  if (!stored) notFound();
+  return new Response(Buffer.from(stored.bytes), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${zoneSlug}-${wallSlug}.pdf"`,
-      "Cache-Control": "public, max-age=300",
+      "Content-Disposition": `attachment; filename="${stored.filename}"`,
+      "Cache-Control": "no-store",
+      "Last-Modified": stored.generatedAt.toUTCString(),
     },
   });
 }

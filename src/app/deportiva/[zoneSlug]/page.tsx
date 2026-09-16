@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import DownloadPdfLink from "@/components/DownloadPdfLink";
 import TrackedLink from "@/components/TrackedLink";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { requireZoneBySlug } from "@/lib/guide/queries";
+import { formatGuideDate } from "@/lib/guide/layout";
+import { latestPdfDate } from "@/lib/guide/store";
 
 type ZonePageProps = {
   params: Promise<{ zoneSlug: string }>;
@@ -24,6 +27,7 @@ export async function generateMetadata({
 export default async function ZonePage({ params }: ZonePageProps) {
   const { zoneSlug } = await params;
   const { zone, sectors, walls, routes } = await requireZoneBySlug(zoneSlug);
+  const generatedAt = await latestPdfDate(zone.id);
 
   return (
     <main className="flex min-h-screen flex-col">
@@ -42,14 +46,19 @@ export default async function ZonePage({ params }: ZonePageProps) {
                 </p>
               ))
             : null}
-          <TrackedLink
+          <DownloadPdfLink
             href={`/deportiva/${zone.slug}/pdf`}
             event="deportiva_zone_pdf"
             properties={{ zone: zone.slug }}
             className="font-brown mt-8 inline-block text-sm tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
           >
             Descargar PDF
-          </TrackedLink>
+          </DownloadPdfLink>
+          {generatedAt ? (
+            <p className="font-brown text-ink-soft mt-2 text-xs tracking-[0.08em] uppercase">
+              Generado {formatGuideDate(generatedAt)}
+            </p>
+          ) : null}
         </header>
 
         {sectors.map((sector) => {

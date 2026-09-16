@@ -19,7 +19,7 @@ export default function Topos() {
 
   return (
     <main className="flex min-h-screen flex-col">
-      <SiteHeader current="topos" />
+      <SiteHeader current="cerro" />
 
       <article>
         <header className="page-shell border-rule border-b py-12 md:py-16">

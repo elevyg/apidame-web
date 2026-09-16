@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import RouteMarkers from "@/components/climbing/RouteMarkers";
 import { optimizedImageUrl } from "@/lib/climbing/cloudinary";
 import { parsePath, serializePath, strokeWidthPx, type Point } from "@/lib/climbing/path";
 import { routeColor } from "@/lib/climbing/colors";
@@ -83,15 +84,26 @@ export default function PathDrawer({
               strokeLinejoin="round"
             />
           ) : null}
-          {points.map((point, index) => (
-            <circle
-              key={`${point.x}-${point.y}-${index}`}
-              cx={point.x}
-              cy={point.y}
-              r={stroke * 0.45}
-              fill={routeColor("Sport")}
+          {points.map((point, index) =>
+            index === 0 || index === points.length - 1 ? null : (
+              <circle
+                key={`${point.x}-${point.y}-${index}`}
+                cx={point.x}
+                cy={point.y}
+                r={stroke * 0.45}
+                fill={routeColor("Sport")}
+              />
+            ),
+          )}
+          {points.length > 0 ? (
+            <RouteMarkers
+              start={points[0]}
+              end={points.length > 1 ? points[points.length - 1] : undefined}
+              label="+"
+              color={routeColor("Sport")}
+              routeStrokeWidth={strokeWidth}
             />
-          ))}
+          ) : null}
         </svg>
       </div>
       <div className="mt-4 flex gap-4">

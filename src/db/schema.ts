@@ -1,4 +1,5 @@
 import {
+  blob,
   integer,
   real,
   sqliteTable,
@@ -171,3 +172,22 @@ export const routePathsRelations = relations(routePaths, ({ one }) => ({
   topo: one(topos, { fields: [routePaths.topoId], references: [topos.id] }),
   route: one(routes, { fields: [routePaths.routeId], references: [routes.id] }),
 }));
+
+export const guidePdfs = sqliteTable(
+  "guide_pdfs",
+  {
+    id: text("id").primaryKey(),
+    kind: text("kind").notNull(),
+    zoneId: text("zone_id")
+      .notNull()
+      .references(() => zones.id, { onDelete: "cascade" }),
+    wallId: text("wall_id").references(() => walls.id, { onDelete: "cascade" }),
+    filename: text("filename").notNull(),
+    bytes: blob("bytes", { mode: "buffer" }).notNull(),
+    generatedAt: integer("generated_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (table) => [
+    index("guide_pdfs_zone_idx").on(table.zoneId),
+    index("guide_pdfs_wall_idx").on(table.wallId),
+  ],
+);

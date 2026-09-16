@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   parsePath,
   parsePoint,
+  pointerRadius,
   serializePath,
   strokeWidthPx,
 } from "./path";
@@ -40,5 +41,12 @@ describe("strokeWidthPx", () => {
   it("matches the Skia drawer formula", () => {
     expect(strokeWidthPx(1, 1)).toBe(21.5);
     expect(strokeWidthPx(0.5, 2)).toBe(21.5);
+  });
+});
+
+describe("pointerRadius", () => {
+  it("keeps the andescalada start disc readable on a 4k topo", () => {
+    expect(pointerRadius(1)).toBe(100);
+    expect(pointerRadius(0.43)).toBe(90);
   });
 });

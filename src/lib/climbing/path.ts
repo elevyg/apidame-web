@@ -33,3 +33,16 @@ export function parsePoint(
 export function strokeWidthPx(routeStrokeWidth: number, scale = 1): number {
   return 21.5 * scale * routeStrokeWidth;
 }
+
+export function pointerRadius(routeStrokeWidth: number, scale = 1): number {
+  return Math.max(90, 100 * routeStrokeWidth) * scale;
+}
+
+export function pointerRingWidth(radius: number): number {
+  return radius / 5;
+}
+
+export function downArrowPath(radius: number): string {
+  const s = radius * 0.42;
+  return `M 0 ${-s * 0.9} V ${s * 0.15} M ${-s * 0.58} ${s * 0.02} L 0 ${s * 0.78} L ${s * 0.58} ${s * 0.02}`;
+}

@@ -8,11 +8,13 @@ import {
   users,
   walls,
   zones,
+  guidePdfs,
 } from "./schema";
 import type { GuideSeed } from "../lib/climbing/fromExtract";
 
 export async function replaceGuideSeed(seed: GuideSeed) {
   await db.delete(routePaths);
+  await db.delete(guidePdfs);
   await db.delete(routes);
   await db.delete(topos);
   await db.delete(walls);

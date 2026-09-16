@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { auth, isAdminEmail } from "@/auth";
 import { db } from "@/db/client";
 import { routePaths, routes, topos, zones } from "@/db/schema";
+import { refreshPdfsForWall, refreshZoneCover } from "@/lib/guide/store";
 
 async function requireAdmin() {
   const session = await auth();
@@ -13,6 +14,11 @@ async function requireAdmin() {
     throw new Error("No autorizado");
   }
   return session;
+}
+
+function revalidateGuide() {
+  revalidatePath("/deportiva");
+  revalidatePath("/dashboard");
 }
 
 export async function updateZone(formData: FormData) {
@@ -31,8 +37,8 @@ export async function updateZone(formData: FormData) {
       updatedAt: new Date(),
     })
     .where(eq(zones.id, id));
-  revalidatePath("/deportiva");
-  revalidatePath("/dashboard");
+  await refreshZoneCover(id);
+  revalidateGuide();
 }
 
 export async function updateRoute(formData: FormData) {
@@ -44,6 +50,12 @@ export async function updateRoute(formData: FormData) {
   const description = String(formData.get("description") ?? "").trim();
   const position = Number(formData.get("position") ?? 0);
   if (!id || !name) throw new Error("Falta el nombre de la ruta");
+  const current = await db
+    .select({ wallId: routes.wallId })
+    .from(routes)
+    .where(eq(routes.id, id))
+    .then((rows) => rows[0] ?? null);
+  if (!current) throw new Error("Ruta no encontrada");
   await db
     .update(routes)
     .set({
@@ -54,8 +66,8 @@ export async function updateRoute(formData: FormData) {
       position: Number.isFinite(position) ? position : 0,
     })
     .where(eq(routes.id, id));
-  revalidatePath("/deportiva");
-  revalidatePath("/dashboard");
+  await refreshPdfsForWall(current.wallId);
+  revalidateGuide();
 }
 
 export async function createRoute(formData: FormData) {
@@ -81,8 +93,8 @@ export async function createRoute(formData: FormData) {
     kind,
     position: Number.isFinite(position) ? position : 0,
   });
-  revalidatePath("/deportiva");
-  revalidatePath("/dashboard");
+  await refreshPdfsForWall(wallId);
+  revalidateGuide();
 }
 
 export async function saveRoutePath(formData: FormData) {
@@ -92,6 +104,12 @@ export async function saveRoutePath(formData: FormData) {
   const path = String(formData.get("path") ?? "").trim();
   const pathId = String(formData.get("pathId") ?? "");
   if (!topoId || !routeId || !path) throw new Error("Falta la línea");
+  const topo = await db
+    .select({ wallId: topos.wallId })
+    .from(topos)
+    .where(eq(topos.id, topoId))
+    .then((rows) => rows[0] ?? null);
+  if (!topo) throw new Error("Topo no encontrado");
 
   if (pathId) {
     await db
@@ -106,8 +124,8 @@ export async function saveRoutePath(formData: FormData) {
       path,
     });
   }
-  revalidatePath("/deportiva");
-  revalidatePath("/dashboard");
+  await refreshPdfsForWall(topo.wallId);
+  revalidateGuide();
 }
 
 export async function updateTopoMeta(formData: FormData) {
@@ -116,10 +134,16 @@ export async function updateTopoMeta(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const main = formData.get("main") === "on";
   if (!id) throw new Error("Falta el topo");
+  const topo = await db
+    .select({ wallId: topos.wallId })
+    .from(topos)
+    .where(eq(topos.id, id))
+    .then((rows) => rows[0] ?? null);
+  if (!topo) throw new Error("Topo no encontrado");
   await db
     .update(topos)
     .set({ name: name || null, main })
     .where(eq(topos.id, id));
-  revalidatePath("/deportiva");
-  revalidatePath("/dashboard");
+  await refreshPdfsForWall(topo.wallId);
+  revalidateGuide();
 }

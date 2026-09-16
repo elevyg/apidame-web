@@ -1,5 +1,5 @@
-import { requireZoneBySlug } from "@/lib/guide/queries";
-import { buildZonePdf } from "@/lib/guide/pdf";
+import { notFound } from "next/navigation";
+import { loadZonePdfBytes } from "@/lib/guide/store";
 
 type PdfProps = {
   params: Promise<{ zoneSlug: string }>;
@@ -7,13 +7,14 @@ type PdfProps = {
 
 export async function GET(_request: Request, { params }: PdfProps) {
   const { zoneSlug } = await params;
-  const guide = await requireZoneBySlug(zoneSlug);
-  const bytes = await buildZonePdf(guide);
-  return new Response(Buffer.from(bytes), {
+  const stored = await loadZonePdfBytes(zoneSlug);
+  if (!stored) notFound();
+  return new Response(Buffer.from(stored.bytes), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${zoneSlug}.pdf"`,
-      "Cache-Control": "public, max-age=300",
+      "Content-Disposition": `attachment; filename="${stored.filename}"`,
+      "Cache-Control": "no-store",
+      "Last-Modified": stored.generatedAt.toUTCString(),
     },
   });
 }

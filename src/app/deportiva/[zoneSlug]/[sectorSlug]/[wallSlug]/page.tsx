@@ -46,7 +46,7 @@ export default async function WallPage({ params }: WallPageProps) {
         </div>
         <div className="text-left md:text-right">
           <DownloadPdfLink
-            href={`/deportiva/${zone.slug}/${sector.slug}/${wall.slug}/pdf`}
+            href={`/deportiva/${zone.slug}/${sector.slug}/${wall.slug}/pdf?t=${storedPdf?.generatedAt.getTime() ?? Date.now()}`}
             event="deportiva_wall_pdf"
             properties={{ zone: zone.slug, wall: wall.slug }}
             className="font-brown text-sm tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"

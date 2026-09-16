@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { LineCapStyle, PDFDocument, PDFFont, PDFImage, PDFPage, StandardFonts, rgb } from "pdf-lib";
+import { LineCapStyle, PDFDocument, PDFFont, PDFImage, PDFPage, rgb } from "pdf-lib";
+import fontkit from "@pdf-lib/fontkit";
 import sharp from "sharp";
 import { pdfImageUrl } from "@/lib/climbing/cloudinary";
 import { parsePath, pointerRadius, pointerRingWidth, strokeWidthPx } from "@/lib/climbing/path";
@@ -61,9 +62,15 @@ async function embedPhoto(pdf: PDFDocument, url: string) {
 }
 
 async function loadFonts(pdf: PDFDocument): Promise<GuideFonts> {
+  pdf.registerFontkit(fontkit);
+  const dir = join(process.cwd(), "src/assets/fonts");
+  const [regular, bold] = await Promise.all([
+    readFile(join(dir, "LiberationSans-Regular.ttf")),
+    readFile(join(dir, "LiberationSans-Bold.ttf")),
+  ]);
   return {
-    body: await pdf.embedFont(StandardFonts.Helvetica),
-    bold: await pdf.embedFont(StandardFonts.HelveticaBold),
+    body: await pdf.embedFont(regular, { subset: true }),
+    bold: await pdf.embedFont(bold, { subset: true }),
   };
 }
 

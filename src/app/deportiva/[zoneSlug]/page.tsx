@@ -47,7 +47,7 @@ export default async function ZonePage({ params }: ZonePageProps) {
               ))
             : null}
           <DownloadPdfLink
-            href={`/deportiva/${zone.slug}/pdf`}
+            href={`/deportiva/${zone.slug}/pdf?t=${generatedAt?.getTime() ?? Date.now()}`}
             event="deportiva_zone_pdf"
             properties={{ zone: zone.slug }}
             className="font-brown mt-8 inline-block text-sm tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"

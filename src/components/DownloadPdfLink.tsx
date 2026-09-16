@@ -43,7 +43,7 @@ export default function DownloadPdfLink({
     setStatus("pending");
 
     try {
-      const response = await fetch(href);
+      const response = await fetch(href, { cache: "no-store" });
       if (!response.ok) throw new Error("pdf_failed");
       const blob = await response.blob();
       if (requestRef.current !== requestId) return;

@@ -21,31 +21,22 @@
     },
     {
       "id": "demasiadas",
-      "share": "Al principio llevaba demasiadas cintas: algunas a la izquierda, otras a la derecha, y algunas cruzadas como bandolera. Eso era lo que más convenía en los Gunks, porque había que extender mucho las piezas y se ponían muchos stoppers o material variado.",
+      "share": "Al principio llevaba demasiadas cintas: algunas a la izquierda, otras a la derecha, y algunas cruzadas como bandolera. Eso era lo que más convenía en los Gunks donde aprendí a escalar trad, porque había que extender mucho las piezas y se ponían muchos stoppers o material variado.",
       "type": "field",
       "kicker": "Al principio",
       "paras": [
-        "Al principio llevaba demasiadas cintas: algunas a la izquierda, otras a la derecha, y algunas cruzadas como bandolera. Eso era lo que más convenía en los Gunks, porque había que extender mucho las piezas y se ponían muchos stoppers o material variado."
+        "Al principio llevaba demasiadas cintas: algunas a la izquierda, otras a la derecha, y algunas cruzadas como bandolera. Eso era lo que más convenía en los Gunks donde aprendí a escalar trad, porque había que extender mucho las piezas y se ponían muchos stoppers o material variado."
       ],
       "tone": "beige"
     },
     {
       "id": "foto-foto-02-mu465ful",
-      "share": "Escalando",
+      "share": "Escalando en los Gunks",
       "type": "photo",
       "src": "/notas-de-cordada/estrategia-de-cintas/pool/foto-02.jpg",
-      "alt": "foto-02",
-      "caption": "Escalando",
+      "alt": "Escalando en los Gunks",
+      "caption": "Escalando en los Gunks",
       "object": "object-center"
-    },
-    {
-      "id": "foto-rack",
-      "share": "El rack viaja. La pregunta es cuánto y cómo.",
-      "type": "photo",
-      "src": "/notas-de-cordada/estrategia-de-cintas/rack-en-el-largo.jpg",
-      "alt": "Escalador de espaldas en chimenea con rack al hombro, dos cuerdas abajo",
-      "caption": "El rack viaja. La pregunta es cuánto y cómo.",
-      "object": "object-[48%_55%]"
     },
     {
       "id": "estrategia",
@@ -58,6 +49,15 @@
       "tone": "paper"
     },
     {
+      "id": "foto-rack",
+      "share": "La Cami en el tercer largo de Guanaco Tabaco",
+      "type": "photo",
+      "src": "/notas-de-cordada/estrategia-de-cintas/rack-en-el-largo.jpg",
+      "alt": "Escalador de espaldas en chimenea con rack al hombro, dos cuerdas abajo",
+      "caption": "La Cami en el tercer largo de Guanaco Tabaco",
+      "object": "object-[48%_55%]"
+    },
+    {
       "id": "splitter",
       "share": "Si vas a un splitter recto y hasta puedes ver la siguiente reunión, no lleves cintas. Ocupa el mosquetón del cam: ahorras peso, y es un movimiento menos cada vez que chapas.",
       "type": "field",
@@ -68,13 +68,78 @@
       "tone": "canvas"
     },
     {
+      "id": "navegacion",
+      "share": "Por el contrario, si el largo que sigue no es derecho y necesita navegación, voy a llevar más runners. Uno con el tiempo aprende bien como ordenar el largo, donde extender y cuando no conviene. Por ejemplo, si vas a proteger justo antes de un techo, por mucho que una cinta corta te de más seguridad, pon una cinta larga!.",
+      "type": "field",
+      "kicker": "Navegación",
+      "paras": [
+        "Por el contrario, si el largo que sigue no es derecho y necesita navegación, voy a llevar más runners. Uno con el tiempo aprende bien como ordenar el largo, donde extender y cuando no conviene. Por ejemplo, si vas a proteger justo antes de un techo, por mucho que una cinta corta te de más seguridad, pon una cinta larga!."
+      ],
+      "tone": "beige"
+    },
+    {
+      "id": "simples-o-dobles",
+      "share": "Acá es importante modificar tu estrategia si estás con cuerdas simples o cuerdas dobles. Si estás con cuerdas dobles, también puedes necesitar menos runners.",
+      "type": "field",
+      "kicker": "Simples o dobles",
+      "paras": [
+        "Acá es importante modificar tu estrategia si estás con cuerdas simples o cuerdas dobles. Si estás con cuerdas dobles, también puedes necesitar menos runners."
+      ],
+      "tone": "paper",
+      "link": {
+        "href": "/notas-de-cordada/cuerdas-dobles-o-simple-y-tagline",
+        "label": "¿Cuerdas dobles o cuerda simple y tagline?"
+      }
+    },
+    {
+      "id": "bandolera",
+      "share": "Sobre si llevar las runners con un solo mosquetón y en bandolera, hay varias ventajas y desventajas. Una ventaja es que uno tiene que hacer un movimiento menos para poner la runner, y lleva un mosquetón menos: es menos peso, y siempre estamos intentando reducir el peso que llevamos en el cuerpo, porque eso nos permite escalar mejor. Pero en particular a mí a veces me queda más cómodo sacar la cinta desde el arnés que hacer el gesto de sacarla desde la banda. Todo va a depender realmente de la dificultad del largo al cual te vas a enfrentar.",
+      "type": "field",
+      "kicker": "Bandolera",
+      "paras": [
+        "Sobre si llevar las runners con un solo mosquetón y en bandolera, hay varias ventajas y desventajas. Una ventaja es que uno tiene que hacer un movimiento menos para poner la runner, y lleva un mosquetón menos: es menos peso, y siempre estamos intentando reducir el peso que llevamos en el cuerpo, porque eso nos permite escalar mejor.",
+        "Pero en particular a mí a veces me queda más cómodo sacar la cinta desde el arnés que hacer el gesto de sacarla desde la banda. Todo va a depender realmente de la dificultad del largo al cual te vas a enfrentar."
+      ],
+      "tone": "beige"
+    },
+    {
+      "id": "packs",
+      "share": "Las cintas express y las runners las llevamos en pack de cuatro: un mosquetón conectado al portaequipo del arnés, y las otras tres cintas conectadas a ese primer mosquetón. Ocupa menos espacio en el arnés, y la cordada mantiene ese orden: cuando toca cambiar quién puntea, es un movimiento pasarle cuatro cintas versus cuatro movimientos por separado. En multilargos he aprendido de grandes maestros que importa mucho reducir la cantidad de movimientos y optimizar esas gestualidades.",
+      "type": "field",
+      "kicker": "Packs de cuatro",
+      "paras": [
+        "Las cintas express y las runners las llevamos en pack de cuatro: un mosquetón que va conectado al portaequipo del arnés, y después las otras tres cintas van conectadas a ese primer mosquetón.",
+        "Esto tiene dos ventajas. La primera es que ocupa menos espacio en el arnés. La segunda es que tu cordada también mantiene ese orden: cuando llega a la reunión y toca cambiar quién puntea, es un movimiento menos pasarle cuatro cintas versus pasar cada cinta por separado, lo cual serían cuatro movimientos.",
+        "Tanto en este post como en varios voy a hablar mucho de los movimientos, porque en multilargos he aprendido de grandes maestros que importa mucho reducir la cantidad de movimientos y optimizar esas gestualidades también."
+      ],
+      "tone": "canvas"
+    },
+    {
       "id": "foto-ocun",
-      "share": "Express: el recuento y el arnés vienen después.",
+      "share": "Estas cintas livianas ayudan a ahorrar peso en el arnés",
       "type": "photo",
       "src": "/notas-de-cordada/estrategia-de-cintas/ocun-express.jpg",
       "alt": "Set de quickdraws Ocun colgando de una cuerda, mosquetones negros y azules",
-      "caption": "Express. El recuento y el arnés vienen después.",
+      "caption": "Estas cintas livianas ayudan a ahorrar peso en el arnés",
       "object": "object-center"
+    },
+    {
+      "id": "papeo",
+      "share": "Aunque vengas con cuerdas dobles o cuerdas simples, en Cerro Apidame se necesitan pocas cintas. Nosotros normalmente vamos con nueve: ocho —cuatro a cada lado— y una cinta reservada para poner al comienzo de cada largo, para evitar el factor dos.\n\nA esa cinta nosotros le llamamos el Jesus (pero dicho en inglés). No tiene nada de especial, pero la reservamos para eso: si esa cinta sobra, es porque no hemos puesto la que va a la reunión para evitar una caída factor dos en caso de caer antes de poner un primer seguro.\n\nEl Apidame permite poner muy buenos stoppers, en ese caso tendrías que llevar más cintas. Aunque si tienes hartos cams pequeños, también puedes usar menos. O simplemente no llevar.",
+      "type": "field",
+      "kicker": "¿Y para el Apidame?",
+      "paras": [
+        "Aunque vengas con cuerdas dobles o cuerdas simples, en Cerro Apidame se necesitan pocas cintas. Nosotros normalmente vamos con nueve: ocho —cuatro a cada lado— y una cinta reservada para poner al comienzo de cada largo, para evitar el factor dos.",
+        "A esa cinta nosotros le llamamos el Jesus (pero dicho en inglés). No tiene nada de especial, pero la reservamos para eso: si esa cinta sobra, es porque no hemos puesto la que va a la reunión para evitar una caída factor dos en caso de caer antes de poner un primer seguro.",
+        "El Apidame permite poner muy buenos stoppers, en ese caso tendrías que llevar más cintas. Aunque si tienes hartos cams pequeños, también puedes usar menos. O simplemente no llevar."
+      ],
+      "tone": "editorial-light",
+      "feature": "nueve cintas",
+      "meta": [
+        "Cerro Apidame",
+        "4 + 4 + Jesus",
+        "evitar factor dos"
+      ]
     }
   ]
 }

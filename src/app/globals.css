@@ -8,6 +8,7 @@
   --color-rule: #1c1916;
   --color-canvas: #12110f;
   --color-canvas-ink: #ffffff;
+  --color-accent: #f59e0b;
   --color-signal: #9c3b1e;
   --color-beige: #e8e2d4;
 
@@ -64,13 +65,15 @@ body {
   color: var(--color-paper);
 }
 
-.kicker {
-  font-family: var(--font-brown), ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.6875rem;
-  font-weight: 400;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--color-ink-soft);
+@layer components {
+  .kicker {
+    font-family: var(--font-brown), ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
 }
 
 .feed-cover-heading {
@@ -104,10 +107,11 @@ body {
 
 .feed-cover-kicker {
   min-width: 0;
-  font-size: clamp(0.625rem, 2.2cqw, 0.75rem);
+  font-size: 1.25rem;
   line-height: 1;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  color: var(--color-accent);
 }
 
 .feed-cover-papeo {

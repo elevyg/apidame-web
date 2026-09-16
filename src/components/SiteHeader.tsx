@@ -53,6 +53,8 @@ export default function SiteHeader({
   const [revealReady, setRevealReady] = useState(!floats);
   const headerRef = useRef<HTMLElement>(null);
   const openRef = useRef(false);
+  const hideTimerRef = useRef(0);
+  const menuWasOpen = useRef(false);
   const menuId = useId();
   const close = () => setOpen(false);
   openRef.current = open;
@@ -127,8 +129,26 @@ export default function SiteHeader({
 
     let last = el.scrollTop;
     let touchY = 0;
-    const show = () => setRevealed(true);
+    const hideAfterMs = 2200;
+
+    const clearHideTimer = () => {
+      window.clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = 0;
+    };
+    const scheduleHide = () => {
+      clearHideTimer();
+      hideTimerRef.current = window.setTimeout(() => {
+        hideTimerRef.current = 0;
+        if (!openRef.current) setRevealed(false);
+      }, hideAfterMs);
+    };
+    const show = () => {
+      setRevealed(true);
+      if (openRef.current) clearHideTimer();
+      else scheduleHide();
+    };
     const hide = () => {
+      clearHideTimer();
       if (!openRef.current) setRevealed(false);
     };
 
@@ -151,15 +171,10 @@ export default function SiteHeader({
       else if (touchY - y > 14) hide();
     };
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "ArrowUp" || event.key === "ArrowLeft" || event.key === "PageUp") {
+      if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
         show();
       }
-      if (
-        event.key === "ArrowDown" ||
-        event.key === "ArrowRight" ||
-        event.key === "PageDown" ||
-        event.key === " "
-      ) {
+      if (event.key === "ArrowDown" || event.key === "ArrowRight") {
         hide();
       }
     };
@@ -171,6 +186,7 @@ export default function SiteHeader({
     el.addEventListener("touchmove", onTouchMove, { passive: true });
     window.addEventListener("keydown", onKey);
     return () => {
+      clearHideTimer();
       window.cancelAnimationFrame(frame);
       el.removeEventListener("wheel", onWheel);
       el.removeEventListener("scroll", onScroll);
@@ -179,6 +195,28 @@ export default function SiteHeader({
       window.removeEventListener("keydown", onKey);
     };
   }, [autoHide]);
+
+  useEffect(() => {
+    if (!autoHide) return;
+    if (open) {
+      menuWasOpen.current = true;
+      window.clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = 0;
+      setRevealed(true);
+      return;
+    }
+    if (!menuWasOpen.current) return;
+    menuWasOpen.current = false;
+    window.clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = window.setTimeout(() => {
+      hideTimerRef.current = 0;
+      if (!openRef.current) setRevealed(false);
+    }, 2200);
+    return () => {
+      window.clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = 0;
+    };
+  }, [autoHide, open]);
 
   useEffect(() => {
     if (!open) return;

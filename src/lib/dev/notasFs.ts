@@ -40,6 +40,12 @@ const cardSchema = z.intersection(
       tone: cardTone,
       feature: z.string().optional(),
       meta: z.array(z.string()).optional(),
+      link: z
+        .object({
+          href: z.string(),
+          label: z.string(),
+        })
+        .optional(),
     }),
     z.object({
       type: z.literal("photo"),

@@ -24,6 +24,10 @@ export type FieldCard = {
   tone: CardTone;
   feature?: string;
   meta?: string[];
+  link?: {
+    href: string;
+    label: string;
+  };
 };
 
 export type PhotoCard = {

@@ -506,7 +506,7 @@ export function DevEditorChrome({
         ) : null}
         <button
           type="button"
-          className="pointer-events-auto rounded bg-amber-500 px-3 py-2 font-brown text-[0.65rem] tracking-[0.16em] text-ink uppercase shadow"
+          className="pointer-events-auto rounded bg-accent px-3 py-2 font-brown text-[0.65rem] tracking-[0.16em] text-ink uppercase shadow"
           onClick={() => {
             onEditCardId(null);
             onPhotosOpen(true);

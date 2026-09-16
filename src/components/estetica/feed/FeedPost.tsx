@@ -14,6 +14,8 @@ import {
 import { motion, useReducedMotion } from "framer-motion";
 import {
   cuerdasPost,
+  getFeedPost,
+  getPostCover,
   type Card,
   type CardTone,
   type FeedPostData,
@@ -36,7 +38,7 @@ const tones: Record<
     bg: "bg-canvas",
     fg: "text-canvas-ink",
     mute: "text-white/45",
-    kicker: "text-canvas-ink/55",
+    kicker: "text-accent",
   },
   beige: {
     bg: "bg-beige",
@@ -54,7 +56,7 @@ const tones: Record<
     bg: "bg-canvas",
     fg: "text-paper",
     mute: "text-paper",
-    kicker: "text-paper",
+    kicker: "text-accent",
   },
 };
 
@@ -333,13 +335,74 @@ function CardFace({
       <FillType
         min={16}
         max={40}
-        className="font-brown mt-4 flex flex-col gap-[0.8em] leading-[1.45]"
+        className="font-brown mt-4 flex min-h-0 flex-1 flex-col gap-[0.8em] leading-[1.45]"
       >
         {card.paras.map((para) => (
           <p key={para.slice(0, 48)}>{para}</p>
         ))}
       </FillType>
+      {card.link ? (
+        <RelatedNoteCard
+          href={card.link.href}
+          label={card.link.label}
+          onDark={card.tone === "canvas" || card.tone === "editorial-dark"}
+        />
+      ) : null}
     </div>
+  );
+}
+
+function RelatedNoteCard({
+  href,
+  label,
+  onDark,
+}: {
+  href: string;
+  label: string;
+  onDark: boolean;
+}) {
+  const slug = href.split("/").filter(Boolean).pop() ?? "";
+  const post = getFeedPost(slug);
+  const cover = post ? getPostCover(post) : undefined;
+  const title = post?.title ?? label;
+
+  return (
+    <Link
+      href={href}
+      className={`mt-5 flex shrink-0 items-stretch gap-3 border p-2 transition ${
+        onDark
+          ? "border-white/20 bg-canvas hover:border-accent"
+          : "border-rule bg-paper hover:border-accent"
+      }`}
+      data-share-ignore
+    >
+      {cover ? (
+        <div className="bg-canvas relative aspect-[3/4] w-[4.25rem] shrink-0 overflow-hidden">
+          <Image
+            src={cover.src}
+            alt=""
+            fill
+            sizes="68px"
+            className={`object-cover ${cover.object}`}
+          />
+        </div>
+      ) : null}
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 py-1 pr-1">
+        <p className="font-brown text-accent text-[0.65rem] tracking-[0.16em] uppercase">
+          Nota relacionada
+        </p>
+        <p className="font-display text-[1.05rem] leading-[1.05] tracking-[-0.03em] italic">
+          {title}
+        </p>
+        <p
+          className={`font-brown text-[0.62rem] tracking-[0.14em] uppercase ${
+            onDark ? "text-white/55" : "text-ink-soft"
+          }`}
+        >
+          Abrir nota ↗
+        </p>
+      </div>
+    </Link>
   );
 }
 
@@ -458,7 +521,7 @@ function Slide({
             {onDevEdit ? (
               <button
                 type="button"
-                className={`${mark} rounded bg-amber-500 px-2 py-1 text-ink [text-shadow:none]`}
+                className={`${mark} rounded bg-accent px-2 py-1 text-ink [text-shadow:none]`}
                 onClick={onDevEdit}
                 data-share-ignore
               >

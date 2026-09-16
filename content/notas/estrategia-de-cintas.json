@@ -1,0 +1,80 @@
+{
+  "slug": "estrategia-de-cintas",
+  "title": "Estrategia de cintas",
+  "description": "Cuántas express, cuántas runners y cómo ponérselas en el arnés: primero la estrategia de la ruta, no un rack mecánico.",
+  "og": {
+    "title": "Estrategia de cintas",
+    "subtitle": "Mirar arriba, no repetir el mismo rack",
+    "imageAlt": "Notas de cordada de Apidame: estrategia de cintas"
+  },
+  "cards": [
+    {
+      "id": "titulo",
+      "share": "Estrategia de cintas",
+      "type": "title",
+      "kicker": "Notas de cordada",
+      "text": "Estrategia de cintas",
+      "tone": "paper",
+      "art": "/notas-de-cordada/estrategia-de-cintas/pool/foto-10.jpg",
+      "artAlt": "Vista hacia abajo en chimenea de granito: escaladora sonriendo a cámara",
+      "object": "object-[50%_35%]"
+    },
+    {
+      "id": "demasiadas",
+      "share": "Al principio llevaba demasiadas cintas: algunas a la izquierda, otras a la derecha, y algunas cruzadas como bandolera. Eso era lo que más convenía en los Gunks, porque había que extender mucho las piezas y se ponían muchos stoppers o material variado.",
+      "type": "field",
+      "kicker": "Al principio",
+      "paras": [
+        "Al principio llevaba demasiadas cintas: algunas a la izquierda, otras a la derecha, y algunas cruzadas como bandolera. Eso era lo que más convenía en los Gunks, porque había que extender mucho las piezas y se ponían muchos stoppers o material variado."
+      ],
+      "tone": "beige"
+    },
+    {
+      "id": "foto-foto-02-mu465ful",
+      "share": "Escalando",
+      "type": "photo",
+      "src": "/notas-de-cordada/estrategia-de-cintas/pool/foto-02.jpg",
+      "alt": "foto-02",
+      "caption": "Escalando",
+      "object": "object-center"
+    },
+    {
+      "id": "foto-rack",
+      "share": "El rack viaja. La pregunta es cuánto y cómo.",
+      "type": "photo",
+      "src": "/notas-de-cordada/estrategia-de-cintas/rack-en-el-largo.jpg",
+      "alt": "Escalador de espaldas en chimenea con rack al hombro, dos cuerdas abajo",
+      "caption": "El rack viaja. La pregunta es cuánto y cómo.",
+      "object": "object-[48%_55%]"
+    },
+    {
+      "id": "estrategia",
+      "share": "Después vi que cada pared pide una forma distinta de poner cintas. Lo más importante es preguntarse cuál va a ser mi estrategia de cintas para esta ruta, entendiendo lo que estoy mirando arriba, no haciendo algo mecánico.",
+      "type": "field",
+      "kicker": "Cada pared",
+      "paras": [
+        "Después vi que cada pared pide una forma distinta de poner cintas. Lo más importante es preguntarse cuál va a ser mi estrategia de cintas para esta ruta, entendiendo lo que estoy mirando arriba, no haciendo algo mecánico."
+      ],
+      "tone": "paper"
+    },
+    {
+      "id": "splitter",
+      "share": "Si vas a un splitter recto y hasta puedes ver la siguiente reunión, no lleves cintas. Ocupa el mosquetón del cam: ahorras peso, y es un movimiento menos cada vez que chapas.",
+      "type": "field",
+      "kicker": "Sin cintas",
+      "paras": [
+        "Si vas a un splitter recto y hasta puedes ver la siguiente reunión, no lleves cintas. Ocupa el mosquetón del cam: ahorras peso, y es un movimiento menos cada vez que chapas."
+      ],
+      "tone": "canvas"
+    },
+    {
+      "id": "foto-ocun",
+      "share": "Express: el recuento y el arnés vienen después.",
+      "type": "photo",
+      "src": "/notas-de-cordada/estrategia-de-cintas/ocun-express.jpg",
+      "alt": "Set de quickdraws Ocun colgando de una cuerda, mosquetones negros y azules",
+      "caption": "Express. El recuento y el arnés vienen después.",
+      "object": "object-center"
+    }
+  ]
+}

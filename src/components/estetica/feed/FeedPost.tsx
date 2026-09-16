@@ -18,6 +18,9 @@ import {
   type CardTone,
   type FeedPostData,
 } from "./posts";
+import { DevEditorChrome } from "./dev/DevEditor";
+
+const isDev = process.env.NODE_ENV === "development";
 
 const tones: Record<
   CardTone,
@@ -243,6 +246,7 @@ function CardFace({
           src={card.src}
           alt={card.alt}
           fill
+          quality={92}
           sizes="(max-width: 768px) 100vw, 36rem"
           className={`object-cover ${card.object ?? "object-center"}`}
         />
@@ -263,6 +267,7 @@ function CardFace({
             alt={card.artAlt ?? card.text}
             fill
             priority
+            quality={92}
             sizes="(max-width: 768px) 100vw, 36rem"
             className={`object-cover ${card.object ?? "object-center"}`}
           />
@@ -403,6 +408,7 @@ function Slide({
   closeHref,
   papeoIndex,
   postId,
+  onDevEdit,
 }: {
   card: Card;
   index: number;
@@ -411,6 +417,7 @@ function Slide({
   closeHref: string;
   papeoIndex: number;
   postId: string;
+  onDevEdit?: () => void;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const editorialRef = useRef<HTMLDivElement>(null);
@@ -447,17 +454,27 @@ function Slide({
           >
             {index + 1} / {total}
           </p>
-          {index === 0 ? (
-            <Link
-              href={closeHref}
-              className={`pointer-events-auto ${mark} ${ink}`}
-              data-share-ignore
-            >
-              Cerrar
-            </Link>
-          ) : (
-            <span />
-          )}
+          <div className="pointer-events-auto flex items-center gap-3">
+            {onDevEdit ? (
+              <button
+                type="button"
+                className={`${mark} rounded bg-amber-500 px-2 py-1 text-ink [text-shadow:none]`}
+                onClick={onDevEdit}
+                data-share-ignore
+              >
+                Editar
+              </button>
+            ) : null}
+            {index === 0 ? (
+              <Link
+                href={closeHref}
+                className={`${mark} ${ink}`}
+                data-share-ignore
+              >
+                Cerrar
+              </Link>
+            ) : null}
+          </div>
         </div>
         <div className="contents">
           <CardFace
@@ -530,8 +547,15 @@ export default function FeedPost({
   const scroller = useRef<HTMLElement>(null);
   const page = useRef(0);
   const reduce = useReducedMotion();
-  const cards = post.cards;
+  const [draft, setDraft] = useState(post);
+  const [editCardId, setEditCardId] = useState<string | null>(null);
+  const [photosOpen, setPhotosOpen] = useState(false);
+  const cards = draft.cards;
   const papeoIndex = cards.findIndex((card) => card.id === "papeo");
+
+  useEffect(() => {
+    setDraft(post);
+  }, [post]);
 
   const jumpTo = useCallback(
     (to: number) => {
@@ -569,20 +593,21 @@ export default function FeedPost({
       }, 620);
     };
     const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
       if (
-        event.key === "ArrowDown" ||
-        event.key === "ArrowRight" ||
-        event.key === "PageDown" ||
-        event.key === " "
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable)
       ) {
+        return;
+      }
+      if (event.key === "ArrowDown" || event.key === "ArrowRight") {
         event.preventDefault();
         go(1);
       }
-      if (
-        event.key === "ArrowUp" ||
-        event.key === "ArrowLeft" ||
-        event.key === "PageUp"
-      ) {
+      if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
         event.preventDefault();
         go(-1);
       }
@@ -602,7 +627,7 @@ export default function FeedPost({
     };
   }, [jumpTo, reduce]);
 
-  return (
+  const feed = (
     <main
       ref={scroller}
       data-feed-scroller
@@ -617,9 +642,32 @@ export default function FeedPost({
           onJump={jumpTo}
           closeHref={closeHref}
           papeoIndex={papeoIndex}
-          postId={post.slug}
+          postId={draft.slug}
+          onDevEdit={
+            isDev
+              ? () => {
+                  setEditCardId(card.id);
+                  setPhotosOpen(false);
+                }
+              : undefined
+          }
         />
       ))}
     </main>
+  );
+
+  if (!isDev) return feed;
+
+  return (
+    <DevEditorChrome
+      post={draft}
+      onPostChange={setDraft}
+      editCardId={editCardId}
+      onEditCardId={setEditCardId}
+      photosOpen={photosOpen}
+      onPhotosOpen={setPhotosOpen}
+    >
+      {feed}
+    </DevEditorChrome>
   );
 }

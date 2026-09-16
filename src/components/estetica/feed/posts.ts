@@ -1,3 +1,5 @@
+import cintasJson from "../../../../content/notas/estrategia-de-cintas.json";
+
 export type CardTone =
   | "paper"
   | "canvas"
@@ -46,7 +48,7 @@ export type FeedPostData = {
     subtitle: string;
     imageAlt: string;
   };
-  cards: readonly Card[];
+  cards: Card[];
 };
 
 const postCards: Card[] = [
@@ -220,93 +222,7 @@ export const cuerdasPost: FeedPostData = {
   cards: postCards,
 };
 
-const cintasCards: Card[] = [
-  {
-    id: "titulo",
-    type: "title",
-    tone: "paper",
-    kicker: "Notas de cordada",
-    text: "Estrategia de cintas",
-    art: "/notas-de-cordada/estrategia-de-cintas/portada-chimenea.jpg",
-    artAlt:
-      "Vista hacia abajo en chimenea de granito: escaladora sonriendo a cámara",
-    object: "object-[50%_35%]",
-    share: "Estrategia de cintas",
-  },
-  {
-    id: "demasiadas",
-    type: "field",
-    tone: "beige",
-    kicker: "Al principio",
-    paras: [
-      "Al principio llevaba demasiadas cintas: algunas a la izquierda, otras a la derecha, y algunas cruzadas como bandolera. Eso era lo que más convenía en los Gunks, porque había que extender mucho las piezas y se ponían muchos stoppers o material variado.",
-    ],
-    share:
-      "Al principio llevaba demasiadas cintas: algunas a la izquierda, otras a la derecha, y algunas cruzadas como bandolera. Eso era lo que más convenía en los Gunks, porque había que extender mucho las piezas y se ponían muchos stoppers o material variado.",
-  },
-  {
-    id: "foto-rack",
-    type: "photo",
-    src: "/notas-de-cordada/estrategia-de-cintas/rack-en-el-largo.jpg",
-    alt: "Escalador de espaldas en chimenea con rack al hombro, dos cuerdas abajo",
-    caption: "El rack viaja. La pregunta es cuánto y cómo.",
-    object: "object-[48%_55%]",
-    share: "El rack viaja. La pregunta es cuánto y cómo.",
-  },
-  {
-    id: "estrategia",
-    type: "field",
-    tone: "paper",
-    kicker: "Cada pared",
-    paras: [
-      "Después vi que cada pared pide una forma distinta de poner cintas. Lo más importante es preguntarse cuál va a ser mi estrategia de cintas para esta ruta, entendiendo lo que estoy mirando arriba, no haciendo algo mecánico.",
-    ],
-    share:
-      "Después vi que cada pared pide una forma distinta de poner cintas. Lo más importante es preguntarse cuál va a ser mi estrategia de cintas para esta ruta, entendiendo lo que estoy mirando arriba, no haciendo algo mecánico.",
-  },
-  {
-    id: "foto-fisura-continua",
-    type: "photo",
-    src: "/notas-de-cordada/estrategia-de-cintas/fisura-continua.jpg",
-    alt: "Vista desde abajo de una fisura continua en arenisca",
-    caption: "Splitter recto. Chapo con el mosquetón del cam.",
-    object: "object-[50%_45%]",
-    share: "Splitter recto: chapo con el mosquetón del cam.",
-  },
-  {
-    id: "splitter",
-    type: "field",
-    tone: "canvas",
-    kicker: "Sin cintas",
-    paras: [
-      "Si vas a un splitter recto y hasta puedes ver la siguiente reunión, no lleves cintas. Ocupa el mosquetón del cam: ahorras peso, y es un movimiento menos cada vez que chapas.",
-    ],
-    share:
-      "Si vas a un splitter recto y hasta puedes ver la siguiente reunión, no lleves cintas. Ocupa el mosquetón del cam: ahorras peso, y es un movimiento menos cada vez que chapas.",
-  },
-  {
-    id: "foto-ocun",
-    type: "photo",
-    src: "/notas-de-cordada/estrategia-de-cintas/ocun-express.jpg",
-    alt: "Set de quickdraws Ocun colgando de una cuerda, mosquetones negros y azules",
-    caption: "Express. El recuento y el arnés vienen después.",
-    object: "object-center",
-    share: "Express: el recuento y el arnés vienen después.",
-  },
-];
-
-export const cintasPost: FeedPostData = {
-  slug: "estrategia-de-cintas",
-  title: "Estrategia de cintas",
-  description:
-    "Cuántas express, cuántas runners y cómo ponérselas en el arnés: primero la estrategia de la ruta, no un rack mecánico.",
-  og: {
-    title: "Estrategia de cintas",
-    subtitle: "Mirar arriba, no repetir el mismo rack",
-    imageAlt: "Notas de cordada de Apidame: estrategia de cintas",
-  },
-  cards: cintasCards,
-};
+export const cintasPost: FeedPostData = cintasJson as FeedPostData;
 
 export const posts: readonly FeedPostData[] = [cuerdasPost, cintasPost];
 export const cards = cuerdasPost.cards;

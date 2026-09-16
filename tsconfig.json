@@ -28,6 +28,7 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.mjs",
+    "content/notas/**/*.json",
     "next-env.d.ts",
     ".next/types/**/*.ts"
   ],

@@ -10,26 +10,16 @@ import {
   siteTitle,
   siteUrl,
 } from "./site";
+import { pageMetadata } from "./seo";
 
 export const metadata: Metadata = {
+  ...pageMetadata({
+    title: siteTitle,
+    description: siteDescription,
+    path: "/",
+    shareTitle: siteTitle,
+  }),
   title: { absolute: siteTitle },
-  description: siteDescription,
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: siteTitle,
-    description: siteDescription,
-    url: "/",
-    siteName,
-    locale: "es_CL",
-    type: "website",
-    images: [siteOgImage],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: siteTitle,
-    description: siteDescription,
-    images: [siteOgImage.url],
-  },
 };
 
 const structuredData = {

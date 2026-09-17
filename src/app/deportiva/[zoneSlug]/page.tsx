@@ -8,6 +8,7 @@ import ZoneMap from "@/components/climbing/ZoneMap";
 import { requireZoneBySlug } from "@/lib/guide/queries";
 import { formatGuideDate } from "@/lib/guide/layout";
 import { latestPdfDate } from "@/lib/guide/store";
+import { flattenDescription, pageMetadata } from "../../seo";
 import { buildZoneMapView, WEB_MAP_SIZE } from "@/lib/guide/mapView";
 import { mapboxToken } from "@/lib/guide/mapbox";
 import { zoneToMapInput } from "@/lib/guide/zoneMap";
@@ -21,12 +22,16 @@ export async function generateMetadata({
 }: ZonePageProps): Promise<Metadata> {
   const { zoneSlug } = await params;
   const data = await requireZoneBySlug(zoneSlug);
-  return {
-    title: data.zone.name,
-    description:
-      data.zone.description?.slice(0, 160) ??
-      `Topo de ${data.zone.name} en Chile Chico.`,
-  };
+  const title = `${data.zone.name} · Chile Chico`;
+  const description = flattenDescription(
+    data.zone.description,
+    `Topo de ${data.zone.name} en Chile Chico.`,
+  );
+  return pageMetadata({
+    title,
+    description,
+    path: `/deportiva/${data.zone.slug}`,
+  });
 }
 
 export default async function ZonePage({ params }: ZonePageProps) {

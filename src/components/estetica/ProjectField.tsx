@@ -59,7 +59,7 @@ export default function ProjectField({ lab = false }: ProjectFieldProps) {
         <div className={clusterShell}>
           <ProjectCluster
             name="Cerro Apidame"
-            kicker="Parque Nacional Patagonia"
+            kicker="Cerro Colorado · Parque Nacional Patagonia"
             cta={{ label: "Ver topos", href: "/topos" }}
             layout="banner"
             primary={{

@@ -7,11 +7,37 @@ import Notice from "@/components/Notice";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import TrackedLink from "@/components/TrackedLink";
+import { pageMetadata } from "../seo";
+import { siteUrl } from "../site";
 
-export const metadata: Metadata = {
-  title: "Topos",
-  description:
-    "Topos del Cerro Apidame en el Parque Nacional Patagonia. Proa y Repisa Central, equipo y acceso desde Chile Chico.",
+const title = "Cerro Apidame · Chile Chico";
+const description =
+  "Topos del Cerro Apidame (también le dicen Cerro Colorado) en el Parque Nacional Patagonia, cerca de Chile Chico. Equipo, acceso y líneas de Proa y Repisa Central.";
+
+export const metadata: Metadata = pageMetadata({
+  title,
+  description,
+  path: "/topos",
+});
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TouristAttraction",
+  name: "Cerro Apidame",
+  alternateName: "Cerro Colorado",
+  description,
+  url: `${siteUrl}/topos`,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Chile Chico",
+    addressRegion: "Aysén",
+    addressCountry: "CL",
+  },
+  touristType: "Escalada tradicional",
+  isPartOf: {
+    "@type": "Place",
+    name: "Parque Nacional Patagonia",
+  },
 };
 
 export default function Topos() {
@@ -29,9 +55,9 @@ export default function Topos() {
           </h1>
           <p className="measure font-brown text-ink-soft mt-6 text-base leading-relaxed md:text-lg">
             Destino de fisura en uno de los extremos del parque más cercanos a
-            Chile Chico. Rutas de un largo y multilargos en estilo tradicional,
-            con un microclima que permite escalar cuando el resto de la región
-            no da.
+            Chile Chico. También le dicen Cerro Colorado. Rutas de un largo y
+            multilargos en estilo tradicional, con un microclima que permite
+            escalar cuando el resto de la región no da.
           </p>
         </header>
 
@@ -51,7 +77,7 @@ export default function Topos() {
             <div>
               <h2 className="font-display text-2xl md:text-3xl">Equipo</h2>
               <p className="font-brown text-ink-soft mt-4 text-sm leading-relaxed md:text-base">
-                Dos cuerdas de 60m son imprescindibles. Un rack doble de #2 a #3
+                Dos cuerdas de 60m son imprescindibles. Un rack doble de #0.2 a #3
                 más un juego de stoppers pequeños resuelve la mayoría de las
                 rutas. Uno o dos #4 ayudan en algunos largos, y conviene llevar
                 cordín para reemplazar los rapeles.
@@ -156,6 +182,10 @@ export default function Topos() {
       </article>
 
       <SiteFooter />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
     </main>
   );
 }

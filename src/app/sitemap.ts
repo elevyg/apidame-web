@@ -1,10 +1,6 @@
 import type { MetadataRoute } from "next";
 import { posts } from "@/components/estetica/feed/posts";
-
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  process.env.SITE_URL ??
-  "https://apidameboulder.com";
+import { siteUrl } from "./site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -45,6 +41,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.9,
+    },
+    {
+      url: `${siteUrl}/topos/proa-repisa`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
     },
     {
       url: `${siteUrl}/quienes-somos`,

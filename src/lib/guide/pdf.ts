@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { LineCapStyle, PDFDocument, PDFFont, PDFImage, PDFPage, rgb } from "pdf-lib";
+import { LineCapStyle, PDFDocument, rgb } from "pdf-lib";
+import type { PDFFont, PDFImage, PDFPage } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import sharp from "sharp";
 import { pdfImageUrl } from "@/lib/climbing/cloudinary";

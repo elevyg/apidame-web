@@ -13,11 +13,39 @@ function assetBase() {
   );
 }
 
-async function readPublicAsset(src: string) {
+function assertSafeRelative(rest: string, src: string) {
+  const parts = rest.split("/").filter(Boolean);
+  if (
+    parts.length === 0 ||
+    parts.some((part) => part === "." || part === ".." || part.includes("\\"))
+  ) {
+    throw new Error(`Portada OG inválida (${src})`);
+  }
+  return parts;
+}
+
+export function publicOgAssetPath(src: string, cwd = process.cwd()) {
   const relative = src.replace(/^\//, "");
+  if (relative.startsWith("estetica/feed/")) {
+    const parts = assertSafeRelative(relative.slice("estetica/feed/".length), src);
+    return join(cwd, "public", "estetica", "feed", ...parts);
+  }
+  if (relative.startsWith("notas-de-cordada/")) {
+    const parts = assertSafeRelative(
+      relative.slice("notas-de-cordada/".length),
+      src,
+    );
+    return join(cwd, "public", "notas-de-cordada", ...parts);
+  }
+  throw new Error(`Portada OG fuera de los directorios permitidos (${src})`);
+}
+
+async function readPublicAsset(src: string) {
+  const filePath = publicOgAssetPath(src);
   try {
-    return await readFile(join(process.cwd(), "public", relative));
+    return await readFile(/* turbopackIgnore: true */ filePath);
   } catch {
+    const relative = src.replace(/^\//, "");
     const res = await fetch(new URL(`/${relative}`, assetBase()));
     if (!res.ok) {
       throw new Error(`No se pudo leer la portada OG (${src})`);

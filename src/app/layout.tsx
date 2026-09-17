@@ -66,7 +66,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es-CL">
+    <html lang="es-CL" data-scroll-behavior="smooth">
       <body
         className={`${foregen.variable} ${brown.variable} ${holluise.variable} bg-paper text-ink antialiased`}
       >

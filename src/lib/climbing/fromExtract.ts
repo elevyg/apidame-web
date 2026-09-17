@@ -1,3 +1,5 @@
+import { FRENCH_GRADE_SYSTEM, toFrenchGrade } from "./frenchGrade";
+
 const SKIP_SECTOR_SLUGS = new Set(["test"]);
 
 export type ExtractDump = {
@@ -32,6 +34,8 @@ export type SeedZone = {
   coverImageHeight: number | null;
   coverPublicId: string | null;
   published: boolean;
+  latitude: number | null;
+  longitude: number | null;
 };
 
 export type SeedSector = {
@@ -41,6 +45,13 @@ export type SeedSector = {
   name: string;
   position: number;
   kind: string;
+  latitude: number | null;
+  longitude: number | null;
+};
+
+export type LocationSeed = {
+  zones: Record<string, { latitude: number; longitude: number }>;
+  sectors: Record<string, { latitude: number; longitude: number }>;
 };
 
 export type SeedWall = {
@@ -123,6 +134,8 @@ export function seedFromExtract(extract: ExtractDump): GuideSeed {
       coverImageHeight: cover ? Number(cover.height) : null,
       coverPublicId: cover?.publicId ? String(cover.publicId) : null,
       published: zone.currentStatus === "Published",
+      latitude: null,
+      longitude: null,
     };
   });
 
@@ -141,6 +154,8 @@ export function seedFromExtract(extract: ExtractDump): GuideSeed {
       name: String(sector.name),
       position: Number(sector.position),
       kind: String(sector.sectorKind ?? "Wall"),
+      latitude: null,
+      longitude: null,
     }));
 
   const sectorIds = new Set(sectors.map((sector) => sector.id));
@@ -187,6 +202,16 @@ export function seedFromExtract(extract: ExtractDump): GuideSeed {
       const length = lengths[String(route.id)];
       const originalGrade = grade?.originalGrade;
       const numericGrade = grade?.grade;
+      const rawGrade =
+        originalGrade != null && originalGrade !== ""
+          ? String(originalGrade)
+          : numericGrade != null
+            ? String(numericGrade)
+            : null;
+      const frenchGrade = toFrenchGrade(
+        rawGrade,
+        grade?.originalGradeSystem ? String(grade.originalGradeSystem) : null,
+      );
       return {
         id: String(route.id),
         wallId: String(route.wallId),
@@ -198,15 +223,8 @@ export function seedFromExtract(extract: ExtractDump): GuideSeed {
         description: route.descriptionId
           ? (texts[String(route.descriptionId)] ?? null)
           : null,
-        grade:
-          originalGrade != null && originalGrade !== ""
-            ? String(originalGrade)
-            : numericGrade != null
-              ? String(numericGrade)
-              : null,
-        gradeSystem: grade?.originalGradeSystem
-          ? String(grade.originalGradeSystem)
-          : null,
+        grade: frenchGrade,
+        gradeSystem: frenchGrade ? FRENCH_GRADE_SYSTEM : null,
         length: length?.length == null ? null : Number(length.length),
         lengthUnit: length?.unit ? String(length.unit) : null,
       };
@@ -232,4 +250,25 @@ export function seedFromExtract(extract: ExtractDump): GuideSeed {
     }));
 
   return { zones, sectors, walls, topos, routes, paths };
+}
+
+export function applyLocations(
+  seed: GuideSeed,
+  locations: LocationSeed,
+): GuideSeed {
+  return {
+    ...seed,
+    zones: seed.zones.map((zone) => {
+      const point = locations.zones[zone.id];
+      return point
+        ? { ...zone, latitude: point.latitude, longitude: point.longitude }
+        : zone;
+    }),
+    sectors: seed.sectors.map((sector) => {
+      const point = locations.sectors[sector.id];
+      return point
+        ? { ...sector, latitude: point.latitude, longitude: point.longitude }
+        : sector;
+    }),
+  };
 }

@@ -41,7 +41,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "diedro-del-medio",
       "name": "Diedro del medio",
-      "position": 6,
+      "position": 2,
       "kind": "Wall"
     },
     {
@@ -57,7 +57,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "pared-blanca-titanica",
       "name": "Gengis Kan",
-      "position": 7,
+      "position": 6,
       "kind": "Wall"
     },
     {
@@ -65,7 +65,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "guggenheim",
       "name": "Guggenheim",
-      "position": 2,
+      "position": 4,
       "kind": "Wall"
     },
     {
@@ -73,7 +73,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "corta-viento-y-potasio",
       "name": "Corta Viento y Potasio",
-      "position": 4,
+      "position": 5,
       "kind": "Wall"
     },
     {
@@ -81,7 +81,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "la-buena-vaina",
       "name": "La buena vaina",
-      "position": 1,
+      "position": 3,
       "kind": "Wall"
     },
     {
@@ -89,7 +89,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "al-principio",
       "name": "Donde pega el sol",
-      "position": 5,
+      "position": 1,
       "kind": "Wall"
     },
     {
@@ -97,7 +97,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "el-queso",
       "name": "El queso",
-      "position": 3,
+      "position": 7,
       "kind": "Wall"
     },
     {
@@ -520,8 +520,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.10c",
-      "gradeSystem": "Yosemite",
+      "grade": "6b",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -534,8 +534,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.12b",
-      "gradeSystem": "Yosemite",
+      "grade": "7b+",
+      "gradeSystem": "French",
       "length": 17,
       "lengthUnit": "Metric"
     },
@@ -548,8 +548,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.10c",
-      "gradeSystem": "Yosemite",
+      "grade": "6b",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -576,8 +576,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "no grade",
-      "gradeSystem": "French",
+      "grade": null,
+      "gradeSystem": null,
       "length": null,
       "lengthUnit": null
     },
@@ -590,8 +590,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "20",
-      "gradeSystem": "French",
+      "grade": null,
+      "gradeSystem": null,
       "length": null,
       "lengthUnit": null
     },
@@ -604,8 +604,8 @@
       "kind": "Trad",
       "unknownName": false,
       "description": null,
-      "grade": "5.9",
-      "gradeSystem": "Yosemite",
+      "grade": "5c",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -632,8 +632,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "Excelente via! Es recomendable extender la tercera, cuarta, sexta, y octava cinta lo mas largas posible.",
-      "grade": "5.12b",
-      "gradeSystem": "Yosemite",
+      "grade": "7b+",
+      "gradeSystem": "French",
       "length": 30,
       "lengthUnit": "Metric"
     },
@@ -646,8 +646,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.10d",
-      "gradeSystem": "Yosemite",
+      "grade": "6b+",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -660,8 +660,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "Se recomienda poner cintas lo más largas posibles. \n\n15 cintas!",
-      "grade": "5.11b",
-      "gradeSystem": "Yosemite",
+      "grade": "6c+",
+      "gradeSystem": "French",
       "length": 28,
       "lengthUnit": "Metric"
     },
@@ -745,7 +745,7 @@
       "unknownName": false,
       "description": null,
       "grade": null,
-      "gradeSystem": "Yosemite",
+      "gradeSystem": null,
       "length": null,
       "lengthUnit": null
     },
@@ -758,8 +758,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.12b",
-      "gradeSystem": "Yosemite",
+      "grade": "7b+",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -772,8 +772,8 @@
       "kind": "Sport",
       "unknownName": true,
       "description": null,
-      "grade": "no grade",
-      "gradeSystem": "French",
+      "grade": null,
+      "gradeSystem": null,
       "length": null,
       "lengthUnit": null
     },
@@ -856,8 +856,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "no grade",
-      "gradeSystem": "Yosemite",
+      "grade": null,
+      "gradeSystem": null,
       "length": null,
       "lengthUnit": null
     },
@@ -884,8 +884,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.11a",
-      "gradeSystem": "Yosemite",
+      "grade": "6c",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -954,8 +954,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "15 cintas, te recomiendo alargar la 5° y 7° cinta.\n\nEs una maravillosa ruta que lleva el nombre de uno de los personajes de la guerra de Chile Chico.",
-      "grade": "5.11c",
-      "gradeSystem": "Yosemite",
+      "grade": "7a",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -968,8 +968,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.11a",
-      "gradeSystem": "Yosemite",
+      "grade": "6c",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -982,8 +982,8 @@
       "kind": "Sport",
       "unknownName": true,
       "description": null,
-      "grade": "5.11b",
-      "gradeSystem": "Yosemite",
+      "grade": "6c+",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -996,8 +996,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.12a",
-      "gradeSystem": "Yosemite",
+      "grade": "7b",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1010,8 +1010,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.11d",
-      "gradeSystem": "Yosemite",
+      "grade": "7a+",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1024,8 +1024,8 @@
       "kind": "Sport",
       "unknownName": true,
       "description": null,
-      "grade": "12",
-      "gradeSystem": "French",
+      "grade": null,
+      "gradeSystem": null,
       "length": null,
       "lengthUnit": null
     },
@@ -1038,8 +1038,8 @@
       "kind": "Sport",
       "unknownName": true,
       "description": "Proyecto\nPosible 8a+ / 8b\n",
-      "grade": "no grade",
-      "gradeSystem": "Yosemite",
+      "grade": null,
+      "gradeSystem": null,
       "length": null,
       "lengthUnit": null
     },
@@ -1066,8 +1066,8 @@
       "kind": "Sport",
       "unknownName": true,
       "description": null,
-      "grade": "5.12c",
-      "gradeSystem": "Yosemite",
+      "grade": "7c",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1080,8 +1080,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.11a",
-      "gradeSystem": "Yosemite",
+      "grade": "6c",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1094,8 +1094,8 @@
       "kind": "Sport",
       "unknownName": true,
       "description": null,
-      "grade": "5.9",
-      "gradeSystem": "Yosemite",
+      "grade": "5c",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1108,8 +1108,8 @@
       "kind": "Sport",
       "unknownName": true,
       "description": null,
-      "grade": "5.10a",
-      "gradeSystem": "Yosemite",
+      "grade": "6a",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1150,8 +1150,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.13b",
-      "gradeSystem": "Yosemite",
+      "grade": "8a+",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1178,8 +1178,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.13b",
-      "gradeSystem": "Yosemite",
+      "grade": "8a+",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1207,7 +1207,7 @@
       "unknownName": true,
       "description": null,
       "grade": null,
-      "gradeSystem": "French",
+      "gradeSystem": null,
       "length": null,
       "lengthUnit": null
     },
@@ -1220,8 +1220,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.12b",
-      "gradeSystem": "Yosemite",
+      "grade": "7b+",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1234,8 +1234,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "22",
-      "gradeSystem": "French",
+      "grade": null,
+      "gradeSystem": null,
       "length": null,
       "lengthUnit": null
     },
@@ -1262,8 +1262,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "La ruta tiene dos mosquetones que sirven para desequiparla. Déjalos o mejoralos.",
-      "grade": "no grade",
-      "gradeSystem": "French",
+      "grade": null,
+      "gradeSystem": null,
       "length": 35,
       "lengthUnit": "Metric"
     },
@@ -1276,8 +1276,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.11c",
-      "gradeSystem": "Yosemite",
+      "grade": "7a",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1318,8 +1318,8 @@
       "kind": "Sport",
       "unknownName": true,
       "description": null,
-      "grade": "5.10b",
-      "gradeSystem": "Yosemite",
+      "grade": "6a+",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1332,8 +1332,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.10b",
-      "gradeSystem": "Yosemite",
+      "grade": "6a+",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1346,8 +1346,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "Sigue una linea evidente de hoyos. Se ve más fácil de lo que es, buena suerte 🍀.",
-      "grade": "5.12c",
-      "gradeSystem": "Yosemite",
+      "grade": "7c",
+      "gradeSystem": "French",
       "length": 17,
       "lengthUnit": "Metric"
     },
@@ -1388,8 +1388,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "Rutón; Cada paso vale la pena. Corta pero notable. ",
-      "grade": "5.11d",
-      "gradeSystem": "Yosemite",
+      "grade": "7a+",
+      "gradeSystem": "French",
       "length": 15,
       "lengthUnit": "Metric"
     },
@@ -1402,8 +1402,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "Buenísima ruta! El agarre del final es mejor de todo el sector.",
-      "grade": "5.11b",
-      "gradeSystem": "Yosemite",
+      "grade": "6c+",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1416,8 +1416,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.13a",
-      "gradeSystem": "Yosemite",
+      "grade": "8a",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1430,8 +1430,8 @@
       "kind": "Trad",
       "unknownName": false,
       "description": null,
-      "grade": "5.10a",
-      "gradeSystem": "Yosemite",
+      "grade": "6a",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1472,8 +1472,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.10c",
-      "gradeSystem": "Yosemite",
+      "grade": "6b",
+      "gradeSystem": "French",
       "length": 25,
       "lengthUnit": "Metric"
     },
@@ -1486,8 +1486,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.10a",
-      "gradeSystem": "Yosemite",
+      "grade": "6a",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1529,7 +1529,7 @@
       "unknownName": true,
       "description": "El equipador de esta ruta dijo que habia que mejorar algunas chapas.\n\nEsta muy sucia pero tiene potencial.",
       "grade": null,
-      "gradeSystem": "French",
+      "gradeSystem": null,
       "length": null,
       "lengthUnit": null
     },
@@ -1556,8 +1556,8 @@
       "kind": "Trad",
       "unknownName": false,
       "description": null,
-      "grade": "5.10b",
-      "gradeSystem": "Yosemite",
+      "grade": "6a+",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     },
@@ -1584,8 +1584,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "Primera ruta equipada en el cerro el indio. Un clásico.",
-      "grade": "5.10d",
-      "gradeSystem": "Yosemite",
+      "grade": "6b+",
+      "gradeSystem": "French",
       "length": 30,
       "lengthUnit": "Metric"
     },
@@ -1599,7 +1599,7 @@
       "unknownName": false,
       "description": null,
       "grade": null,
-      "gradeSystem": "French",
+      "gradeSystem": null,
       "length": null,
       "lengthUnit": null
     },
@@ -1626,8 +1626,8 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.12a",
-      "gradeSystem": "Yosemite",
+      "grade": "7b",
+      "gradeSystem": "French",
       "length": null,
       "lengthUnit": null
     }

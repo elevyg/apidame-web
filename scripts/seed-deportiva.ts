@@ -2,11 +2,20 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { replaceGuideSeed } from "../src/db/seed";
 import { refreshAllGuidePdfs } from "../src/lib/guide/store";
-import type { GuideSeed } from "../src/lib/climbing/fromExtract";
+import {
+  applyLocations,
+  type GuideSeed,
+  type LocationSeed,
+} from "../src/lib/climbing/fromExtract";
 
-const seed = JSON.parse(
-  readFileSync(resolve("scripts/seed/deportiva.json"), "utf8"),
-) as GuideSeed;
+const seed = applyLocations(
+  JSON.parse(
+    readFileSync(resolve("scripts/seed/deportiva.json"), "utf8"),
+  ) as GuideSeed,
+  JSON.parse(
+    readFileSync(resolve("scripts/seed/locations.json"), "utf8"),
+  ) as LocationSeed,
+);
 
 async function main() {
   await replaceGuideSeed(seed);

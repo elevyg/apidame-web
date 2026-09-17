@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { withFrenchGrade } from "@/lib/climbing/frenchGrade";
 import { getWallById } from "@/lib/guide/queries";
 import { db } from "@/db/client";
 import { routes, topos } from "@/db/schema";
@@ -62,7 +63,7 @@ export default async function WallAdminPage({ params }: WallAdminProps) {
 
         <h2 className="font-display mt-10 text-2xl">Rutas</h2>
         <ul className="mt-4 grid gap-6">
-          {wallRoutes.map((route) => (
+          {wallRoutes.map(withFrenchGrade).map((route) => (
             <li key={route.id} className="border-rule border p-4">
               <form action={updateRoute} className="grid gap-3 md:grid-cols-2">
                 <input type="hidden" name="id" value={route.id} />

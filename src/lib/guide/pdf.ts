@@ -5,8 +5,18 @@ import type { PDFFont, PDFImage, PDFPage } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import sharp from "sharp";
 import { pdfImageUrl } from "@/lib/climbing/cloudinary";
-import { parsePath, pointerRadius, pointerRingWidth, strokeWidthPx } from "@/lib/climbing/path";
+import {
+  fitDiscLabelSize,
+  parsePath,
+  pdfPointerRadius,
+  pointerRingWidth,
+  strokeWidthPx,
+} from "@/lib/climbing/path";
 import { routeColor } from "@/lib/climbing/colors";
+import { toFrenchGrade } from "@/lib/climbing/frenchGrade";
+import { fetchStaticMap } from "./mapbox";
+import { buildZoneMapView, PDF_MAP_SIZE } from "./mapView";
+import { zoneToMapInput } from "./zoneMap";
 import {
   fitRect,
   formatGuideDate,
@@ -24,6 +34,7 @@ const PAPER = rgb(1, 1, 1);
 const BEIGE = rgb(232 / 255, 226 / 255, 212 / 255);
 const CANVAS = rgb(18 / 255, 17 / 255, 15 / 255);
 const RULE = rgb(28 / 255, 25 / 255, 22 / 255);
+const SIGNAL = rgb(156 / 255, 59 / 255, 30 / 255);
 const LOGO_W = 22;
 const LOGO_H = 20;
 
@@ -47,10 +58,7 @@ async function loadLogoPng(): Promise<Uint8Array> {
   return logoPngCache;
 }
 
-async function embedPhoto(pdf: PDFDocument, url: string) {
-  const response = await fetch(url);
-  if (!response.ok) return null;
-  const bytes = new Uint8Array(await response.arrayBuffer());
+async function embedRaster(pdf: PDFDocument, bytes: Uint8Array) {
   try {
     return await pdf.embedJpg(bytes);
   } catch {
@@ -60,6 +68,12 @@ async function embedPhoto(pdf: PDFDocument, url: string) {
       return null;
     }
   }
+}
+
+async function embedPhoto(pdf: PDFDocument, url: string) {
+  const response = await fetch(url);
+  if (!response.ok) return null;
+  return embedRaster(pdf, new Uint8Array(await response.arrayBuffer()));
 }
 
 async function loadFonts(pdf: PDFDocument): Promise<GuideFonts> {
@@ -189,11 +203,13 @@ function drawStartDisc(
     borderColor: color,
     borderWidth: ring,
   });
-  const size = Math.max(7, radius * 0.9);
+  const size = fitDiscLabelSize(label, radius, (fontSize) =>
+    fonts.bold.widthOfTextAtSize(label, fontSize),
+  );
   const textW = fonts.bold.widthOfTextAtSize(label, size);
   page.drawText(label, {
     x: cx - textW / 2,
-    y: cy - size * 0.32,
+    y: cy - size * 0.35,
     size,
     font: fonts.bold,
     color,
@@ -308,7 +324,133 @@ export async function buildZoneCoverPdf(
   }
 
   drawFooter(page, fonts, generatedAt);
+  await drawZoneMapPage(pdf, fonts, logo, guide, generatedAt);
   return pdf.save();
+}
+
+async function drawZoneMapPage(
+  pdf: PDFDocument,
+  fonts: GuideFonts,
+  logo: PDFImage,
+  guide: ZoneGuide,
+  generatedAt: Date,
+) {
+  const view = buildZoneMapView(zoneToMapInput(guide), PDF_MAP_SIZE);
+  if (!view) return;
+  const image = await fetchStaticMap({
+    center: view.center,
+    zoom: view.zoom,
+    width: view.width,
+    height: view.height,
+  });
+  if (!image) return;
+
+  const page = pdf.addPage([PAGE_W, PAGE_H]);
+  page.drawRectangle({
+    x: 0,
+    y: 0,
+    width: PAGE_W,
+    height: PAGE_H,
+    color: PAPER,
+  });
+  await drawHeaderBand(page, fonts, logo);
+
+  let y = PAGE_H - 96;
+  page.drawText("MAPA", {
+    x: MARGIN,
+    y,
+    size: 9,
+    font: fonts.body,
+    color: MUTED,
+  });
+  y -= 22;
+  page.drawText("Sectores y paredes", {
+    x: MARGIN,
+    y,
+    size: 16,
+    font: fonts.bold,
+    color: INK,
+  });
+
+  const mapW = view.width;
+  const mapH = view.height;
+  const mapX = MARGIN;
+  const mapY = PAGE_H - 148 - mapH;
+  const photo = await embedRaster(pdf, image.bytes);
+  page.drawRectangle({
+    x: mapX,
+    y: mapY,
+    width: mapW,
+    height: mapH,
+    color: CANVAS,
+  });
+  if (photo) {
+    page.drawImage(photo, {
+      x: mapX,
+      y: mapY,
+      width: mapW,
+      height: mapH,
+    });
+  }
+  for (const pin of view.pins) {
+    drawStartDisc(
+      page,
+      fonts,
+      mapX + pin.x,
+      mapY + (mapH - pin.y),
+      8,
+      SIGNAL,
+      String(pin.number),
+    );
+  }
+
+  y = mapY - 24;
+  page.drawText("SECTORES", {
+    x: MARGIN,
+    y,
+    size: 8,
+    font: fonts.body,
+    color: MUTED,
+  });
+  for (const pin of view.pins) {
+    y -= 26;
+    if (y < 56) break;
+    drawStartDisc(
+      page,
+      fonts,
+      MARGIN + 8,
+      y + 4,
+      7,
+      SIGNAL,
+      String(pin.number),
+    );
+    const walls = pin.walls.map((wall) => wall.name).join(" · ");
+    page.drawText(sanitizePdfText(pin.name).slice(0, 36), {
+      x: MARGIN + 22,
+      y: y + (walls ? 6 : 0),
+      size: 10,
+      font: fonts.bold,
+      color: INK,
+    });
+    if (walls) {
+      page.drawText(sanitizePdfText(walls).slice(0, 42), {
+        x: MARGIN + 22,
+        y,
+        size: 8,
+        font: fonts.body,
+        color: MUTED,
+      });
+    }
+  }
+
+  page.drawText("Mapa (c) Mapbox (c) OpenStreetMap", {
+    x: MARGIN,
+    y: 40,
+    size: 7,
+    font: fonts.body,
+    color: MUTED,
+  });
+  drawFooter(page, fonts, generatedAt);
 }
 
 export async function buildWallPdf(
@@ -387,7 +529,7 @@ async function drawWallPage(
     },
   );
 
-  const legendH = Math.min(240, 36 + input.routes.length * 18);
+  const legendH = Math.min(240, 36 + input.routes.length * 20);
   const imageMaxH = PAGE_H - 150 - legendH;
   const imageMaxW = PAGE_W - MARGIN * 2;
   let imageBottom = PAGE_H - 128 - imageMaxH;
@@ -423,7 +565,7 @@ async function drawWallPage(
     }
     const scale = fitted.width / srcW;
     const line = Math.max(1.4, strokeWidthPx(input.topo.routeStrokeWidth, scale) * 0.45);
-    const markerR = pointerRadius(input.topo.routeStrokeWidth, scale) * 0.55;
+    const markerR = pdfPointerRadius(input.topo.routeStrokeWidth, scale);
     for (const path of input.paths) {
       const points = parsePath(path.path);
       if (points.length < 2) continue;
@@ -472,7 +614,7 @@ async function drawWallPage(
     }
   }
 
-  let legendY = Math.min(imageBottom - 22, legendH + 36);
+  let legendY = imageBottom - 22;
   page.drawText("RUTAS", {
     x: MARGIN,
     y: legendY,
@@ -481,15 +623,24 @@ async function drawWallPage(
     color: MUTED,
   });
   for (const route of input.routes) {
-    legendY -= 18;
+    legendY -= 20;
     if (legendY < 44) break;
     const color = hexToRgb(routeColor(route.kind));
-    page.drawCircle({ x: MARGIN + 6, y: legendY + 3, size: 6, color });
-    const label = sanitizePdfText(
-      `${route.position}   ${route.name}${route.grade ? `   ${route.grade}` : ""}`,
+    drawStartDisc(
+      page,
+      fonts,
+      MARGIN + 8,
+      legendY + 4,
+      7,
+      color,
+      String(route.position),
     );
-    page.drawText(label.slice(0, 48), {
-      x: MARGIN + 18,
+    const grade = toFrenchGrade(route.grade, route.gradeSystem);
+    const label = sanitizePdfText(
+      `${route.name}${grade ? `   ${grade}` : ""}`,
+    );
+    page.drawText(label.slice(0, 42), {
+      x: MARGIN + 22,
       y: legendY,
       size: 10,
       font: fonts.body,

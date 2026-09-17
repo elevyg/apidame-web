@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { seedFromExtract, type ExtractDump } from "./fromExtract";
+import {
+  applyLocations,
+  seedFromExtract,
+  type ExtractDump,
+} from "./fromExtract";
 
 const dump: ExtractDump = {
   texts: [{ id: "t1", originalText: "Zona viva" }],
@@ -128,7 +132,33 @@ describe("seedFromExtract", () => {
     expect(seed.walls).toHaveLength(1);
     expect(seed.routes.map((r) => r.name)).toEqual(["Pitufina"]);
     expect(seed.routes[0]?.grade).toBe("6a");
+    expect(seed.routes[0]?.gradeSystem).toBe("French");
     expect(seed.topos[0]?.imagePublicId).toBe("andescalada-app/topo");
     expect(seed.paths).toHaveLength(1);
+    expect(seed.zones[0]?.latitude).toBeNull();
+  });
+
+  it("stores Yosemite grades as French", () => {
+    const seed = seedFromExtract({
+      ...dump,
+      grades: [
+        {
+          routeId: "r1",
+          originalGrade: "5.10c",
+          originalGradeSystem: "Yosemite",
+        },
+      ],
+    });
+    expect(seed.routes[0]?.grade).toBe("6b");
+    expect(seed.routes[0]?.gradeSystem).toBe("French");
+  });
+
+  it("copies lat/lng from the location seed by id", () => {
+    const seed = applyLocations(seedFromExtract(dump), {
+      zones: { z1: { latitude: -46.5, longitude: -71.7 } },
+      sectors: { "s-live": { latitude: -46.51, longitude: -71.71 } },
+    });
+    expect(seed.zones[0]?.latitude).toBe(-46.5);
+    expect(seed.sectors[0]?.longitude).toBe(-71.71);
   });
 });

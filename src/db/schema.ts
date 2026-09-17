@@ -31,6 +31,8 @@ export const zones = sqliteTable(
     coverImageWidth: integer("cover_image_width"),
     coverImageHeight: integer("cover_image_height"),
     coverPublicId: text("cover_public_id"),
+    latitude: real("latitude"),
+    longitude: real("longitude"),
     published: integer("published", { mode: "boolean" }).notNull().default(true),
     createdAt: integer("created_at", { mode: "timestamp_ms" })
       .notNull()
@@ -53,6 +55,8 @@ export const sectors = sqliteTable(
     name: text("name").notNull(),
     position: integer("position").notNull().default(0),
     kind: text("kind").notNull().default("Wall"),
+    latitude: real("latitude"),
+    longitude: real("longitude"),
   },
   (table) => [
     index("sectors_zone_idx").on(table.zoneId),

@@ -1,13 +1,16 @@
 import { ImageResponse } from "next/og";
+import { ogImageOptions } from "@/components/estetica/feed/ogFont";
+import { siteOgAlt } from "./site";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
+export const alt = siteOgAlt;
 export const size = {
   width: 1200,
   height: 630,
 };
 export const contentType = "image/png";
 
-export default function OpenGraphImage() {
+export default async function OpenGraphImage() {
   return new ImageResponse(
     (
       <div
@@ -20,21 +23,21 @@ export default function OpenGraphImage() {
           background: "#12110F",
           color: "#FFFFFF",
           padding: "52px 60px",
+          fontFamily: "Brown",
         }}
       >
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
+            fontFamily: "Brown",
             fontSize: 16,
             letterSpacing: 4,
             textTransform: "uppercase",
             color: "#E8E2D4",
           }}
         >
-          <div style={{ display: "flex" }}>
-            Escalar / Entrenar / Crear
-          </div>
+          <div style={{ display: "flex" }}>Escalar / Entrenar / Crear</div>
           <div style={{ display: "flex" }}>Chile Chico · Aysén</div>
         </div>
         <div
@@ -48,9 +51,10 @@ export default function OpenGraphImage() {
           <div
             style={{
               display: "flex",
-              fontSize: 148,
-              lineHeight: 0.82,
-              letterSpacing: -7,
+              fontFamily: "Holluise",
+              fontSize: 128,
+              lineHeight: 0.9,
+              letterSpacing: 16,
               textTransform: "uppercase",
             }}
           >
@@ -60,7 +64,7 @@ export default function OpenGraphImage() {
             style={{
               display: "flex",
               alignItems: "center",
-              marginTop: 42,
+              marginTop: 36,
             }}
           >
             <div
@@ -75,9 +79,10 @@ export default function OpenGraphImage() {
               style={{
                 display: "flex",
                 marginLeft: 24,
-                fontSize: 47,
-                fontStyle: "italic",
-                letterSpacing: -2,
+                fontFamily: "Foregen",
+                fontSize: 48,
+                lineHeight: 1,
+                letterSpacing: -1,
               }}
             >
               Escalada en Chile Chico
@@ -90,6 +95,7 @@ export default function OpenGraphImage() {
             justifyContent: "space-between",
             borderTop: "2px solid #E8E2D4",
             paddingTop: 20,
+            fontFamily: "Brown",
             fontSize: 17,
             color: "#E8E2D4",
             letterSpacing: 3,
@@ -97,12 +103,10 @@ export default function OpenGraphImage() {
           }}
         >
           <div style={{ display: "flex" }}>Muro / Cerro / Deportiva</div>
-          <div style={{ display: "flex" }}>apidameboulder.com</div>
+          <div style={{ display: "flex" }}>apidame.com</div>
         </div>
       </div>
     ),
-    {
-      ...size,
-    },
+    await ogImageOptions(),
   );
 }

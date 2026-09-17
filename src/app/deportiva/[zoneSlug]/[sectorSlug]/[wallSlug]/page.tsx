@@ -5,6 +5,7 @@ import WallTopoExplorer from "@/components/climbing/WallTopoExplorer";
 import { requireWallGuide } from "@/lib/guide/queries";
 import { formatGuideDate } from "@/lib/guide/layout";
 import { getStoredPdf, wallPdfId } from "@/lib/guide/store";
+import { pageMetadata } from "../../../../seo";
 
 type WallPageProps = {
   params: Promise<{
@@ -19,10 +20,11 @@ export async function generateMetadata({
 }: WallPageProps): Promise<Metadata> {
   const { zoneSlug, sectorSlug, wallSlug } = await params;
   const data = await requireWallGuide(zoneSlug, sectorSlug, wallSlug);
-  return {
+  return pageMetadata({
     title: `${data.wall.name} · ${data.zone.name}`,
-    description: `Topo de ${data.wall.name} en ${data.zone.name}.`,
-  };
+    description: `Topo de ${data.wall.name} en ${data.zone.name}, Chile Chico.`,
+    path: `/deportiva/${data.zone.slug}/${data.sector.slug}/${data.wall.slug}`,
+  });
 }
 
 export default async function WallPage({ params }: WallPageProps) {

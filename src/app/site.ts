@@ -8,7 +8,7 @@ export const siteName = "Apidame";
 export const siteTitle = "Apidame | Escalar, Entrenar, Crear";
 
 export const siteDescription =
-  "Apidame en Chile Chico, Aysén. Escalar, entrenar, crear. Información del muro de escalada, topos del Cerro Apidame y sectores de escalada.";
+  "Apidame en Chile Chico, Aysén. Muro de escalada, topos del Cerro Apidame (también le dicen Cerro Colorado) y sectores de deportiva cerca del pueblo.";
 
 export const siteOgAlt = "Apidame | Escalar, Entrenar, Crear";
 

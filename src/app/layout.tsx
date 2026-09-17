@@ -32,13 +32,11 @@ export const metadata: Metadata = {
     "muro de escalada Chile Chico",
     "muro Chile Chico",
     "topos cerro apidame",
+    "cerro colorado chile chico",
     "escalada deportiva Aysén",
     "patagonia chilena",
   ],
   openGraph: {
-    title: siteTitle,
-    description: siteDescription,
-    url: "/",
     siteName,
     locale: "es_CL",
     type: "website",
@@ -46,8 +44,6 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: siteTitle,
-    description: siteDescription,
     images: [siteOgImage.url],
   },
   robots: {

@@ -77,7 +77,7 @@ export default function Topos() {
             <div>
               <h2 className="font-display text-2xl md:text-3xl">Equipo</h2>
               <p className="font-brown text-ink-soft mt-4 text-sm leading-relaxed md:text-base">
-                Dos cuerdas de 60m son imprescindibles. Un rack doble de #2 a #3
+                Dos cuerdas de 60m son imprescindibles. Un rack doble de #0.2 a #3
                 más un juego de stoppers pequeños resuelve la mayoría de las
                 rutas. Uno o dos #4 ayudan en algunos largos, y conviene llevar
                 cordín para reemplazar los rapeles.

@@ -45,3 +45,5 @@ yarn-error.log*
 
 # secrets
 .secrets/
+.env*
+!.env.example

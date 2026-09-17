@@ -12,7 +12,7 @@ export default function ComingSoonTopo({
 }: ComingSoonTopoProps) {
   return (
     <main className="flex min-h-screen flex-col">
-      <SiteHeader current="topos" />
+      <SiteHeader current="cerro" />
       <section className="page-shell flex flex-1 flex-col justify-center py-20">
         <p className="kicker">Cerro Apidame</p>
         <h1 className="font-display mt-4 text-4xl md:text-6xl">{title}</h1>

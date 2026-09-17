@@ -6,6 +6,19 @@ import { withPostHogConfig } from "@posthog/nextjs-config";
 const config = {
   reactStrictMode: true,
   skipTrailingSlashRedirect: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/fundacion-andescalada/**",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+    ],
+  },
   async rewrites() {
     return [
       {

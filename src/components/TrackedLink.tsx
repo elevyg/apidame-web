@@ -18,6 +18,7 @@ type TrackedLinkProps = {
   target?: string;
   rel?: string;
   onClick?: () => void;
+  transitionTypes?: string[];
 };
 
 export default function TrackedLink({
@@ -29,6 +30,7 @@ export default function TrackedLink({
   target,
   rel,
   onClick,
+  transitionTypes,
 }: TrackedLinkProps) {
   const handleClick = () => {
     posthog.capture(event, { href, ...properties });
@@ -55,7 +57,12 @@ export default function TrackedLink({
   }
 
   return (
-    <Link href={href} className={className} onClick={handleClick}>
+    <Link
+      href={href}
+      className={className}
+      onClick={handleClick}
+      transitionTypes={transitionTypes}
+    >
       {children}
     </Link>
   );

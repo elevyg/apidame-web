@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import ApidameMark from "@/components/estetica/ApidameMark";
 import TrackedLink from "@/components/TrackedLink";
@@ -49,6 +50,7 @@ export default function SiteHeader({
 }: SiteHeaderProps) {
   const paper = tone === "paper";
   const floats = overlay || autoHide;
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [revealed, setRevealed] = useState(!floats);
   const [revealReady, setRevealReady] = useState(!floats);
@@ -261,6 +263,7 @@ export default function SiteHeader({
       inert={floats && !revealed ? true : undefined}
       aria-hidden={floats && !revealed ? true : undefined}
       className={`${position} border-b ${chrome}`}
+      style={{ viewTransitionName: "site-header" }}
     >
       <div className="page-shell flex h-14 items-center justify-between gap-4 md:h-16">
         {markHref.startsWith("#") ? (
@@ -284,7 +287,16 @@ export default function SiteHeader({
               );
             }
             return (
-              <Link key={item.id} href={item.href} className={className}>
+              <Link
+                key={item.id}
+                href={item.href}
+                className={className}
+                transitionTypes={
+                  item.id === "deportiva" && pathname.startsWith("/deportiva/")
+                    ? ["nav-back"]
+                    : undefined
+                }
+              >
                 {item.label}
               </Link>
             );
@@ -370,6 +382,12 @@ export default function SiteHeader({
                     href={item.href}
                     className={className}
                     onClick={close}
+                    transitionTypes={
+                      item.id === "deportiva" &&
+                      pathname.startsWith("/deportiva/")
+                        ? ["nav-back"]
+                        : undefined
+                    }
                   >
                     {item.label}
                   </Link>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import DownloadPdfLink from "@/components/DownloadPdfLink";
-import SiteHeader from "@/components/SiteHeader";
+import DeportivaBackLink from "@/components/climbing/DeportivaBackLink";
+import DeportivaPageTransition from "@/components/climbing/DeportivaPageTransition";
 import WallTopoExplorer from "@/components/climbing/WallTopoExplorer";
 import { requireWallGuide } from "@/lib/guide/queries";
 import { formatGuideDate } from "@/lib/guide/layout";
@@ -35,34 +36,37 @@ export default async function WallPage({ params }: WallPageProps) {
   const storedPdf = await getStoredPdf(wallPdfId(wall.id));
 
   return (
-    <main className="flex h-dvh flex-col overflow-hidden">
-      <SiteHeader current="deportiva" />
-      <header className="page-shell border-rule flex shrink-0 items-baseline justify-between gap-3 border-b py-2 md:items-end md:py-5">
-        <div className="min-w-0">
-          <p className="font-brown text-ink-soft truncate text-[0.65rem] tracking-[0.14em] uppercase md:text-[1.25rem]">
-            {zone.name} · {sector.name}
-          </p>
-          <h1 className="font-display mt-0.5 text-2xl leading-none md:mt-2 md:text-5xl">
-            {wall.name}
-          </h1>
-        </div>
-        <div className="shrink-0 text-right">
-          <DownloadPdfLink
-            href={`/deportiva/${zone.slug}/${sector.slug}/${wall.slug}/pdf?t=${storedPdf?.generatedAt.getTime() ?? Date.now()}`}
-            event="deportiva_wall_pdf"
-            properties={{ zone: zone.slug, wall: wall.slug }}
-            className="font-brown text-[0.65rem] tracking-[0.12em] uppercase underline decoration-from-font underline-offset-4 md:text-sm md:tracking-[0.14em]"
-          >
-            PDF de esta pared
-          </DownloadPdfLink>
-          {storedPdf ? (
-            <p className="font-brown text-ink-soft mt-0.5 hidden text-xs tracking-[0.08em] uppercase md:block">
-              Generado {formatGuideDate(storedPdf.generatedAt)}
-            </p>
-          ) : null}
-        </div>
-      </header>
-      <WallTopoExplorer topos={topos} routes={routes} paths={paths} />
-    </main>
+    <DeportivaPageTransition>
+      <main className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+        <header className="page-shell border-rule relative z-30 flex shrink-0 items-center justify-between gap-3 border-b bg-paper py-2 md:py-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <DeportivaBackLink
+              href={`/deportiva/${zone.slug}#sector-${sector.slug}`}
+              to={zone.name}
+              compact
+            />
+            <h1 className="font-display truncate text-2xl leading-none md:text-5xl">
+              {wall.name}
+            </h1>
+          </div>
+          <div className="shrink-0 text-right">
+            <DownloadPdfLink
+              href={`/deportiva/${zone.slug}/${sector.slug}/${wall.slug}/pdf?t=${storedPdf?.generatedAt.getTime() ?? Date.now()}`}
+              event="deportiva_wall_pdf"
+              properties={{ zone: zone.slug, wall: wall.slug }}
+              className="font-brown text-[0.65rem] tracking-[0.12em] uppercase underline decoration-from-font underline-offset-4 md:text-sm md:tracking-[0.14em]"
+            >
+              PDF de esta pared
+            </DownloadPdfLink>
+            {storedPdf ? (
+              <p className="font-brown text-ink-soft mt-0.5 hidden text-xs tracking-[0.08em] uppercase md:block">
+                Generado {formatGuideDate(storedPdf.generatedAt)}
+              </p>
+            ) : null}
+          </div>
+        </header>
+        <WallTopoExplorer topos={topos} routes={routes} paths={paths} />
+      </main>
+    </DeportivaPageTransition>
   );
 }

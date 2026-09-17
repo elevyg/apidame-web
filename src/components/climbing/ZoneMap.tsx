@@ -96,6 +96,7 @@ export default function ZoneMap({ zoneSlug, zoneName, view }: ZoneMapProps) {
                   href={wall.href}
                   event="deportiva_map_wall"
                   properties={{ zone: zoneSlug, wall: wall.slug }}
+                  transitionTypes={["nav-forward"]}
                   className="border-rule font-brown hover:bg-beige inline-block border px-3 py-2 text-sm"
                 >
                   {wall.name}

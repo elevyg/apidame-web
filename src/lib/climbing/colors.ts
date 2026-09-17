@@ -1,3 +1,5 @@
+import { toFrenchGrade } from "./frenchGrade";
+
 export const KIND_COLORS: Record<string, string> = {
   Sport: "#E11845",
   Trad: "#F2CA19",
@@ -30,12 +32,14 @@ export function routeKindLabel(kind: string): string {
 export function routeMeta(route: {
   kind: string;
   grade: string | null;
+  gradeSystem?: string | null;
   length: number | null;
   lengthUnit: string | null;
 }): string {
   const parts = [routeKindLabel(route.kind)];
-  if (route.grade && route.grade.toLowerCase() !== "no grade") {
-    parts.push(route.grade);
+  const grade = toFrenchGrade(route.grade, route.gradeSystem);
+  if (grade) {
+    parts.push(grade);
   }
   if (route.length != null) {
     parts.push(`${route.length} ${lengthUnitLabel(route.lengthUnit)}`);

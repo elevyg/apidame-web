@@ -5,6 +5,10 @@ import { asc, eq } from "drizzle-orm";
 import { auth, isAdminEmail } from "@/auth";
 import { db } from "@/db/client";
 import { routePaths, routes, sectors, topos, zones } from "@/db/schema";
+import {
+  FRENCH_GRADE_SYSTEM,
+  toFrenchGrade,
+} from "@/lib/climbing/frenchGrade";
 import { refreshPdfsForWall, refreshZoneCover } from "@/lib/guide/store";
 import {
   moveSectorId,
@@ -120,6 +124,7 @@ export async function updateRoute(formData: FormData) {
   const kind = String(formData.get("kind") ?? "Sport").trim();
   const description = String(formData.get("description") ?? "").trim();
   const position = Number(formData.get("position") ?? 0);
+  const frenchGrade = toFrenchGrade(grade || null);
   if (!id || !name) throw new Error("Falta el nombre de la ruta");
   const current = await db
     .select({ wallId: routes.wallId })
@@ -131,7 +136,8 @@ export async function updateRoute(formData: FormData) {
     .update(routes)
     .set({
       name,
-      grade: grade || null,
+      grade: frenchGrade,
+      gradeSystem: frenchGrade ? FRENCH_GRADE_SYSTEM : null,
       kind,
       description: description || null,
       position: Number.isFinite(position) ? position : 0,
@@ -148,6 +154,7 @@ export async function createRoute(formData: FormData) {
   const grade = String(formData.get("grade") ?? "").trim();
   const kind = String(formData.get("kind") ?? "Sport").trim();
   const position = Number(formData.get("position") ?? 0);
+  const frenchGrade = toFrenchGrade(grade || null);
   if (!wallId || !name) throw new Error("Falta el nombre de la ruta");
   const slug = name
     .toLowerCase()
@@ -160,7 +167,8 @@ export async function createRoute(formData: FormData) {
     wallId,
     name,
     slug: slug || crypto.randomUUID(),
-    grade: grade || null,
+    grade: frenchGrade,
+    gradeSystem: frenchGrade ? FRENCH_GRADE_SYSTEM : null,
     kind,
     position: Number.isFinite(position) ? position : 0,
   });

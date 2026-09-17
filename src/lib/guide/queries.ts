@@ -8,6 +8,7 @@ import {
   walls,
   zones,
 } from "@/db/schema";
+import { withFrenchGrade } from "@/lib/climbing/frenchGrade";
 import { notFound } from "next/navigation";
 
 export async function listPublishedZones() {
@@ -78,7 +79,7 @@ export async function getZoneBySlug(slug: string) {
     zone,
     sectors: zoneSectors,
     walls: zoneWalls,
-    routes: zoneRoutes,
+    routes: zoneRoutes.map(withFrenchGrade),
     topos: zoneTopos,
     paths: zonePaths,
   };
@@ -147,7 +148,14 @@ export async function getWallGuide(
           .from(routePaths)
           .where(inArray(routePaths.topoId, topoIds));
 
-  return { zone, sector, wall, topos: wallTopos, routes: wallRoutes, paths };
+  return {
+    zone,
+    sector,
+    wall,
+    topos: wallTopos,
+    routes: wallRoutes.map(withFrenchGrade),
+    paths,
+  };
 }
 
 export async function requireWallGuide(
@@ -200,5 +208,5 @@ export async function getTopoEditor(topoId: string) {
     .select()
     .from(routePaths)
     .where(eq(routePaths.topoId, topo.id));
-  return { topo, ...context, routes: wallRoutes, paths };
+  return { topo, ...context, routes: wallRoutes.map(withFrenchGrade), paths };
 }

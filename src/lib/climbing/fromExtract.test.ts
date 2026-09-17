@@ -132,9 +132,25 @@ describe("seedFromExtract", () => {
     expect(seed.walls).toHaveLength(1);
     expect(seed.routes.map((r) => r.name)).toEqual(["Pitufina"]);
     expect(seed.routes[0]?.grade).toBe("6a");
+    expect(seed.routes[0]?.gradeSystem).toBe("French");
     expect(seed.topos[0]?.imagePublicId).toBe("andescalada-app/topo");
     expect(seed.paths).toHaveLength(1);
     expect(seed.zones[0]?.latitude).toBeNull();
+  });
+
+  it("stores Yosemite grades as French", () => {
+    const seed = seedFromExtract({
+      ...dump,
+      grades: [
+        {
+          routeId: "r1",
+          originalGrade: "5.10c",
+          originalGradeSystem: "Yosemite",
+        },
+      ],
+    });
+    expect(seed.routes[0]?.grade).toBe("6b");
+    expect(seed.routes[0]?.gradeSystem).toBe("French");
   });
 
   it("copies lat/lng from the location seed by id", () => {

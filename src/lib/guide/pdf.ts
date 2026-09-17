@@ -13,6 +13,7 @@ import {
   strokeWidthPx,
 } from "@/lib/climbing/path";
 import { routeColor } from "@/lib/climbing/colors";
+import { toFrenchGrade } from "@/lib/climbing/frenchGrade";
 import { fetchStaticMap } from "./mapbox";
 import { buildZoneMapView, PDF_MAP_SIZE } from "./mapView";
 import { zoneToMapInput } from "./zoneMap";
@@ -634,8 +635,9 @@ async function drawWallPage(
       color,
       String(route.position),
     );
+    const grade = toFrenchGrade(route.grade, route.gradeSystem);
     const label = sanitizePdfText(
-      `${route.name}${route.grade ? `   ${route.grade}` : ""}`,
+      `${route.name}${grade ? `   ${grade}` : ""}`,
     );
     page.drawText(label.slice(0, 42), {
       x: MARGIN + 22,

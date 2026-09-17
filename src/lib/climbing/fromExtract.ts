@@ -1,3 +1,5 @@
+import { FRENCH_GRADE_SYSTEM, toFrenchGrade } from "./frenchGrade";
+
 const SKIP_SECTOR_SLUGS = new Set(["test"]);
 
 export type ExtractDump = {
@@ -200,6 +202,16 @@ export function seedFromExtract(extract: ExtractDump): GuideSeed {
       const length = lengths[String(route.id)];
       const originalGrade = grade?.originalGrade;
       const numericGrade = grade?.grade;
+      const rawGrade =
+        originalGrade != null && originalGrade !== ""
+          ? String(originalGrade)
+          : numericGrade != null
+            ? String(numericGrade)
+            : null;
+      const frenchGrade = toFrenchGrade(
+        rawGrade,
+        grade?.originalGradeSystem ? String(grade.originalGradeSystem) : null,
+      );
       return {
         id: String(route.id),
         wallId: String(route.wallId),
@@ -211,15 +223,8 @@ export function seedFromExtract(extract: ExtractDump): GuideSeed {
         description: route.descriptionId
           ? (texts[String(route.descriptionId)] ?? null)
           : null,
-        grade:
-          originalGrade != null && originalGrade !== ""
-            ? String(originalGrade)
-            : numericGrade != null
-              ? String(numericGrade)
-              : null,
-        gradeSystem: grade?.originalGradeSystem
-          ? String(grade.originalGradeSystem)
-          : null,
+        grade: frenchGrade,
+        gradeSystem: frenchGrade ? FRENCH_GRADE_SYSTEM : null,
         length: length?.length == null ? null : Number(length.length),
         lengthUnit: length?.unit ? String(length.unit) : null,
       };

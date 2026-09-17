@@ -10,6 +10,7 @@ import { routeColor, routeMeta, SELECTED_COLOR } from "@/lib/climbing/colors";
 
 type ExplorerRoute = TopoViewRoute & {
   description: string | null;
+  gradeSystem?: string | null;
   length: number | null;
   lengthUnit: string | null;
 };

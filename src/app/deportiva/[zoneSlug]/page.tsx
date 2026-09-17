@@ -3,9 +3,13 @@ import DownloadPdfLink from "@/components/DownloadPdfLink";
 import TrackedLink from "@/components/TrackedLink";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
+import ZoneMap from "@/components/climbing/ZoneMap";
 import { requireZoneBySlug } from "@/lib/guide/queries";
 import { formatGuideDate } from "@/lib/guide/layout";
 import { latestPdfDate } from "@/lib/guide/store";
+import { buildZoneMapView, WEB_MAP_SIZE } from "@/lib/guide/mapView";
+import { mapboxToken } from "@/lib/guide/mapbox";
+import { zoneToMapInput } from "@/lib/guide/zoneMap";
 
 type ZonePageProps = {
   params: Promise<{ zoneSlug: string }>;
@@ -26,8 +30,13 @@ export async function generateMetadata({
 
 export default async function ZonePage({ params }: ZonePageProps) {
   const { zoneSlug } = await params;
-  const { zone, sectors, walls, routes } = await requireZoneBySlug(zoneSlug);
+  const guide = await requireZoneBySlug(zoneSlug);
+  const { zone, sectors, walls, routes } = guide;
   const generatedAt = await latestPdfDate(zone.id);
+  const mapView =
+    mapboxToken().length > 0
+      ? buildZoneMapView(zoneToMapInput(guide), WEB_MAP_SIZE)
+      : null;
 
   return (
     <main className="flex min-h-screen flex-col">
@@ -61,11 +70,20 @@ export default async function ZonePage({ params }: ZonePageProps) {
           ) : null}
         </header>
 
+        {mapView ? (
+          <ZoneMap
+            zoneSlug={zone.slug}
+            zoneName={zone.name}
+            view={mapView}
+          />
+        ) : null}
+
         {sectors.map((sector) => {
           const sectorWalls = walls.filter((wall) => wall.sectorId === sector.id);
           return (
             <section
               key={sector.id}
+              id={`sector-${sector.slug}`}
               className="page-shell border-rule border-b py-12"
             >
               <p className="kicker">Sector</p>

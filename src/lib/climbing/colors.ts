@@ -7,9 +7,44 @@ export const KIND_COLORS: Record<string, string> = {
   Aid: "#8931EF",
 };
 
+export const KIND_LABELS: Record<string, string> = {
+  Sport: "Deportiva",
+  Trad: "Tradicional",
+  Boulder: "Boulder",
+  Mixed: "Mixto",
+  Ice: "Hielo",
+  Aid: "Artificial",
+};
+
 export const SELECTED_COLOR = "#87E911";
 export const DIMMED_COLOR = "rgba(28, 25, 22, 0.28)";
 
 export function routeColor(kind: string): string {
   return KIND_COLORS[kind] ?? "#E11845";
 }
+
+export function routeKindLabel(kind: string): string {
+  return KIND_LABELS[kind] ?? kind;
+}
+
+export function routeMeta(route: {
+  kind: string;
+  grade: string | null;
+  length: number | null;
+  lengthUnit: string | null;
+}): string {
+  const parts = [routeKindLabel(route.kind)];
+  if (route.grade && route.grade.toLowerCase() !== "no grade") {
+    parts.push(route.grade);
+  }
+  if (route.length != null) {
+    parts.push(`${route.length} ${lengthUnitLabel(route.lengthUnit)}`);
+  }
+  return parts.join(" · ");
+}
+
+function lengthUnitLabel(unit: string | null): string {
+  if (!unit || /^(mts|m|meter|meters|metric)$/i.test(unit)) return "m";
+  return unit;
+}
+

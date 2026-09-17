@@ -41,7 +41,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "diedro-del-medio",
       "name": "Diedro del medio",
-      "position": 6,
+      "position": 2,
       "kind": "Wall"
     },
     {
@@ -57,7 +57,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "pared-blanca-titanica",
       "name": "Gengis Kan",
-      "position": 7,
+      "position": 6,
       "kind": "Wall"
     },
     {
@@ -65,7 +65,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "guggenheim",
       "name": "Guggenheim",
-      "position": 2,
+      "position": 4,
       "kind": "Wall"
     },
     {
@@ -73,7 +73,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "corta-viento-y-potasio",
       "name": "Corta Viento y Potasio",
-      "position": 4,
+      "position": 5,
       "kind": "Wall"
     },
     {
@@ -81,7 +81,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "la-buena-vaina",
       "name": "La buena vaina",
-      "position": 1,
+      "position": 3,
       "kind": "Wall"
     },
     {
@@ -89,7 +89,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "al-principio",
       "name": "Donde pega el sol",
-      "position": 5,
+      "position": 1,
       "kind": "Wall"
     },
     {
@@ -97,7 +97,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "el-queso",
       "name": "El queso",
-      "position": 3,
+      "position": 7,
       "kind": "Wall"
     },
     {

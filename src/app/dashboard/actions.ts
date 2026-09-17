@@ -1,11 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { auth, isAdminEmail } from "@/auth";
 import { db } from "@/db/client";
-import { routePaths, routes, topos, zones } from "@/db/schema";
+import { routePaths, routes, sectors, topos, zones } from "@/db/schema";
 import { refreshPdfsForWall, refreshZoneCover } from "@/lib/guide/store";
+import {
+  moveSectorId,
+  rankNorthToSouth,
+  sortSectors,
+} from "@/lib/guide/sectorOrder";
 
 async function requireAdmin() {
   const session = await auth();
@@ -16,9 +21,70 @@ async function requireAdmin() {
   return session;
 }
 
-function revalidateGuide() {
+function revalidateGuide(zoneSlug?: string) {
   revalidatePath("/deportiva");
   revalidatePath("/dashboard");
+  if (zoneSlug) {
+    revalidatePath(`/deportiva/${zoneSlug}`);
+    revalidatePath(`/dashboard/zonas`);
+  }
+}
+
+async function writeSectorOrder(
+  zoneId: string,
+  orderedIds: string[],
+  refreshPdf = false,
+) {
+  const zone = await db
+    .select({ slug: zones.slug })
+    .from(zones)
+    .where(eq(zones.id, zoneId))
+    .then((rows) => rows[0] ?? null);
+  if (!zone) throw new Error("Zona no encontrada");
+
+  for (const [index, id] of orderedIds.entries()) {
+    await db
+      .update(sectors)
+      .set({ position: index + 1 })
+      .where(eq(sectors.id, id));
+  }
+  if (refreshPdf) await refreshZoneCover(zoneId);
+  revalidateGuide(zone.slug);
+  revalidatePath(`/dashboard/zonas/${zoneId}`);
+}
+
+async function sectorIdsForZone(zoneId: string) {
+  const rows = await db
+    .select()
+    .from(sectors)
+    .where(eq(sectors.zoneId, zoneId))
+    .orderBy(asc(sectors.position), asc(sectors.name));
+  return sortSectors(rows);
+}
+
+export async function moveSector(formData: FormData) {
+  await requireAdmin();
+  const zoneId = String(formData.get("zoneId") ?? "");
+  const sectorId = String(formData.get("sectorId") ?? "");
+  const direction = String(formData.get("direction") ?? "");
+  if (!zoneId || !sectorId || (direction !== "up" && direction !== "down")) {
+    throw new Error("No se pudo mover el sector");
+  }
+  const rows = await sectorIdsForZone(zoneId);
+  const next = moveSectorId(
+    rows.map((row) => row.id),
+    sectorId,
+    direction,
+  );
+  await writeSectorOrder(zoneId, next);
+}
+
+export async function orderSectorsNorthToSouth(formData: FormData) {
+  await requireAdmin();
+  const zoneId = String(formData.get("zoneId") ?? "");
+  if (!zoneId) throw new Error("Falta la zona");
+  const rows = await sectorIdsForZone(zoneId);
+  await writeSectorOrder(zoneId, rankNorthToSouth(rows), true);
 }
 
 export async function updateZone(formData: FormData) {
@@ -37,8 +103,13 @@ export async function updateZone(formData: FormData) {
       updatedAt: new Date(),
     })
     .where(eq(zones.id, id));
+  const zone = await db
+    .select({ slug: zones.slug })
+    .from(zones)
+    .where(eq(zones.id, id))
+    .then((rows) => rows[0] ?? null);
   await refreshZoneCover(id);
-  revalidateGuide();
+  revalidateGuide(zone?.slug);
 }
 
 export async function updateRoute(formData: FormData) {

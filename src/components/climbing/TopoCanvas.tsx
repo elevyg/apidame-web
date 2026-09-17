@@ -27,6 +27,7 @@ export type TopoViewImage = {
   id: string;
   name: string | null;
   main?: boolean;
+  position: number;
   imageUrl: string;
   imagePublicId: string | null;
   imageWidth: number | null;
@@ -34,13 +35,28 @@ export type TopoViewImage = {
   routeStrokeWidth: number;
 };
 
+type DrawnPath = TopoViewPath & {
+  route: TopoViewRoute;
+  points: { x: number; y: number }[];
+};
+
 type TopoCanvasProps = {
   topo: TopoViewImage;
   routes: TopoViewRoute[];
   paths: TopoViewPath[];
   selectedRouteId: string | null;
-  onSelectRoute: (id: string) => void;
+  onSelectRoute: (id: string | null) => void;
 };
+
+function pathStroke(
+  kind: string,
+  routeId: string,
+  selectedRouteId: string | null,
+) {
+  if (selectedRouteId === routeId) return SELECTED_COLOR;
+  if (selectedRouteId !== null) return DIMMED_COLOR;
+  return routeColor(kind);
+}
 
 export default function TopoCanvas({
   topo,
@@ -57,39 +73,45 @@ export default function TopoCanvas({
     1800,
   );
 
-  const drawn = useMemo(
-    () =>
-      paths
-        .map((item) => {
-          const route = routes.find((candidate) => candidate.id === item.routeId);
-          return route
-            ? { ...item, route, points: parsePath(item.path) }
-            : null;
-        })
-        .filter((item) => item && item.points.length > 1),
-    [paths, routes],
-  );
+  const drawn = useMemo(() => {
+    const items: DrawnPath[] = [];
+    for (const item of paths) {
+      const route = routes.find((candidate) => candidate.id === item.routeId);
+      if (!route) continue;
+      const points = parsePath(item.path);
+      if (points.length > 1) items.push({ ...item, route, points });
+    }
+    if (!selectedRouteId) return items;
+    return [...items].sort((a, b) => {
+      const aSel = a.route.id === selectedRouteId ? 1 : 0;
+      const bSel = b.route.id === selectedRouteId ? 1 : 0;
+      return aSel - bSel;
+    });
+  }, [paths, routes, selectedRouteId]);
 
   return (
-    <div className="bg-canvas h-full overflow-hidden">
+    <div className="h-full min-h-0 w-full overflow-hidden bg-canvas">
       <TransformWrapper
-        minScale={1}
+        minScale={0.25}
         maxScale={6}
-        centerOnInit
+        fitOnInit
         limitToBounds
+        centerZoomedOut
         wheel={{ step: 0.12 }}
         pinch={{ step: 6 }}
       >
         <TransformComponent
-          wrapperClass="!h-full !w-full"
-          contentClass="!h-full !w-full"
+          wrapperStyle={{ width: "100%", height: "100%", overflow: "hidden" }}
+          contentStyle={{ width: "100%" }}
         >
-          <div className="relative h-full w-full">
+          <div className="relative w-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={src}
               alt={topo.name ?? "Topo"}
-              className="absolute inset-0 h-full w-full object-contain"
+              width={width}
+              height={height}
+              className="block h-auto w-full"
               draggable={false}
             />
             <svg
@@ -97,17 +119,24 @@ export default function TopoCanvas({
               className="absolute inset-0 h-full w-full"
               preserveAspectRatio="xMidYMid meet"
             >
+              <rect
+                width={width}
+                height={height}
+                fill="transparent"
+                onClick={() => onSelectRoute(null)}
+              />
               {drawn.map((item) => {
-                if (!item) return null;
                 const active = selectedRouteId === item.route.id;
-                const dimmed = selectedRouteId !== null && !active;
-                const color = dimmed
-                  ? DIMMED_COLOR
-                  : active
-                    ? SELECTED_COLOR
-                    : routeColor(item.route.kind);
+                const color = pathStroke(
+                  item.route.kind,
+                  item.route.id,
+                  selectedRouteId,
+                );
                 const start = item.points[0];
                 const end = item.points[item.points.length - 1];
+                const points = item.points
+                  .map((point) => `${point.x},${point.y}`)
+                  .join(" ");
                 return (
                   <g
                     key={item.id}
@@ -119,11 +148,17 @@ export default function TopoCanvas({
                   >
                     <polyline
                       fill="none"
-                      points={item.points
-                        .map((point) => `${point.x},${point.y}`)
-                        .join(" ")}
+                      points={points}
+                      stroke="transparent"
+                      strokeWidth={Math.max(stroke * 8, 64)}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <polyline
+                      fill="none"
+                      points={points}
                       stroke={color}
-                      strokeWidth={stroke}
+                      strokeWidth={active ? stroke * 1.45 : stroke}
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />

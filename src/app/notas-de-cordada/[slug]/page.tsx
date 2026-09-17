@@ -69,7 +69,11 @@ export default async function NotaDeCordadaPage({
   return (
     <div className="bg-canvas h-dvh overflow-hidden">
       <SiteHeader current="notas-de-cordada" autoHide />
-      <FeedPost post={post} closeHref="/notas-de-cordada" />
+      <FeedPost
+        key={post.slug}
+        post={post}
+        closeHref={`/notas-de-cordada#${post.slug}`}
+      />
     </div>
   );
 }

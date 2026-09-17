@@ -21,6 +21,8 @@
 :root {
   --site-header-h: calc(3.5rem + 1px);
   --site-panel-h: calc(100dvh - var(--site-header-h));
+  --nota-morph-duration: 680ms;
+  --nota-morph-ease: cubic-bezier(0.32, 0.08, 0.24, 1);
 }
 
 @media (min-width: 768px) {
@@ -102,6 +104,47 @@ html {
   }
   to {
     translate: 0;
+  }
+}
+
+::view-transition-group(.nota-morph) {
+  z-index: 20;
+  overflow: hidden;
+  animation-duration: var(--nota-morph-duration);
+  animation-timing-function: var(--nota-morph-ease);
+}
+
+::view-transition-old(.nota-morph),
+::view-transition-new(.nota-morph) {
+  height: 100%;
+  overflow: hidden;
+  object-fit: cover;
+  animation-duration: var(--nota-morph-duration);
+  animation-timing-function: var(--nota-morph-ease);
+}
+
+::view-transition-group(.text-morph) {
+  z-index: 21;
+  animation-duration: var(--nota-morph-duration);
+  animation-timing-function: var(--nota-morph-ease);
+}
+
+::view-transition-old(.text-morph) {
+  display: none;
+}
+
+::view-transition-new(.text-morph) {
+  animation: var(--nota-morph-duration) var(--nota-morph-ease) both nota-text-in;
+  object-fit: none;
+  object-position: left top;
+}
+
+@keyframes nota-text-in {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
   }
 }
 

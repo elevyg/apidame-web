@@ -12,6 +12,7 @@ import {
 } from "@/db/schema";
 import { withFrenchGrade } from "@/lib/climbing/frenchGrade";
 import { agreementRank } from "@/lib/guide/overlay";
+import type { AdminSearchItem } from "./adminSearch";
 import { notFound } from "next/navigation";
 
 export async function listPublishedZones() {
@@ -234,4 +235,112 @@ export async function getTopoEditor(topoId: string) {
     .from(routePaths)
     .where(eq(routePaths.topoId, topo.id));
   return { topo, ...context, routes: wallRoutes.map(withFrenchGrade), paths };
+}
+
+export async function getAdminCatalog(): Promise<AdminSearchItem[]> {
+  const [zoneRows, sectorRows, wallRows, routeRows] = await Promise.all([
+    db.select().from(zones).orderBy(asc(zones.name)),
+    db.select().from(sectors).orderBy(asc(sectors.position), asc(sectors.name)),
+    db.select().from(walls).orderBy(asc(walls.position), asc(walls.name)),
+    db.select().from(routes).orderBy(asc(routes.position), asc(routes.name)),
+  ]);
+  const zoneById = new Map(zoneRows.map((zone) => [zone.id, zone]));
+  const sectorById = new Map(sectorRows.map((sector) => [sector.id, sector]));
+  const wallById = new Map(wallRows.map((wall) => [wall.id, wall]));
+
+  const items: AdminSearchItem[] = zoneRows.map((zone) => ({
+    kind: "zona",
+    id: zone.id,
+    name: zone.name,
+    href: `/dashboard/zonas/${zone.id}`,
+    crumb: zone.published ? "Publicada" : "Oculta",
+    zoneId: zone.id,
+  }));
+
+  for (const sector of sectorRows) {
+    const zone = zoneById.get(sector.zoneId);
+    if (!zone) continue;
+    items.push({
+      kind: "sector",
+      id: sector.id,
+      name: sector.name,
+      href: `/dashboard/zonas/${zone.id}#sector-${sector.id}`,
+      crumb: zone.name,
+      zoneId: zone.id,
+      sectorId: sector.id,
+    });
+  }
+
+  for (const wall of wallRows) {
+    const sector = sectorById.get(wall.sectorId);
+    const zone = sector ? zoneById.get(sector.zoneId) : undefined;
+    if (!sector || !zone) continue;
+    items.push({
+      kind: "pared",
+      id: wall.id,
+      name: wall.name,
+      href: `/dashboard/paredes/${wall.id}`,
+      crumb: `${zone.name} · ${sector.name}`,
+      zoneId: zone.id,
+      sectorId: sector.id,
+      wallId: wall.id,
+    });
+  }
+
+  for (const route of routeRows) {
+    const wall = wallById.get(route.wallId);
+    const sector = wall ? sectorById.get(wall.sectorId) : undefined;
+    const zone = sector ? zoneById.get(sector.zoneId) : undefined;
+    if (!wall || !sector || !zone) continue;
+    items.push({
+      kind: "ruta",
+      id: route.id,
+      name: route.name,
+      href: `/dashboard/rutas/${route.id}`,
+      crumb: `${zone.name} · ${wall.name}`,
+      zoneId: zone.id,
+      sectorId: sector.id,
+      wallId: wall.id,
+    });
+  }
+
+  return items;
+}
+
+export async function getAdminTree() {
+  const [zoneRows, sectorRows, wallRows] = await Promise.all([
+    db.select().from(zones).orderBy(asc(zones.name)),
+    db.select().from(sectors).orderBy(asc(sectors.position), asc(sectors.name)),
+    db.select().from(walls).orderBy(asc(walls.position), asc(walls.name)),
+  ]);
+  return zoneRows.map((zone) => ({
+    ...zone,
+    sectors: sectorRows
+      .filter((sector) => sector.zoneId === zone.id)
+      .map((sector) => ({
+        ...sector,
+        walls: wallRows.filter((wall) => wall.sectorId === sector.id),
+      })),
+  }));
+}
+
+export async function getRouteEditor(routeId: string) {
+  const route = await db
+    .select()
+    .from(routes)
+    .where(eq(routes.id, routeId))
+    .then((rows) => rows[0] ?? null);
+  if (!route) return null;
+  const context = await getWallById(route.wallId);
+  if (!context) return null;
+  const wallTopos = await db
+    .select()
+    .from(topos)
+    .where(eq(topos.wallId, route.wallId))
+    .orderBy(asc(topos.position));
+  const paths = await db
+    .select()
+    .from(routePaths)
+    .where(eq(routePaths.routeId, route.id));
+  return { route, ...context, topos: wallTopos, paths };
 }

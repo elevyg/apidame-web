@@ -1,13 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
 import { withFrenchGrade } from "@/lib/climbing/frenchGrade";
 import { getWallById } from "@/lib/guide/queries";
 import { db } from "@/db/client";
-import { routes, topos } from "@/db/schema";
-import { asc, eq } from "drizzle-orm";
-import { createRoute, updateRoute } from "../../actions";
+import { routePaths, routes, topos } from "@/db/schema";
+import { asc, eq, inArray } from "drizzle-orm";
+import { createRoute, createTopo } from "../../actions";
 
 type WallAdminProps = {
   params: Promise<{ wallId: string }>;
@@ -28,127 +26,175 @@ export default async function WallAdminPage({ params }: WallAdminProps) {
     .from(topos)
     .where(eq(topos.wallId, wall.id))
     .orderBy(asc(topos.position));
+  const routeIds = wallRoutes.map((route) => route.id);
+  const paths =
+    routeIds.length === 0
+      ? []
+      : await db
+          .select()
+          .from(routePaths)
+          .where(inArray(routePaths.routeId, routeIds));
 
   return (
-    <main className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <section className="page-shell py-12">
-        <p className="kicker">
-          {zone.name} · {sector.name}
-        </p>
-        <h1 className="font-display mt-2 text-4xl">{wall.name}</h1>
-        <Link
-          href={`/dashboard/zonas/${zone.id}`}
-          className="font-brown text-ink-soft mt-3 inline-block text-xs tracking-[0.14em] uppercase"
-        >
-          Volver a la zona
-        </Link>
+    <section className="page-shell py-12">
+      <p className="kicker">
+        <Link href={`/dashboard/zonas/${zone.id}`}>{zone.name}</Link>
+        {" · "}
+        {sector.name}
+      </p>
+      <h1 className="font-display mt-2 text-4xl">{wall.name}</h1>
 
-        <h2 className="font-display mt-10 text-2xl">Topos</h2>
-        <ul className="mt-4 grid gap-3">
-          {wallTopos.map((topo) => (
-            <li key={topo.id} className="border-rule flex items-center justify-between border p-4">
-              <p className="font-brown text-sm">
-                {topo.name ?? "Topo"} {topo.main ? "· principal" : ""}
+      <div className="mt-10 flex items-end justify-between gap-4">
+        <h2 className="font-display text-2xl">Topos</h2>
+      </div>
+      <ul className="mt-4 grid gap-3">
+        {wallTopos.map((topo) => (
+          <li
+            key={topo.id}
+            className="border-rule flex items-center justify-between border p-4"
+          >
+            <div>
+              <p className="font-display text-xl">{topo.name ?? "Topo"}</p>
+              <p className="font-brown text-ink-soft text-xs tracking-[0.12em] uppercase">
+                {topo.main ? "Principal" : "Secundario"}
               </p>
-              <Link
-                href={`/dashboard/topos/${topo.id}`}
-                className="font-brown text-xs tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
-              >
-                Dibujar líneas
-              </Link>
-            </li>
-          ))}
-        </ul>
+            </div>
+            <Link
+              href={`/dashboard/topos/${topo.id}`}
+              className="font-brown text-xs tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
+            >
+              Modificar topo
+            </Link>
+          </li>
+        ))}
+      </ul>
 
-        <h2 className="font-display mt-10 text-2xl">Rutas</h2>
-        <ul className="mt-4 grid gap-6">
-          {wallRoutes.map(withFrenchGrade).map((route) => (
-            <li key={route.id} className="border-rule border p-4">
-              <form action={updateRoute} className="grid gap-3 md:grid-cols-2">
-                <input type="hidden" name="id" value={route.id} />
-                <label className="font-brown text-sm">
-                  Nombre
-                  <input
-                    name="name"
-                    defaultValue={route.name}
-                    className="border-rule mt-1 block w-full border px-3 py-2"
-                  />
-                </label>
-                <label className="font-brown text-sm">
-                  Grado
-                  <input
-                    name="grade"
-                    defaultValue={route.grade ?? ""}
-                    className="border-rule mt-1 block w-full border px-3 py-2"
-                  />
-                </label>
-                <label className="font-brown text-sm">
-                  Tipo
-                  <input
-                    name="kind"
-                    defaultValue={route.kind}
-                    className="border-rule mt-1 block w-full border px-3 py-2"
-                  />
-                </label>
-                <label className="font-brown text-sm">
-                  Posición
-                  <input
-                    name="position"
-                    type="number"
-                    defaultValue={route.position}
-                    className="border-rule mt-1 block w-full border px-3 py-2"
-                  />
-                </label>
-                <label className="font-brown text-sm md:col-span-2">
-                  Descripción
-                  <textarea
-                    name="description"
-                    defaultValue={route.description ?? ""}
-                    rows={3}
-                    className="border-rule mt-1 block w-full border px-3 py-2"
-                  />
-                </label>
-                <button
-                  type="submit"
-                  className="font-brown border-rule w-fit border px-4 py-2 text-xs tracking-[0.16em] uppercase"
-                >
-                  Guardar ruta
-                </button>
-              </form>
-            </li>
-          ))}
-        </ul>
-
-        <form action={createRoute} className="border-rule mt-10 grid max-w-xl gap-3 border p-4">
-          <h2 className="font-display text-2xl">Agregar ruta</h2>
-          <input type="hidden" name="wallId" value={wall.id} />
+      <form
+        action={createTopo}
+        className="border-rule mt-6 grid max-w-xl gap-3 border p-4"
+      >
+        <h3 className="font-display text-xl">Agregar topo</h3>
+        <input type="hidden" name="wallId" value={wall.id} />
+        <label className="font-brown text-sm">
+          Nombre
+          <input
+            name="name"
+            className="border-rule mt-1 block w-full border px-3 py-2"
+          />
+        </label>
+        <label className="font-brown text-sm">
+          URL de la foto
+          <input
+            name="imageUrl"
+            required
+            placeholder="https://"
+            className="border-rule mt-1 block w-full border px-3 py-2"
+          />
+        </label>
+        <label className="font-brown text-sm">
+          Cloudinary public id
+          <input
+            name="imagePublicId"
+            className="border-rule mt-1 block w-full border px-3 py-2"
+          />
+        </label>
+        <div className="grid grid-cols-2 gap-3">
           <label className="font-brown text-sm">
-            Nombre
-            <input name="name" className="border-rule mt-1 block w-full border px-3 py-2" />
-          </label>
-          <label className="font-brown text-sm">
-            Grado
-            <input name="grade" className="border-rule mt-1 block w-full border px-3 py-2" />
-          </label>
-          <label className="font-brown text-sm">
-            Posición
+            Ancho
             <input
-              name="position"
+              name="imageWidth"
               type="number"
-              defaultValue={wallRoutes.length + 1}
               className="border-rule mt-1 block w-full border px-3 py-2"
             />
           </label>
-          <button
-            type="submit"
-            className="font-brown border-rule w-fit border px-4 py-2 text-xs tracking-[0.16em] uppercase"
-          >
-            Crear
-          </button>
-        </form>
-      </section>
-      <SiteFooter />
-    </main>
+          <label className="font-brown text-sm">
+            Alto
+            <input
+              name="imageHeight"
+              type="number"
+              className="border-rule mt-1 block w-full border px-3 py-2"
+            />
+          </label>
+        </div>
+        <label className="font-brown flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            name="main"
+            defaultChecked={wallTopos.length === 0}
+          />
+          Topo principal
+        </label>
+        <button
+          type="submit"
+          className="font-brown border-rule w-fit border px-4 py-2 text-xs tracking-[0.16em] uppercase"
+        >
+          Crear topo
+        </button>
+      </form>
+
+      <div className="mt-14 flex items-end justify-between gap-4">
+        <h2 className="font-display text-2xl">Rutas</h2>
+        <Link
+          href={`/dashboard/agregar?kind=ruta&zoneId=${zone.id}&sectorId=${sector.id}&wallId=${wall.id}`}
+          className="font-brown text-xs tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
+        >
+          Agregar ruta
+        </Link>
+      </div>
+      <ul className="divide-rule mt-4 divide-y border-rule border-y">
+        {wallRoutes.map(withFrenchGrade).map((route) => {
+          const lined = paths.some((path) => path.routeId === route.id);
+          return (
+            <li key={route.id}>
+              <Link
+                href={`/dashboard/rutas/${route.id}`}
+                className="flex items-baseline justify-between gap-4 py-4"
+              >
+                <span>
+                  <span className="font-display text-xl">
+                    {route.position}. {route.name}
+                  </span>
+                  <span className="font-brown text-ink-soft ml-3 text-sm">
+                    {route.grade ?? "s/g"}
+                  </span>
+                </span>
+                <span className="font-brown text-ink-soft text-xs tracking-[0.12em] uppercase">
+                  {lined ? "Con línea" : "Sin línea"}
+                </span>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+
+      <form
+        action={createRoute}
+        className="border-rule mt-8 grid max-w-xl gap-3 border p-4"
+      >
+        <h3 className="font-display text-xl">Ruta rápida</h3>
+        <input type="hidden" name="wallId" value={wall.id} />
+        <label className="font-brown text-sm">
+          Nombre
+          <input
+            name="name"
+            required
+            className="border-rule mt-1 block w-full border px-3 py-2"
+          />
+        </label>
+        <label className="font-brown text-sm">
+          Grado
+          <input
+            name="grade"
+            className="border-rule mt-1 block w-full border px-3 py-2"
+          />
+        </label>
+        <button
+          type="submit"
+          className="font-brown border-rule w-fit border px-4 py-2 text-xs tracking-[0.16em] uppercase"
+        >
+          Crear y abrir ficha
+        </button>
+      </form>
+    </section>
   );
 }

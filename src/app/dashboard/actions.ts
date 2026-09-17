@@ -1,14 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { asc, eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
+import { and, asc, eq } from "drizzle-orm";
 import { auth, isAdminEmail } from "@/auth";
 import { db } from "@/db/client";
-import { routePaths, routes, sectors, topos, zones } from "@/db/schema";
+import { routePaths, routes, sectors, topos, walls, zones } from "@/db/schema";
 import {
   FRENCH_GRADE_SYSTEM,
   toFrenchGrade,
 } from "@/lib/climbing/frenchGrade";
+import { guideSlug } from "@/lib/guide/slug";
 import { refreshPdfsForWall, refreshZoneCover } from "@/lib/guide/store";
 import {
   moveSectorId,
@@ -91,6 +93,15 @@ export async function orderSectorsNorthToSouth(formData: FormData) {
   await writeSectorOrder(zoneId, rankNorthToSouth(rows), true);
 }
 
+async function uniqueChildSlug(
+  existing: string[],
+  name: string,
+) {
+  const base = guideSlug(name);
+  if (!existing.includes(base)) return base;
+  return `${base}-${crypto.randomUUID().slice(0, 8)}`;
+}
+
 export async function updateZone(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id") ?? "");
@@ -114,6 +125,62 @@ export async function updateZone(formData: FormData) {
     .then((rows) => rows[0] ?? null);
   await refreshZoneCover(id);
   revalidateGuide(zone?.slug);
+}
+
+export async function createSector(formData: FormData) {
+  await requireAdmin();
+  const zoneId = String(formData.get("zoneId") ?? "");
+  const name = String(formData.get("name") ?? "").trim();
+  if (!zoneId || !name) throw new Error("Falta el sector");
+  const siblings = await db
+    .select({ slug: sectors.slug, position: sectors.position })
+    .from(sectors)
+    .where(eq(sectors.zoneId, zoneId));
+  const id = crypto.randomUUID();
+  await db.insert(sectors).values({
+    id,
+    zoneId,
+    name,
+    slug: await uniqueChildSlug(
+      siblings.map((row) => row.slug),
+      name,
+    ),
+    position: siblings.reduce((max, row) => Math.max(max, row.position), 0) + 1,
+  });
+  await refreshZoneCover(zoneId);
+  revalidateGuide();
+  redirect(`/dashboard/zonas/${zoneId}#sector-${id}`);
+}
+
+export async function createWall(formData: FormData) {
+  await requireAdmin();
+  const sectorId = String(formData.get("sectorId") ?? "");
+  const name = String(formData.get("name") ?? "").trim();
+  if (!sectorId || !name) throw new Error("Falta la pared");
+  const sector = await db
+    .select({ zoneId: sectors.zoneId })
+    .from(sectors)
+    .where(eq(sectors.id, sectorId))
+    .then((rows) => rows[0] ?? null);
+  if (!sector) throw new Error("Sector no encontrado");
+  const siblings = await db
+    .select({ slug: walls.slug, position: walls.position })
+    .from(walls)
+    .where(eq(walls.sectorId, sectorId));
+  const id = crypto.randomUUID();
+  await db.insert(walls).values({
+    id,
+    sectorId,
+    name,
+    slug: await uniqueChildSlug(
+      siblings.map((row) => row.slug),
+      name,
+    ),
+    position: siblings.reduce((max, row) => Math.max(max, row.position), 0) + 1,
+  });
+  await refreshZoneCover(sector.zoneId);
+  revalidateGuide();
+  redirect(`/dashboard/paredes/${id}`);
 }
 
 export async function updateRoute(formData: FormData) {
@@ -145,6 +212,7 @@ export async function updateRoute(formData: FormData) {
     .where(eq(routes.id, id));
   await refreshPdfsForWall(current.wallId);
   revalidateGuide();
+  revalidatePath(`/dashboard/rutas/${id}`);
 }
 
 export async function createRoute(formData: FormData) {
@@ -156,24 +224,29 @@ export async function createRoute(formData: FormData) {
   const position = Number(formData.get("position") ?? 0);
   const frenchGrade = toFrenchGrade(grade || null);
   if (!wallId || !name) throw new Error("Falta el nombre de la ruta");
-  const slug = name
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
+  const siblings = await db
+    .select({ slug: routes.slug, position: routes.position })
+    .from(routes)
+    .where(eq(routes.wallId, wallId));
+  const id = crypto.randomUUID();
   await db.insert(routes).values({
-    id: crypto.randomUUID(),
+    id,
     wallId,
     name,
-    slug: slug || crypto.randomUUID(),
+    slug: await uniqueChildSlug(
+      siblings.map((row) => row.slug),
+      name,
+    ),
     grade: frenchGrade,
     gradeSystem: frenchGrade ? FRENCH_GRADE_SYSTEM : null,
     kind,
-    position: Number.isFinite(position) ? position : 0,
+    position: Number.isFinite(position)
+      ? position
+      : siblings.reduce((max, row) => Math.max(max, row.position), 0) + 1,
   });
   await refreshPdfsForWall(wallId);
   revalidateGuide();
+  redirect(`/dashboard/rutas/${id}`);
 }
 
 export async function saveRoutePath(formData: FormData) {
@@ -191,10 +264,7 @@ export async function saveRoutePath(formData: FormData) {
   if (!topo) throw new Error("Topo no encontrado");
 
   if (pathId) {
-    await db
-      .update(routePaths)
-      .set({ path })
-      .where(eq(routePaths.id, pathId));
+    await db.update(routePaths).set({ path }).where(eq(routePaths.id, pathId));
   } else {
     await db.insert(routePaths).values({
       id: crypto.randomUUID(),
@@ -205,6 +275,50 @@ export async function saveRoutePath(formData: FormData) {
   }
   await refreshPdfsForWall(topo.wallId);
   revalidateGuide();
+  revalidatePath(`/dashboard/rutas/${routeId}`);
+  revalidatePath(`/dashboard/topos/${topoId}`);
+}
+
+export async function createTopo(formData: FormData) {
+  await requireAdmin();
+  const wallId = String(formData.get("wallId") ?? "");
+  const name = String(formData.get("name") ?? "").trim();
+  const imageUrl = String(formData.get("imageUrl") ?? "").trim();
+  const imagePublicId = String(formData.get("imagePublicId") ?? "").trim();
+  const imageWidth = Number(formData.get("imageWidth") ?? 0);
+  const imageHeight = Number(formData.get("imageHeight") ?? 0);
+  const main = formData.get("main") === "on";
+  if (!wallId || !imageUrl) throw new Error("Falta la foto del topo");
+  if (!/^https?:\/\//i.test(imageUrl)) {
+    throw new Error("La foto tiene que ser una URL http");
+  }
+  const siblings = await db
+    .select({ slug: topos.slug, position: topos.position })
+    .from(topos)
+    .where(eq(topos.wallId, wallId));
+  const id = crypto.randomUUID();
+  if (main) {
+    await db.update(topos).set({ main: false }).where(eq(topos.wallId, wallId));
+  }
+  await db.insert(topos).values({
+    id,
+    wallId,
+    name: name || null,
+    slug: await uniqueChildSlug(
+      siblings.map((row) => row.slug),
+      name || "topo",
+    ),
+    position: siblings.reduce((max, row) => Math.max(max, row.position), 0) + 1,
+    main: main || siblings.length === 0,
+    imageUrl,
+    imagePublicId: imagePublicId || null,
+    imageWidth: Number.isFinite(imageWidth) && imageWidth > 0 ? imageWidth : null,
+    imageHeight:
+      Number.isFinite(imageHeight) && imageHeight > 0 ? imageHeight : null,
+  });
+  await refreshPdfsForWall(wallId);
+  revalidateGuide();
+  redirect(`/dashboard/topos/${id}`);
 }
 
 export async function updateTopoMeta(formData: FormData) {
@@ -212,17 +326,32 @@ export async function updateTopoMeta(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   const name = String(formData.get("name") ?? "").trim();
   const main = formData.get("main") === "on";
+  const imageUrl = String(formData.get("imageUrl") ?? "").trim();
   if (!id) throw new Error("Falta el topo");
   const topo = await db
-    .select({ wallId: topos.wallId })
+    .select()
     .from(topos)
     .where(eq(topos.id, id))
     .then((rows) => rows[0] ?? null);
   if (!topo) throw new Error("Topo no encontrado");
+  if (main) {
+    await db
+      .update(topos)
+      .set({ main: false })
+      .where(and(eq(topos.wallId, topo.wallId)));
+  }
   await db
     .update(topos)
-    .set({ name: name || null, main })
+    .set({
+      name: name || null,
+      main,
+      ...(imageUrl && /^https?:\/\//i.test(imageUrl)
+        ? { imageUrl }
+        : {}),
+    })
     .where(eq(topos.id, id));
   await refreshPdfsForWall(topo.wallId);
   revalidateGuide();
+  revalidatePath(`/dashboard/topos/${id}`);
+  revalidatePath(`/dashboard/paredes/${topo.wallId}`);
 }

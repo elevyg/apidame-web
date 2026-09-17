@@ -7,6 +7,7 @@ const config = {
   reactStrictMode: true,
   skipTrailingSlashRedirect: true,
   images: {
+    qualities: [75, 85, 92],
     remotePatterns: [
       {
         protocol: "https",
@@ -18,6 +19,14 @@ const config = {
         hostname: "lh3.googleusercontent.com",
       },
     ],
+  },
+  turbopack: {
+    rules: {
+      "*.svg": {
+        loaders: ["@svgr/webpack"],
+        as: "*.js",
+      },
+    },
   },
   async rewrites() {
     return [
@@ -42,13 +51,6 @@ const config = {
     "/notas-de-cordada/opengraph-image": [
       "./src/assets/fonts/BrownStd-Regular.otf",
     ],
-  },
-  webpack: (webpackConfig) => {
-    webpackConfig.module.rules.push({
-      test: /\.svg$/,
-      use: ["@svgr/webpack"],
-    });
-    return webpackConfig;
   },
 };
 

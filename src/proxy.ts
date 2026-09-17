@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth, isAdminEmail } from "@/auth";
 
-export default auth((req) => {
+const proxy = auth((req) => {
   const path = req.nextUrl.pathname;
   if (!path.startsWith("/dashboard")) return NextResponse.next();
 
@@ -18,6 +18,9 @@ export default auth((req) => {
 
   return NextResponse.next();
 });
+
+export default proxy;
+export { proxy };
 
 export const config = {
   matcher: ["/dashboard/:path*"],

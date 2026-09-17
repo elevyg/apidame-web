@@ -52,6 +52,16 @@ const config = {
       "./src/assets/fonts/BrownStd-Regular.otf",
     ],
   },
+  outputFileTracingExcludes: {
+    "/notas-de-cordada/[slug]/opengraph-image": [
+      "./public/tiles/**",
+      "./public/vendor/**",
+    ],
+    "/notas-de-cordada/opengraph-image": [
+      "./public/tiles/**",
+      "./public/vendor/**",
+    ],
+  },
 };
 
 const posthogApiKey =

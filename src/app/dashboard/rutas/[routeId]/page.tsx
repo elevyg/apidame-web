@@ -87,6 +87,55 @@ export default async function RouteAdminPage({ params }: RouteAdminProps) {
             className="border-rule mt-1 block w-full border px-3 py-2"
           />
         </label>
+        <label className="font-brown text-sm">
+          Promedio de estrellas (0–5)
+          <input
+            name="starAverage"
+            type="number"
+            min={0}
+            max={5}
+            step={0.1}
+            defaultValue={route.starCount > 0 ? (route.starAverage ?? "") : ""}
+            className="border-rule mt-1 block w-full border px-3 py-2"
+          />
+        </label>
+        <label className="font-brown text-sm">
+          Cantidad de votos
+          <input
+            name="starCount"
+            type="number"
+            min={0}
+            step={1}
+            defaultValue={route.starCount}
+            className="border-rule mt-1 block w-full border px-3 py-2"
+          />
+        </label>
+        <p className="font-brown text-ink-soft text-xs leading-relaxed">
+          Si la cantidad es 0, el promedio queda vacío y no se imprime en el
+          PDF.
+        </p>
+        <label className="font-brown text-sm">
+          Largo
+          <input
+            name="length"
+            type="number"
+            min={0}
+            step={0.1}
+            defaultValue={route.length ?? ""}
+            className="border-rule mt-1 block w-full border px-3 py-2"
+          />
+        </label>
+        <label className="font-brown text-sm">
+          Unidad
+          <select
+            name="lengthUnit"
+            defaultValue={route.lengthUnit ?? "Metric"}
+            className="border-rule mt-1 block w-full border px-3 py-2"
+          >
+            <option value="Metric">Metros</option>
+            <option value="Feet">Pies</option>
+          </select>
+        </label>
         <button
           type="submit"
           className="font-brown border-rule w-fit border px-4 py-2 text-xs tracking-[0.16em] uppercase"

@@ -5,12 +5,14 @@ import { redirect } from "next/navigation";
 import { and, asc, eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import {
+  agreements,
   routePaths,
   routes,
   sectors,
   topos,
   users,
   walls,
+  zoneAgreements,
   zoneRoles,
   zones,
 } from "@/db/schema";
@@ -45,6 +47,15 @@ function revalidateGuide(zoneSlug?: string) {
     revalidatePath(`/deportiva/${zoneSlug}`);
     revalidatePath(`/dashboard/zonas`);
   }
+}
+
+async function slugForZoneId(zoneId: string) {
+  const zone = await db
+    .select({ slug: zones.slug })
+    .from(zones)
+    .where(eq(zones.id, zoneId))
+    .then((rows) => rows[0] ?? null);
+  return zone?.slug;
 }
 
 async function writeSectorOrder(
@@ -108,6 +119,52 @@ async function uniqueChildSlug(existing: string[], name: string) {
   const base = guideSlug(name);
   if (!existing.includes(base)) return base;
   return `${base}-${crypto.randomUUID().slice(0, 8)}`;
+}
+
+function clampStroke(value: number, fallback: number) {
+  if (!Number.isFinite(value)) return fallback;
+  return Math.min(3, Math.max(0.2, Math.round(value * 20) / 20));
+}
+
+function parseStars(formData: FormData) {
+  const countRaw = String(formData.get("starCount") ?? "").trim();
+  const averageRaw = String(formData.get("starAverage") ?? "").trim();
+  const starCount = countRaw === "" ? 0 : Math.floor(Number(countRaw));
+  if (!Number.isFinite(starCount) || starCount < 0) {
+    throw new Error("La cantidad de estrellas no calza");
+  }
+  if (starCount === 0) return { starCount: 0, starAverage: null as number | null };
+  const starAverage = Number(averageRaw);
+  if (!Number.isFinite(starAverage)) {
+    throw new Error("Falta el promedio de estrellas");
+  }
+  return {
+    starCount,
+    starAverage: Math.min(5, Math.max(0, starAverage)),
+  };
+}
+
+function parseLength(formData: FormData) {
+  const lengthRaw = String(formData.get("length") ?? "").trim();
+  const unitRaw = String(formData.get("lengthUnit") ?? "").trim();
+  if (!lengthRaw) return { length: null as number | null, lengthUnit: null as string | null };
+  const length = Number(lengthRaw);
+  if (!Number.isFinite(length) || length <= 0) {
+    throw new Error("El largo no calza");
+  }
+  return {
+    length,
+    lengthUnit: unitRaw === "Feet" ? "Feet" : "Metric",
+  };
+}
+
+const AGREEMENT_LEVELS = ["Critical", "Important", "Recommended"] as const;
+
+function parseAgreementLevel(value: string) {
+  if (!AGREEMENT_LEVELS.includes(value as (typeof AGREEMENT_LEVELS)[number])) {
+    throw new Error("Nivel inválido");
+  }
+  return value;
 }
 
 export async function updateZone(formData: FormData) {
@@ -219,6 +276,8 @@ export async function updateRoute(formData: FormData) {
   if (!current) throw new Error("Ruta no encontrada");
   const zoneId = await zoneIdForRoute(id);
   await requireOwnedAction(zoneId, "update", current.createdByUserId);
+  const stars = parseStars(formData);
+  const length = parseLength(formData);
   await db
     .update(routes)
     .set({
@@ -228,10 +287,14 @@ export async function updateRoute(formData: FormData) {
       kind,
       description: description || null,
       position: Number.isFinite(position) ? position : 0,
+      starCount: stars.starCount,
+      starAverage: stars.starAverage,
+      length: length.length,
+      lengthUnit: length.lengthUnit,
     })
     .where(eq(routes.id, id));
   await refreshPdfsForWall(current.wallId);
-  revalidateGuide();
+  revalidateGuide(await slugForZoneId(zoneId));
   revalidatePath(`/dashboard/rutas/${id}`);
 }
 
@@ -245,6 +308,8 @@ export async function createRoute(formData: FormData) {
   if (!wallId || !name) throw new Error("Falta el nombre de la ruta");
   const zoneId = await zoneIdForWall(wallId);
   const { actor } = await requireZoneAction(zoneId, "create");
+  const stars = parseStars(formData);
+  const length = parseLength(formData);
   const siblings = await db
     .select({ slug: routes.slug, position: routes.position })
     .from(routes)
@@ -264,10 +329,14 @@ export async function createRoute(formData: FormData) {
     position: Number.isFinite(position)
       ? position
       : siblings.reduce((max, row) => Math.max(max, row.position), 0) + 1,
+    starCount: stars.starCount,
+    starAverage: stars.starAverage,
+    length: length.length,
+    lengthUnit: length.lengthUnit,
     createdByUserId: actor.id,
   });
   await refreshPdfsForWall(wallId);
-  revalidateGuide();
+  revalidateGuide(await slugForZoneId(zoneId));
   redirect(`/dashboard/rutas/${id}`);
 }
 
@@ -378,6 +447,10 @@ export async function updateTopoMeta(formData: FormData) {
     .set({
       name: name || null,
       main: nextMain,
+      routeStrokeWidth: clampStroke(
+        Number(formData.get("routeStrokeWidth")),
+        topo.routeStrokeWidth,
+      ),
       ...(image
         ? {
             imageUrl: image.url,
@@ -389,7 +462,7 @@ export async function updateTopoMeta(formData: FormData) {
     })
     .where(eq(topos.id, id));
   await refreshPdfsForWall(topo.wallId);
-  revalidateGuide();
+  revalidateGuide(await slugForZoneId(zoneId));
   revalidatePath(`/dashboard/topos/${id}`);
   revalidatePath(`/dashboard/paredes/${topo.wallId}`);
 }
@@ -468,4 +541,93 @@ export async function invitePlatformAdmin(formData: FormData) {
   const saved = await findOrCreateUserByEmail(email);
   await db.update(users).set({ role: "admin" }).where(eq(users.id, saved.id));
   revalidatePath("/dashboard");
+}
+
+async function refreshZoneGuide(zoneId: string) {
+  await refreshZoneCover(zoneId);
+  revalidateGuide(await slugForZoneId(zoneId));
+  revalidatePath(`/dashboard/zonas/${zoneId}`);
+}
+
+export async function addZoneAgreement(formData: FormData) {
+  const zoneId = String(formData.get("zoneId") ?? "");
+  const agreementId = String(formData.get("agreementId") ?? "");
+  const level = parseAgreementLevel(
+    String(formData.get("level") ?? "Recommended"),
+  );
+  const comment = String(formData.get("comment") ?? "").trim();
+  if (!zoneId || !agreementId) throw new Error("Falta el acuerdo");
+  await requireZoneAction(zoneId, "editZone");
+  const already = await db
+    .select({ id: zoneAgreements.id })
+    .from(zoneAgreements)
+    .where(
+      and(
+        eq(zoneAgreements.zoneId, zoneId),
+        eq(zoneAgreements.agreementId, agreementId),
+      ),
+    )
+    .then((rows) => rows[0] ?? null);
+  if (already) throw new Error("Ese acuerdo ya está en la zona");
+  const siblings = await db
+    .select({ position: zoneAgreements.position })
+    .from(zoneAgreements)
+    .where(eq(zoneAgreements.zoneId, zoneId));
+  await db.insert(zoneAgreements).values({
+    id: crypto.randomUUID(),
+    zoneId,
+    agreementId,
+    level,
+    comment: comment || null,
+    position: siblings.reduce((max, row) => Math.max(max, row.position), 0) + 1,
+  });
+  await refreshZoneGuide(zoneId);
+}
+
+export async function updateZoneAgreement(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  const zoneId = String(formData.get("zoneId") ?? "");
+  const level = parseAgreementLevel(String(formData.get("level") ?? ""));
+  const comment = String(formData.get("comment") ?? "").trim();
+  const position = Number(formData.get("position") ?? 0);
+  if (!id || !zoneId) throw new Error("Falta el acuerdo");
+  await requireZoneAction(zoneId, "editZone");
+  await db
+    .update(zoneAgreements)
+    .set({
+      level,
+      comment: comment || null,
+      position: Number.isFinite(position) ? position : 0,
+    })
+    .where(and(eq(zoneAgreements.id, id), eq(zoneAgreements.zoneId, zoneId)));
+  await refreshZoneGuide(zoneId);
+}
+
+export async function removeZoneAgreement(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  const zoneId = String(formData.get("zoneId") ?? "");
+  if (!id || !zoneId) throw new Error("Falta el acuerdo");
+  await requireZoneAction(zoneId, "editZone");
+  await db
+    .delete(zoneAgreements)
+    .where(and(eq(zoneAgreements.id, id), eq(zoneAgreements.zoneId, zoneId)));
+  await refreshZoneGuide(zoneId);
+}
+
+export async function createAgreement(formData: FormData) {
+  const zoneId = String(formData.get("zoneId") ?? "");
+  const title = String(formData.get("title") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim();
+  const icon = String(formData.get("icon") ?? "").trim();
+  const classic = String(formData.get("classic") ?? "").trim();
+  if (!zoneId || !title || !description) throw new Error("Falta el acuerdo");
+  await requireZoneAction(zoneId, "editZone");
+  await db.insert(agreements).values({
+    id: crypto.randomUUID(),
+    title,
+    description,
+    icon: icon || null,
+    classic: classic || null,
+  });
+  revalidatePath(`/dashboard/zonas/${zoneId}`);
 }

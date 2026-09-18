@@ -19,6 +19,10 @@ import { listGuideImagesOrEmpty } from "@/lib/climbing/cloudinary";
 import type { AdminSearchItem } from "./adminSearch";
 import { notFound } from "next/navigation";
 
+export async function listAgreements() {
+  return db.select().from(agreements).orderBy(asc(agreements.title));
+}
+
 export async function listPublishedZones() {
   return db
     .select()
@@ -125,6 +129,7 @@ export async function getZoneBySlug(slug: string) {
       level: zoneAgreements.level,
       position: zoneAgreements.position,
       comment: zoneAgreements.comment,
+      agreementId: zoneAgreements.agreementId,
       title: agreements.title,
       description: agreements.description,
       classic: agreements.classic,

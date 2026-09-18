@@ -5,15 +5,20 @@ import { loadZoneAccess, requireActor } from "@/lib/guide/authz";
 import { hasZoneAction, ROLE_HELP, ROLE_LABEL, ZONE_ROLES } from "@/lib/guide/zoneAccess";
 import {
   getZoneById,
+  listAgreements,
   listGuidePhotoLibrary,
   listZoneMembers,
 } from "@/lib/guide/queries";
 import {
+  addZoneAgreement,
   assignZoneRole,
+  createAgreement,
   moveSector,
   orderSectorsNorthToSouth,
+  removeZoneAgreement,
   removeZoneRole,
   updateZone,
+  updateZoneAgreement,
 } from "../../actions";
 import AdminPhotoField from "../../AdminPhotoField";
 
@@ -33,6 +38,9 @@ export default async function ZoneAdminPage({ params }: ZoneAdminProps) {
   const canCreate = hasZoneAction(access, "create");
   const canAssign = hasZoneAction(access, "assignRole");
   const members = canAssign ? await listZoneMembers(zoneId) : [];
+  const catalog = canEditZone ? await listAgreements() : [];
+  const assignedIds = new Set(data.rules.map((rule) => rule.agreementId));
+  const unusedAgreements = catalog.filter((item) => !assignedIds.has(item.id));
   const library = await listGuidePhotoLibrary();
   const coverUrl = zone.coverImageUrl
     ? optimizedImageUrl(
@@ -240,6 +248,187 @@ export default async function ZoneAdminPage({ params }: ZoneAdminProps) {
           </section>
         );
       })}
+
+      {canEditZone ? (
+        <section className="mt-16 max-w-xl">
+          <h2 className="font-display text-2xl">Acuerdos</h2>
+          <p className="font-brown text-ink-soft mt-2 text-sm leading-relaxed">
+            El title y la description salen del catálogo. El comentario es de
+            esta zona. Vacío es válido: no se inventan filas.
+          </p>
+          {data.rules.length === 0 ? (
+            <p className="font-brown text-ink-soft mt-4 text-sm">
+              Esta zona no tiene acuerdos asignados.
+            </p>
+          ) : (
+            <ul className="mt-6 grid gap-6">
+              {data.rules.map((rule) => (
+                <li key={rule.id} className="border-rule border p-4">
+                  <p className="font-display text-xl">{rule.title}</p>
+                  <p className="font-brown text-ink-soft mt-1 text-xs">
+                    {rule.description}
+                  </p>
+                  <form action={updateZoneAgreement} className="mt-4 grid gap-3">
+                    <input type="hidden" name="id" value={rule.id} />
+                    <input type="hidden" name="zoneId" value={zone.id} />
+                    <label className="font-brown text-sm">
+                      Nivel
+                      <select
+                        name="level"
+                        defaultValue={rule.level}
+                        className="border-rule mt-1 block w-full border px-3 py-2"
+                      >
+                        <option value="Critical">Crítico</option>
+                        <option value="Important">Importante</option>
+                        <option value="Recommended">Recomendado</option>
+                      </select>
+                    </label>
+                    <label className="font-brown text-sm">
+                      Orden
+                      <input
+                        name="position"
+                        type="number"
+                        defaultValue={rule.position}
+                        className="border-rule mt-1 block w-full border px-3 py-2"
+                      />
+                    </label>
+                    <label className="font-brown text-sm">
+                      Comentario de esta zona
+                      <textarea
+                        name="comment"
+                        defaultValue={rule.comment ?? ""}
+                        rows={2}
+                        className="border-rule mt-1 block w-full border px-3 py-2"
+                      />
+                    </label>
+                    <button
+                      type="submit"
+                      className="font-brown border-rule w-fit border px-4 py-2 text-xs tracking-[0.16em] uppercase"
+                    >
+                      Guardar acuerdo
+                    </button>
+                  </form>
+                  <form action={removeZoneAgreement} className="mt-3">
+                    <input type="hidden" name="id" value={rule.id} />
+                    <input type="hidden" name="zoneId" value={zone.id} />
+                    <button
+                      type="submit"
+                      className="font-brown text-xs tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
+                    >
+                      Quitar de la zona
+                    </button>
+                  </form>
+                </li>
+              ))}
+            </ul>
+          )}
+          {unusedAgreements.length > 0 ? (
+            <form action={addZoneAgreement} className="mt-8 grid gap-3">
+              <h3 className="font-display text-xl">Asignar del catálogo</h3>
+              <input type="hidden" name="zoneId" value={zone.id} />
+              <label className="font-brown text-sm">
+                Acuerdo
+                <select
+                  name="agreementId"
+                  required
+                  className="border-rule mt-1 block w-full border px-3 py-2"
+                >
+                  {unusedAgreements.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.title}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="font-brown text-sm">
+                Nivel
+                <select
+                  name="level"
+                  defaultValue="Recommended"
+                  className="border-rule mt-1 block w-full border px-3 py-2"
+                >
+                  <option value="Critical">Crítico</option>
+                  <option value="Important">Importante</option>
+                  <option value="Recommended">Recomendado</option>
+                </select>
+              </label>
+              <label className="font-brown text-sm">
+                Comentario de esta zona
+                <textarea
+                  name="comment"
+                  rows={2}
+                  className="border-rule mt-1 block w-full border px-3 py-2"
+                />
+              </label>
+              <button
+                type="submit"
+                className="font-brown border-rule w-fit border px-4 py-2 text-xs tracking-[0.16em] uppercase"
+              >
+                Asignar
+              </button>
+            </form>
+          ) : null}
+          <form action={createAgreement} className="mt-10 grid gap-3">
+            <h3 className="font-display text-xl">Nuevo en el catálogo</h3>
+            <input type="hidden" name="zoneId" value={zone.id} />
+            <label className="font-brown text-sm">
+              Title
+              <input
+                name="title"
+                required
+                className="border-rule mt-1 block w-full border px-3 py-2"
+              />
+            </label>
+            <label className="font-brown text-sm">
+              Description
+              <textarea
+                name="description"
+                required
+                rows={3}
+                className="border-rule mt-1 block w-full border px-3 py-2"
+              />
+            </label>
+            <label className="font-brown text-sm">
+              Icon
+              <select
+                name="icon"
+                className="border-rule mt-1 block w-full border px-3 py-2"
+              >
+                <option value="">Sin icon</option>
+                <option value="no-fire">no-fire</option>
+                <option value="shake-hands">shake-hands</option>
+                <option value="poop-bag">poop-bag</option>
+                <option value="dog">dog</option>
+                <option value="no-dog">no-dog</option>
+                <option value="no-camping">no-camping</option>
+                <option value="camping">camping</option>
+                <option value="toilet">toilet</option>
+                <option value="paid-hands">paid-hands</option>
+              </select>
+            </label>
+            <label className="font-brown text-sm">
+              Classic
+              <select
+                name="classic"
+                className="border-rule mt-1 block w-full border px-3 py-2"
+              >
+                <option value="">Ninguno</option>
+                <option value="Payment">Payment</option>
+                <option value="Fire">Fire</option>
+                <option value="Camping">Camping</option>
+                <option value="Pets">Pets</option>
+                <option value="Toilet">Toilet</option>
+              </select>
+            </label>
+            <button
+              type="submit"
+              className="font-brown border-rule w-fit border px-4 py-2 text-xs tracking-[0.16em] uppercase"
+            >
+              Crear catálogo
+            </button>
+          </form>
+        </section>
+      ) : null}
 
       {canAssign ? (
         <section className="mt-16 max-w-xl">

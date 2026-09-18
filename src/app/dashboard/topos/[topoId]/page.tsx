@@ -6,6 +6,7 @@ import { canMutateOwned, hasZoneAction } from "@/lib/guide/zoneAccess";
 import { getTopoEditor, listGuidePhotoLibrary } from "@/lib/guide/queries";
 import { updateTopoMeta } from "../../actions";
 import AdminPhotoField from "../../AdminPhotoField";
+import TopoStrokeField from "../TopoStrokeField";
 
 type TopoAdminProps = {
   params: Promise<{ topoId: string }>;
@@ -63,6 +64,11 @@ export default async function TopoAdminPage({ params }: TopoAdminProps) {
             </label>
           </>
         ) : null}
+        <TopoStrokeField
+          topo={topo}
+          routes={routes}
+          paths={paths}
+        />
         <button
           type="submit"
           className="font-brown border-rule w-fit border px-4 py-2 text-sm tracking-[0.16em] uppercase"

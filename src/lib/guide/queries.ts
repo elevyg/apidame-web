@@ -1,5 +1,6 @@
 import { and, asc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/client";
+import { isMissingSqliteTable } from "@/db/schemaPatches";
 import {
   agreements,
   routePaths,
@@ -78,26 +79,7 @@ export async function getZoneBySlug(slug: string) {
           .from(routePaths)
           .where(inArray(routePaths.topoId, topoIds));
 
-  const zoneRuleRows = await db
-    .select({
-      id: zoneAgreements.id,
-      level: zoneAgreements.level,
-      position: zoneAgreements.position,
-      comment: zoneAgreements.comment,
-      title: agreements.title,
-      description: agreements.description,
-      classic: agreements.classic,
-      icon: agreements.icon,
-    })
-    .from(zoneAgreements)
-    .innerJoin(agreements, eq(zoneAgreements.agreementId, agreements.id))
-    .where(eq(zoneAgreements.zoneId, zone.id));
-
-  const rules = [...zoneRuleRows].sort((a, b) => {
-    const rank = agreementRank(a.level) - agreementRank(b.level);
-    if (rank !== 0) return rank;
-    return a.title.localeCompare(b.title, "es");
-  });
+  const rules = await listZoneRules(zone.id);
 
   return {
     zone,
@@ -108,6 +90,40 @@ export async function getZoneBySlug(slug: string) {
     paths: zonePaths,
     rules,
   };
+}
+
+async function listZoneRules(zoneId: string) {
+  try {
+    const zoneRuleRows = await db
+      .select({
+        id: zoneAgreements.id,
+        level: zoneAgreements.level,
+        position: zoneAgreements.position,
+        comment: zoneAgreements.comment,
+        title: agreements.title,
+        description: agreements.description,
+        classic: agreements.classic,
+        icon: agreements.icon,
+      })
+      .from(zoneAgreements)
+      .innerJoin(agreements, eq(zoneAgreements.agreementId, agreements.id))
+      .where(eq(zoneAgreements.zoneId, zoneId));
+
+    return [...zoneRuleRows].sort((a, b) => {
+      const rank = agreementRank(a.level) - agreementRank(b.level);
+      if (rank !== 0) return rank;
+      return a.title.localeCompare(b.title, "es");
+    });
+  } catch (error) {
+    if (
+      isMissingSqliteTable(error, "zone_agreements") ||
+      isMissingSqliteTable(error, "agreements")
+    ) {
+      console.error("Turso missing agreement tables; run yarn db:migrate", error);
+      return [];
+    }
+    throw error;
+  }
 }
 
 export async function getZoneById(id: string) {

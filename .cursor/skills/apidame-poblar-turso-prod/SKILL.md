@@ -10,10 +10,16 @@ description: >-
 
 # Poblar Turso productivo
 
-Si hay cambios en `src/db/schema.ts`, `scripts/seed/deportiva.json`,
-`scripts/seed/locations.json`, `src/lib/guide/pdf.ts`, `src/lib/guide/store.ts`
-o el seed, **sugiere esta estrategia** antes de inventar otro camino (dump,
-GUI, o escribir a prod desde `.env.local`).
+El schema aditivo (tablas nuevas, indexes) se aplica solo en el `yarn build`
+de Vercel via `scripts/ensure-schema.ts`. Eso cubre el caso que tumba Deportiva:
+`agreements` / `zone_agreements` ausentes. **No** uses `drizzle-kit push --force`
+en CI: puede dropear tablas que no están en `schema.ts` (`zone_roles`, etc.).
+
+Si hay cambios en `src/db/schema.ts`, agrega un patch en `src/db/schemaPatches.ts`.
+Si cambian `scripts/seed/deportiva.json`, `scripts/seed/locations.json`,
+`src/lib/guide/pdf.ts`, `src/lib/guide/store.ts` o el seed completo,
+**sugiere esta estrategia** antes de inventar otro camino (dump, GUI, o
+escribir a prod desde `.env.local`).
 
 Nunca pongas el token de prod en `.env.local`. Ese archivo es de **dev**.
 Pide un token temporal y expórtalo solo en el shell. No lo commitees ni lo
@@ -34,9 +40,19 @@ El seed mezcla `scripts/seed/deportiva.json` con `scripts/seed/locations.json`
 (`lat`/`lng` de zona y sector). Si solo empujas schema sin seed, los mapas
 salen vacíos.
 
-## Estrategia (la que corrimos)
+## Schema en cada deploy (CI)
 
-drizzle-kit push contra la URL de prod (crea las tablas)
+`scripts/ensure-schema.ts` corre al inicio de `yarn build`. Es aditivo:
+`CREATE TABLE IF NOT EXISTS` + backfill de agreements solo si la tabla está
+vacía. El seed completo sigue siendo manual.
+
+El workflow `.github/workflows/ci.yml` corre lint y test en PRs y en `main`.
+No tiene token de Turso prod; el migrate vive en el build de Vercel, que sí
+tiene `TURSO_*`.
+
+## Estrategia para un seed completo (la que corrimos)
+
+drizzle-kit push contra la URL de prod (dev/local, no CI)
 scripts/seed-deportiva.ts con deportiva.json (zonas, paredes, rutas, paths)
 refreshAllGuidePdfs() genera y guarda cover + wall PDFs en guide_pdfs
 Para repetirlo más adelante, con un token temporal en el shell (sin tocar tu .env.local de dev):
@@ -44,7 +60,7 @@ Para repetirlo más adelante, con un token temporal en el shell (sin tocar tu .e
 ```bash
 export TURSO_DATABASE_URL='libsql://prod-elevyg.aws-us-east-1.turso.io'
 export TURSO_DATABASE_TOKEN='...'
-yarn drizzle-kit push --force
+node --import tsx scripts/ensure-schema.ts
 node --import tsx scripts/seed-deportiva.ts
 ```
 

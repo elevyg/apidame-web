@@ -2,17 +2,19 @@
   "name": "apidame-web",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "yarn@1.22.22",
   "engines": {
     "node": "24.x"
   },
   "scripts": {
-    "build": "next build",
+    "build": "node --import tsx scripts/ensure-schema.ts && next build",
     "dev": "next dev --port 4000",
     "fetch:topos": "node scripts/fetch-drive-topos.mjs",
     "lint": "eslint .",
     "start": "next start --port 4000",
     "test": "vitest run",
     "db:push": "drizzle-kit push",
+    "db:migrate": "node --env-file=.env.local --import tsx scripts/ensure-schema.ts",
     "db:seed": "node --env-file=.env.local --import tsx scripts/seed-deportiva.ts"
   },
   "dependencies": {
@@ -31,6 +33,7 @@
     "react-dom": "^19.2.0",
     "react-zoom-pan-pinch": "^4.2.0",
     "sharp": "0.35.4",
+    "tsx": "^4.23.13",
     "zod": "^3.24.0"
   },
   "devDependencies": {
@@ -48,7 +51,6 @@
     "prettier": "^3.4.0",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "^4.0.0",
-    "tsx": "^4.23.13",
     "typescript": "^5.7.0",
     "vite": "^8.3.0",
     "vitest": "^5.0.1"

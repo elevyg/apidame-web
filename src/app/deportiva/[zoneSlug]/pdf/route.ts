@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { loadZonePdfBytes } from "@/lib/guide/store";
 
+export const maxDuration = 60;
+
 type PdfProps = {
   params: Promise<{ zoneSlug: string }>;
 };

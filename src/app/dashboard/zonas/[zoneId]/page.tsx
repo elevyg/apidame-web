@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getZoneById } from "@/lib/guide/queries";
+import { optimizedImageUrl } from "@/lib/climbing/cloudinary";
+import { getZoneById, listGuidePhotoLibrary } from "@/lib/guide/queries";
 import {
   updateZone,
   moveSector,
   orderSectorsNorthToSouth,
 } from "../../actions";
+import AdminPhotoField from "../../AdminPhotoField";
 
 type ZoneAdminProps = {
   params: Promise<{ zoneId: string }>;
@@ -16,6 +18,13 @@ export default async function ZoneAdminPage({ params }: ZoneAdminProps) {
   const data = await getZoneById(zoneId);
   if (!data) notFound();
   const { zone, sectors, walls, routes, topos } = data;
+  const library = await listGuidePhotoLibrary();
+  const coverUrl = zone.coverImageUrl
+    ? optimizedImageUrl(
+        { url: zone.coverImageUrl, publicId: zone.coverPublicId },
+        1200,
+      )
+    : null;
 
   return (
     <section className="page-shell py-12">
@@ -45,6 +54,11 @@ export default async function ZoneAdminPage({ params }: ZoneAdminProps) {
             className="border-rule mt-2 block w-full border px-3 py-2"
           />
         </label>
+        <AdminPhotoField
+          currentUrl={coverUrl}
+          currentAlt={zone.name}
+          library={library}
+        />
         <label className="font-brown flex items-center gap-2 text-sm">
           <input
             type="checkbox"

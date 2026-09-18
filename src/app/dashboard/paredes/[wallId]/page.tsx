@@ -1,11 +1,14 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { withFrenchGrade } from "@/lib/climbing/frenchGrade";
-import { getWallById } from "@/lib/guide/queries";
 import { db } from "@/db/client";
 import { routePaths, routes, topos } from "@/db/schema";
 import { asc, eq, inArray } from "drizzle-orm";
+import { optimizedImageUrl } from "@/lib/climbing/cloudinary";
+import { getWallById, listGuidePhotoLibrary } from "@/lib/guide/queries";
 import { createRoute, createTopo } from "../../actions";
+import AdminPhotoField from "../../AdminPhotoField";
 
 type WallAdminProps = {
   params: Promise<{ wallId: string }>;
@@ -34,6 +37,7 @@ export default async function WallAdminPage({ params }: WallAdminProps) {
           .select()
           .from(routePaths)
           .where(inArray(routePaths.routeId, routeIds));
+  const library = await listGuidePhotoLibrary();
 
   return (
     <section className="page-shell py-12">
@@ -48,25 +52,41 @@ export default async function WallAdminPage({ params }: WallAdminProps) {
         <h2 className="font-display text-2xl">Topos</h2>
       </div>
       <ul className="mt-4 grid gap-3">
-        {wallTopos.map((topo) => (
+        {wallTopos.map((topo) => {
+          const src = optimizedImageUrl(
+            { url: topo.imageUrl, publicId: topo.imagePublicId },
+            800,
+          );
+          return (
           <li
             key={topo.id}
-            className="border-rule flex items-center justify-between border p-4"
+            className="border-rule grid grid-cols-[7rem_1fr] items-center gap-4 border p-3"
           >
-            <div>
-              <p className="font-display text-xl">{topo.name ?? "Topo"}</p>
-              <p className="font-brown text-ink-soft text-xs tracking-[0.12em] uppercase">
-                {topo.main ? "Principal" : "Secundario"}
-              </p>
+            <Image
+              src={src}
+              alt={topo.name ?? wall.name}
+              width={topo.imageWidth ?? 280}
+              height={topo.imageHeight ?? 210}
+              unoptimized
+              className="h-24 w-full object-cover"
+            />
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="font-display text-xl">{topo.name ?? "Topo"}</p>
+                <p className="font-brown text-ink-soft text-xs tracking-[0.12em] uppercase">
+                  {topo.main ? "Principal" : "Secundario"}
+                </p>
+              </div>
+              <Link
+                href={`/dashboard/topos/${topo.id}`}
+                className="font-brown text-xs tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
+              >
+                Modificar topo
+              </Link>
             </div>
-            <Link
-              href={`/dashboard/topos/${topo.id}`}
-              className="font-brown text-xs tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
-            >
-              Modificar topo
-            </Link>
           </li>
-        ))}
+          );
+        })}
       </ul>
 
       <form
@@ -82,40 +102,11 @@ export default async function WallAdminPage({ params }: WallAdminProps) {
             className="border-rule mt-1 block w-full border px-3 py-2"
           />
         </label>
-        <label className="font-brown text-sm">
-          URL de la foto
-          <input
-            name="imageUrl"
-            required
-            placeholder="https://"
-            className="border-rule mt-1 block w-full border px-3 py-2"
-          />
-        </label>
-        <label className="font-brown text-sm">
-          Cloudinary public id
-          <input
-            name="imagePublicId"
-            className="border-rule mt-1 block w-full border px-3 py-2"
-          />
-        </label>
-        <div className="grid grid-cols-2 gap-3">
-          <label className="font-brown text-sm">
-            Ancho
-            <input
-              name="imageWidth"
-              type="number"
-              className="border-rule mt-1 block w-full border px-3 py-2"
-            />
-          </label>
-          <label className="font-brown text-sm">
-            Alto
-            <input
-              name="imageHeight"
-              type="number"
-              className="border-rule mt-1 block w-full border px-3 py-2"
-            />
-          </label>
-        </div>
+        <AdminPhotoField
+          currentAlt="Nuevo topo"
+          library={library}
+          required
+        />
         <label className="font-brown flex items-center gap-2 text-sm">
           <input
             type="checkbox"

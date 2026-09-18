@@ -12,6 +12,8 @@ import {
 } from "@/db/schema";
 import { withFrenchGrade } from "@/lib/climbing/frenchGrade";
 import { agreementRank } from "@/lib/guide/overlay";
+import type { CloudinaryImage } from "@/lib/climbing/cloudinary";
+import { listGuideImagesOrEmpty } from "@/lib/climbing/cloudinary";
 import type { AdminSearchItem } from "./adminSearch";
 import { notFound } from "next/navigation";
 
@@ -235,6 +237,43 @@ export async function getTopoEditor(topoId: string) {
     .from(routePaths)
     .where(eq(routePaths.topoId, topo.id));
   return { topo, ...context, routes: wallRoutes.map(withFrenchGrade), paths };
+}
+
+export async function listGuidePhotoLibrary(): Promise<CloudinaryImage[]> {
+  const [topoRows, zoneRows, uploaded] = await Promise.all([
+    db
+      .select({
+        url: topos.imageUrl,
+        publicId: topos.imagePublicId,
+        width: topos.imageWidth,
+        height: topos.imageHeight,
+      })
+      .from(topos),
+    db
+      .select({
+        url: zones.coverImageUrl,
+        publicId: zones.coverPublicId,
+        width: zones.coverImageWidth,
+        height: zones.coverImageHeight,
+      })
+      .from(zones),
+    listGuideImagesOrEmpty("apidame/guia"),
+  ]);
+  const seen = new Set<string>();
+  const library: CloudinaryImage[] = [];
+  for (const row of [...uploaded, ...topoRows, ...zoneRows]) {
+    if (!row.url) continue;
+    const key = row.publicId || row.url;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    library.push({
+      url: row.url,
+      publicId: row.publicId ?? row.url,
+      width: row.width ?? null,
+      height: row.height ?? null,
+    });
+  }
+  return library;
 }
 
 export async function getAdminCatalog(): Promise<AdminSearchItem[]> {

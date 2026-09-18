@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getTopoEditor } from "@/lib/guide/queries";
+import { optimizedImageUrl } from "@/lib/climbing/cloudinary";
+import { getTopoEditor, listGuidePhotoLibrary } from "@/lib/guide/queries";
 import { updateTopoMeta } from "../../actions";
+import AdminPhotoField from "../../AdminPhotoField";
 
 type TopoAdminProps = {
   params: Promise<{ topoId: string }>;
@@ -12,6 +14,11 @@ export default async function TopoAdminPage({ params }: TopoAdminProps) {
   const data = await getTopoEditor(topoId);
   if (!data) notFound();
   const { topo, wall, zone, routes, paths } = data;
+  const library = await listGuidePhotoLibrary();
+  const currentUrl = optimizedImageUrl(
+    { url: topo.imageUrl, publicId: topo.imagePublicId },
+    1200,
+  );
 
   return (
     <section className="page-shell py-12">
@@ -34,14 +41,11 @@ export default async function TopoAdminPage({ params }: TopoAdminProps) {
             className="border-rule mt-1 block w-full border px-3 py-2"
           />
         </label>
-        <label className="font-brown text-sm">
-          URL de la foto
-          <input
-            name="imageUrl"
-            defaultValue={topo.imageUrl}
-            className="border-rule mt-1 block w-full border px-3 py-2"
-          />
-        </label>
+        <AdminPhotoField
+          currentUrl={currentUrl}
+          currentAlt={topo.name ?? wall.name}
+          library={library}
+        />
         <label className="font-brown flex items-center gap-2 text-sm">
           <input type="checkbox" name="main" defaultChecked={topo.main} />
           Topo principal de la pared

@@ -10,6 +10,7 @@ import {
   FRENCH_GRADE_SYSTEM,
   toFrenchGrade,
 } from "@/lib/climbing/frenchGrade";
+import { imageFromAdminForm } from "@/lib/climbing/cloudinary";
 import { guideSlug } from "@/lib/guide/slug";
 import { refreshPdfsForWall, refreshZoneCover } from "@/lib/guide/store";
 import {
@@ -109,6 +110,7 @@ export async function updateZone(formData: FormData) {
   const description = String(formData.get("description") ?? "").trim();
   const published = formData.get("published") === "on";
   if (!id || !name) throw new Error("Falta el nombre de la zona");
+  const cover = await imageFromAdminForm(formData, "apidame/guia/covers");
   await db
     .update(zones)
     .set({
@@ -116,6 +118,14 @@ export async function updateZone(formData: FormData) {
       description: description || null,
       published,
       updatedAt: new Date(),
+      ...(cover
+        ? {
+            coverImageUrl: cover.url,
+            coverPublicId: cover.publicId,
+            coverImageWidth: cover.width,
+            coverImageHeight: cover.height,
+          }
+        : {}),
     })
     .where(eq(zones.id, id));
   const zone = await db
@@ -283,15 +293,9 @@ export async function createTopo(formData: FormData) {
   await requireAdmin();
   const wallId = String(formData.get("wallId") ?? "");
   const name = String(formData.get("name") ?? "").trim();
-  const imageUrl = String(formData.get("imageUrl") ?? "").trim();
-  const imagePublicId = String(formData.get("imagePublicId") ?? "").trim();
-  const imageWidth = Number(formData.get("imageWidth") ?? 0);
-  const imageHeight = Number(formData.get("imageHeight") ?? 0);
+  const image = await imageFromAdminForm(formData, "apidame/guia/topos");
   const main = formData.get("main") === "on";
-  if (!wallId || !imageUrl) throw new Error("Falta la foto del topo");
-  if (!/^https?:\/\//i.test(imageUrl)) {
-    throw new Error("La foto tiene que ser una URL http");
-  }
+  if (!wallId || !image) throw new Error("Falta la foto del topo");
   const siblings = await db
     .select({ slug: topos.slug, position: topos.position })
     .from(topos)
@@ -310,11 +314,10 @@ export async function createTopo(formData: FormData) {
     ),
     position: siblings.reduce((max, row) => Math.max(max, row.position), 0) + 1,
     main: main || siblings.length === 0,
-    imageUrl,
-    imagePublicId: imagePublicId || null,
-    imageWidth: Number.isFinite(imageWidth) && imageWidth > 0 ? imageWidth : null,
-    imageHeight:
-      Number.isFinite(imageHeight) && imageHeight > 0 ? imageHeight : null,
+    imageUrl: image.url,
+    imagePublicId: image.publicId,
+    imageWidth: image.width,
+    imageHeight: image.height,
   });
   await refreshPdfsForWall(wallId);
   revalidateGuide();
@@ -326,7 +329,7 @@ export async function updateTopoMeta(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   const name = String(formData.get("name") ?? "").trim();
   const main = formData.get("main") === "on";
-  const imageUrl = String(formData.get("imageUrl") ?? "").trim();
+  const image = await imageFromAdminForm(formData, "apidame/guia/topos");
   if (!id) throw new Error("Falta el topo");
   const topo = await db
     .select()
@@ -345,8 +348,13 @@ export async function updateTopoMeta(formData: FormData) {
     .set({
       name: name || null,
       main,
-      ...(imageUrl && /^https?:\/\//i.test(imageUrl)
-        ? { imageUrl }
+      ...(image
+        ? {
+            imageUrl: image.url,
+            imagePublicId: image.publicId,
+            imageWidth: image.width,
+            imageHeight: image.height,
+          }
         : {}),
     })
     .where(eq(topos.id, id));

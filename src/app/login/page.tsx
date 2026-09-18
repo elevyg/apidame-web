@@ -1,4 +1,5 @@
-import { signIn } from "@/auth";
+import { redirect } from "next/navigation";
+import { auth, signIn } from "@/auth";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 
@@ -6,8 +7,19 @@ type LoginPageProps = {
   searchParams: Promise<{ callbackUrl?: string }>;
 };
 
+function safeReturnTo(value: string | undefined) {
+  if (!value) return "/dashboard";
+  if (!value.startsWith("/") || value.startsWith("//") || value.includes("://")) {
+    return "/dashboard";
+  }
+  if (value === "/login" || value.startsWith("/login?")) return "/dashboard";
+  return value;
+}
+
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const { callbackUrl } = await searchParams;
+  const session = await auth();
+  if (session?.user?.email) redirect(safeReturnTo(callbackUrl));
 
   return (
     <main className="flex min-h-screen flex-col">
@@ -24,7 +36,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           action={async () => {
             "use server";
             await signIn("google", {
-              redirectTo: callbackUrl || "/dashboard",
+              redirectTo: safeReturnTo(callbackUrl),
             });
           }}
         >

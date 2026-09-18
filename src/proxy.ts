@@ -19,5 +19,5 @@ export default proxy;
 export { proxy };
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard", "/dashboard/:path*"],
 };

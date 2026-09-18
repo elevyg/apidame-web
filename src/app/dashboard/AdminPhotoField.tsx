@@ -10,6 +10,14 @@ type AdminPhotoFieldProps = {
   required?: boolean;
 };
 
+function cloudinarySized(url: string, publicId: string | null | undefined, width: number) {
+  if (!publicId) return url;
+  if (url.includes("/image/upload/")) {
+    return url.replace("/image/upload/", `/image/upload/w_${width},c_limit,q_auto,f_auto/`);
+  }
+  return url;
+}
+
 export default function AdminPhotoField({
   currentUrl,
   currentAlt,
@@ -26,7 +34,7 @@ export default function AdminPhotoField({
         <img
           src={preview}
           alt={currentAlt}
-          className="border-rule h-48 w-full border object-cover"
+          className="border-rule h-40 w-full border object-cover"
         />
       ) : null}
       <label className="font-brown text-sm">
@@ -49,7 +57,7 @@ export default function AdminPhotoField({
           <legend className="font-brown text-ink-soft text-xs tracking-[0.14em] uppercase">
             O elegir una que ya está
           </legend>
-          <ul className="mt-3 grid grid-cols-3 gap-2 md:grid-cols-4">
+          <ul className="border-rule mt-2 grid max-h-48 grid-cols-6 gap-1 overflow-y-auto border p-1 sm:grid-cols-8">
             {library.map((image) => (
               <li key={image.publicId}>
                 <label className="block cursor-pointer">
@@ -60,7 +68,9 @@ export default function AdminPhotoField({
                     checked={picked === image.publicId}
                     onChange={() => {
                       setPicked(image.publicId);
-                      setPreview(image.url);
+                      setPreview(
+                        cloudinarySized(image.url, image.publicId, 1200),
+                      );
                     }}
                     className="sr-only"
                   />
@@ -72,10 +82,12 @@ export default function AdminPhotoField({
                   ) : null}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={image.url}
+                    src={cloudinarySized(image.url, image.publicId, 240)}
                     alt=""
-                    className={`border-rule h-20 w-full border object-cover ${
-                      picked === image.publicId ? "outline outline-2 outline-offset-2" : ""
+                    className={`bg-paper-deep pointer-events-none aspect-square w-full object-contain ${
+                      picked === image.publicId
+                        ? "outline-ink outline outline-2 outline-offset-1"
+                        : ""
                     }`}
                   />
                 </label>

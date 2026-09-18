@@ -2,7 +2,9 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { guidePdfs } from "@/db/schema";
 import { getWallById, getZoneById, getZoneBySlug, listAllZones } from "./queries";
+import { PDFDocument } from "pdf-lib";
 import { buildZoneCoverPdf } from "./pdf";
+import { minGuidebookPages } from "./pdfPlan";
 
 export function coverPdfId(zoneId: string) {
   return `cover:${zoneId}`;
@@ -78,13 +80,26 @@ export async function refreshAllGuidePdfs() {
   }
 }
 
+async function storedPageCount(bytes: Uint8Array) {
+  try {
+    return (await PDFDocument.load(bytes)).getPageCount();
+  } catch {
+    return 0;
+  }
+}
+
 export async function loadZonePdfBytes(zoneSlug: string) {
   const guide = await getZoneBySlug(zoneSlug);
   if (!guide || !guide.zone.published) return null;
   let cover = await getStoredPdf(coverPdfId(guide.zone.id));
-  if (!cover) {
-    await refreshZoneCover(guide.zone.id);
-    cover = await getStoredPdf(coverPdfId(guide.zone.id));
+  const pages = cover ? await storedPageCount(new Uint8Array(cover.bytes)) : 0;
+  if (!cover || pages < minGuidebookPages(guide)) {
+    try {
+      await refreshZoneCover(guide.zone.id);
+      cover = await getStoredPdf(coverPdfId(guide.zone.id));
+    } catch (error) {
+      console.error("guide pdf refresh failed", zoneSlug, error);
+    }
   }
   if (!cover) return null;
   return {

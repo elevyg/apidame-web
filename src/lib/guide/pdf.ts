@@ -247,38 +247,42 @@ async function drawCoverPage(
   page.drawRectangle({ x: 0, y: 0, width: PAGE_W, height: PAGE_H, color: CANVAS });
 
   if (guide.zone.coverImageUrl) {
-    const bytes = await fetchImageBytes(
-      pdfImageUrl({
-        url: guide.zone.coverImageUrl,
-        publicId: guide.zone.coverPublicId,
-      }),
-    );
-    if (bytes) {
-      const meta = await sharp(bytes).metadata();
-      const srcW = meta.width ?? guide.zone.coverImageWidth ?? PAGE_W;
-      const srcH = meta.height ?? guide.zone.coverImageHeight ?? PAGE_H;
-      const crop = pixelCrop(coverCrop(srcW, srcH, PAGE_W, PAGE_H), srcW, srcH);
-      const cropped = new Uint8Array(
-        await sharp(bytes)
-          .extract({
-            left: crop.x,
-            top: crop.y,
-            width: crop.width,
-            height: crop.height,
-          })
-          .resize(PAGE_W * 2, PAGE_H * 2)
-          .jpeg({ quality: 72 })
-          .toBuffer(),
+    try {
+      const bytes = await fetchImageBytes(
+        pdfImageUrl({
+          url: guide.zone.coverImageUrl,
+          publicId: guide.zone.coverPublicId,
+        }),
       );
-      const photo = await embedRaster(pdf, cropped);
-      if (photo) {
-        page.drawImage(photo, {
-          x: 0,
-          y: 0,
-          width: PAGE_W,
-          height: PAGE_H,
-        });
+      if (bytes) {
+        const meta = await sharp(bytes).metadata();
+        const srcW = meta.width ?? guide.zone.coverImageWidth ?? PAGE_W;
+        const srcH = meta.height ?? guide.zone.coverImageHeight ?? PAGE_H;
+        const crop = pixelCrop(coverCrop(srcW, srcH, PAGE_W, PAGE_H), srcW, srcH);
+        const cropped = new Uint8Array(
+          await sharp(bytes)
+            .extract({
+              left: crop.x,
+              top: crop.y,
+              width: crop.width,
+              height: crop.height,
+            })
+            .resize(PAGE_W * 2, PAGE_H * 2)
+            .jpeg({ quality: 72 })
+            .toBuffer(),
+        );
+        const photo = await embedRaster(pdf, cropped);
+        if (photo) {
+          page.drawImage(photo, {
+            x: 0,
+            y: 0,
+            width: PAGE_W,
+            height: PAGE_H,
+          });
+        }
       }
+    } catch (error) {
+      console.error("guide pdf cover image failed", error);
     }
   }
 
@@ -774,9 +778,21 @@ export async function buildZoneCoverPdf(
   const pdf = await PDFDocument.create();
   const fonts = await loadFonts(pdf);
   const logo = await pdf.embedPng(await loadLogoPng());
-  await drawCoverPage(pdf, fonts, logo, guide, generatedAt);
-  await drawRulesPage(pdf, fonts, guide.rules, generatedAt);
-  await drawZoneMapPage(pdf, fonts, guide, generatedAt);
+  try {
+    await drawCoverPage(pdf, fonts, logo, guide, generatedAt);
+  } catch (error) {
+    console.error("guide pdf cover page failed", error);
+  }
+  try {
+    await drawRulesPage(pdf, fonts, guide.rules, generatedAt);
+  } catch (error) {
+    console.error("guide pdf rules page failed", error);
+  }
+  try {
+    await drawZoneMapPage(pdf, fonts, guide, generatedAt);
+  } catch (error) {
+    console.error("guide pdf map page failed", error);
+  }
 
   const orderedWalls = [...guide.sectors].flatMap((sector) =>
     guide.walls
@@ -794,17 +810,21 @@ export async function buildZoneCoverPdf(
       });
     const pages = wallTopos.length > 0 ? wallTopos : [null];
     for (const topo of pages) {
-      await drawWallPage(pdf, fonts, {
-        zoneName: guide.zone.name,
-        sectorName: sector.name,
-        wallName: wall.name,
-        topo,
-        routes: wallRoutes,
-        paths: topo
-          ? guide.paths.filter((path) => path.topoId === topo.id)
-          : [],
-        generatedAt,
-      });
+      try {
+        await drawWallPage(pdf, fonts, {
+          zoneName: guide.zone.name,
+          sectorName: sector.name,
+          wallName: wall.name,
+          topo,
+          routes: wallRoutes,
+          paths: topo
+            ? guide.paths.filter((path) => path.topoId === topo.id)
+            : [],
+          generatedAt,
+        });
+      } catch (error) {
+        console.error("guide pdf wall page failed", wall.id, error);
+      }
     }
   }
   return pdf.save();

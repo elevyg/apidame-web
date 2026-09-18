@@ -53,6 +53,7 @@ export type MapmableZone = {
 export function buildZoneMapView(
   zone: MapmableZone,
   size: { width: number; height: number },
+  options: { separatePins?: boolean } = {},
 ): ZoneMapView | null {
   const raw = [...zone.sectors]
     .sort((a, b) => a.position - b.position || a.name.localeCompare(b.name))
@@ -106,6 +107,9 @@ export function buildZoneMapView(
     zoom: view.zoom,
     width: size.width,
     height: size.height,
-    pins: separatePins(projected, 28, size.width, size.height, padding),
+    pins:
+      options.separatePins === false
+        ? projected
+        : separatePins(projected, 28, size.width, size.height, padding),
   };
 }

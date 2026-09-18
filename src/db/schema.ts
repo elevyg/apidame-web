@@ -7,7 +7,7 @@ import {
   uniqueIndex,
   index,
 } from "drizzle-orm/sqlite-core";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
@@ -120,6 +120,10 @@ export const routes = sqliteTable(
     gradeSystem: text("grade_system"),
     length: real("length"),
     lengthUnit: text("length_unit"),
+    starAverage: real("star_average"),
+    starCount: integer("star_count")
+      .notNull()
+      .default(sql`0`),
   },
   (table) => [index("routes_wall_idx").on(table.wallId)],
 );
@@ -176,6 +180,34 @@ export const routePathsRelations = relations(routePaths, ({ one }) => ({
   topo: one(topos, { fields: [routePaths.topoId], references: [topos.id] }),
   route: one(routes, { fields: [routePaths.routeId], references: [routes.id] }),
 }));
+
+export const agreements = sqliteTable("agreements", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  classic: text("classic"),
+  icon: text("icon"),
+});
+
+export const zoneAgreements = sqliteTable(
+  "zone_agreements",
+  {
+    id: text("id").primaryKey(),
+    zoneId: text("zone_id")
+      .notNull()
+      .references(() => zones.id, { onDelete: "cascade" }),
+    agreementId: text("agreement_id")
+      .notNull()
+      .references(() => agreements.id, { onDelete: "cascade" }),
+    level: text("level").notNull(),
+    position: integer("position").notNull().default(0),
+    comment: text("comment"),
+  },
+  (table) => [
+    index("zone_agreements_zone_idx").on(table.zoneId),
+    index("zone_agreements_agreement_idx").on(table.agreementId),
+  ],
+);
 
 export const guidePdfs = sqliteTable(
   "guide_pdfs",

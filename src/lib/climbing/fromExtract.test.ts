@@ -136,6 +136,66 @@ describe("seedFromExtract", () => {
     expect(seed.topos[0]?.imagePublicId).toBe("andescalada-app/topo");
     expect(seed.paths).toHaveLength(1);
     expect(seed.zones[0]?.latitude).toBeNull();
+    expect(seed.agreements).toEqual([]);
+    expect(seed.routes[0]?.starCount).toBe(0);
+  });
+
+  it("averages live route evaluations", () => {
+    const seed = seedFromExtract({
+      ...dump,
+      evaluations: [
+        { routeId: "r1", evaluation: 5, isDeleted: "NotDeleted" },
+        { routeId: "r1", evaluation: 3, isDeleted: "NotDeleted" },
+        { routeId: "r1", evaluation: 1, isDeleted: "DeletedPublic" },
+      ],
+    });
+    expect(seed.routes[0]?.starAverage).toBe(4);
+    expect(seed.routes[0]?.starCount).toBe(2);
+  });
+
+  it("keeps zone agreements except NotAplicable", () => {
+    const seed = seedFromExtract({
+      ...dump,
+      agreements: [
+        {
+          id: "a1",
+          title: "No fuego",
+          description: "Sin fogatas",
+          classic: "NoFire",
+          icon: null,
+          isDeleted: "NotDeleted",
+        },
+      ],
+      zoneAgreements: [
+        {
+          id: "za1",
+          zoneId: "z1",
+          agreementId: "a1",
+          level: "Critical",
+          position: 0,
+          isDeleted: "NotDeleted",
+        },
+        {
+          id: "za2",
+          zoneId: "z1",
+          agreementId: "a1",
+          level: "NotAplicable",
+          position: 1,
+          isDeleted: "NotDeleted",
+        },
+      ],
+    });
+    expect(seed.agreements).toHaveLength(1);
+    expect(seed.zoneAgreements).toEqual([
+      {
+        id: "za1",
+        zoneId: "z1",
+        agreementId: "a1",
+        level: "Critical",
+        position: 0,
+        comment: null,
+      },
+    ]);
   });
 
   it("stores Yosemite grades as French", () => {

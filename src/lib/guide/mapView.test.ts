@@ -48,6 +48,42 @@ describe("buildZoneMapView", () => {
     }
   });
 
+  it("leaves overlapping pins on their projected pixel when separation is off", () => {
+    const view = buildZoneMapView(
+      {
+        slug: "cerro-el-indio",
+        latitude: -46.557,
+        longitude: -71.722,
+        sectors: [
+          {
+            id: "a",
+            slug: "a",
+            name: "A",
+            position: 1,
+            latitude: -46.557,
+            longitude: -71.722,
+            walls: [],
+          },
+          {
+            id: "b",
+            slug: "b",
+            name: "B",
+            position: 2,
+            latitude: -46.55701,
+            longitude: -71.72201,
+            walls: [],
+          },
+        ],
+      },
+      WEB_MAP_SIZE,
+      { separatePins: false },
+    );
+    expect(view?.pins).toHaveLength(2);
+    const dx = Math.abs((view?.pins[0]?.x ?? 0) - (view?.pins[1]?.x ?? 0));
+    const dy = Math.abs((view?.pins[0]?.y ?? 0) - (view?.pins[1]?.y ?? 0));
+    expect(Math.hypot(dx, dy)).toBeLessThan(8);
+  });
+
   it("returns null when nothing has coordinates", () => {
     expect(
       buildZoneMapView(

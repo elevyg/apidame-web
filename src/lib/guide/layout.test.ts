@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   fitRect,
+  fitTextSize,
   formatGuideDate,
   sanitizePdfText,
   wrapMeasured,
@@ -35,6 +36,20 @@ describe("sanitizePdfText", () => {
     expect(sanitizePdfText("Mañera Nocturna · Corazón")).toBe(
       "Mañera Nocturna · Corazón",
     );
+  });
+});
+
+describe("fitTextSize", () => {
+  it("shrinks until the title fits a single line", () => {
+    const size = fitTextSize(
+      "Cerro Azul",
+      200,
+      34,
+      16,
+      (fontSize) => fontSize * 8,
+    );
+    expect(size * 8).toBeLessThanOrEqual(200);
+    expect(size).toBeGreaterThanOrEqual(16);
   });
 });
 

@@ -1,14 +1,17 @@
 import { and, asc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/client";
 import {
+  agreements,
   routePaths,
   routes,
   sectors,
   topos,
   walls,
+  zoneAgreements,
   zones,
 } from "@/db/schema";
 import { withFrenchGrade } from "@/lib/climbing/frenchGrade";
+import { agreementRank } from "@/lib/guide/overlay";
 import { notFound } from "next/navigation";
 
 export async function listPublishedZones() {
@@ -75,6 +78,27 @@ export async function getZoneBySlug(slug: string) {
           .from(routePaths)
           .where(inArray(routePaths.topoId, topoIds));
 
+  const zoneRuleRows = await db
+    .select({
+      id: zoneAgreements.id,
+      level: zoneAgreements.level,
+      position: zoneAgreements.position,
+      comment: zoneAgreements.comment,
+      title: agreements.title,
+      description: agreements.description,
+      classic: agreements.classic,
+      icon: agreements.icon,
+    })
+    .from(zoneAgreements)
+    .innerJoin(agreements, eq(zoneAgreements.agreementId, agreements.id))
+    .where(eq(zoneAgreements.zoneId, zone.id));
+
+  const rules = [...zoneRuleRows].sort((a, b) => {
+    const rank = agreementRank(a.level) - agreementRank(b.level);
+    if (rank !== 0) return rank;
+    return a.title.localeCompare(b.title, "es");
+  });
+
   return {
     zone,
     sectors: zoneSectors,
@@ -82,6 +106,7 @@ export async function getZoneBySlug(slug: string) {
     routes: zoneRoutes.map(withFrenchGrade),
     topos: zoneTopos,
     paths: zonePaths,
+    rules,
   };
 }
 

@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "./client";
 import {
+  agreements,
   routePaths,
   routes,
   sectors,
@@ -8,6 +9,7 @@ import {
   users,
   walls,
   zones,
+  zoneAgreements,
   guidePdfs,
 } from "./schema";
 import type { GuideSeed } from "../lib/climbing/fromExtract";
@@ -15,6 +17,8 @@ import type { GuideSeed } from "../lib/climbing/fromExtract";
 export async function replaceGuideSeed(seed: GuideSeed) {
   await db.delete(routePaths);
   await db.delete(guidePdfs);
+  await db.delete(zoneAgreements);
+  await db.delete(agreements);
   await db.delete(routes);
   await db.delete(topos);
   await db.delete(walls);
@@ -35,6 +39,12 @@ export async function replaceGuideSeed(seed: GuideSeed) {
   if (seed.topos.length > 0) await db.insert(topos).values(seed.topos);
   if (seed.routes.length > 0) await db.insert(routes).values(seed.routes);
   if (seed.paths.length > 0) await db.insert(routePaths).values(seed.paths);
+  if (seed.agreements.length > 0) {
+    await db.insert(agreements).values(seed.agreements);
+  }
+  if (seed.zoneAgreements.length > 0) {
+    await db.insert(zoneAgreements).values(seed.zoneAgreements);
+  }
 }
 
 export async function upsertUser(input: {

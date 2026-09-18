@@ -5,7 +5,7 @@ import DeportivaPageTransition from "@/components/climbing/DeportivaPageTransiti
 import WallTopoExplorer from "@/components/climbing/WallTopoExplorer";
 import { requireWallGuide } from "@/lib/guide/queries";
 import { formatGuideDate } from "@/lib/guide/layout";
-import { getStoredPdf, wallPdfId } from "@/lib/guide/store";
+import { latestPdfDate } from "@/lib/guide/store";
 import { pageMetadata } from "../../../../seo";
 
 type WallPageProps = {
@@ -35,7 +35,7 @@ export default async function WallPage({ params }: WallPageProps) {
     sectorSlug,
     wallSlug,
   );
-  const storedPdf = await getStoredPdf(wallPdfId(wall.id));
+  const generatedAt = await latestPdfDate(zone.id);
 
   return (
     <DeportivaPageTransition>
@@ -53,16 +53,16 @@ export default async function WallPage({ params }: WallPageProps) {
           </div>
           <div className="shrink-0 text-right">
             <DownloadPdfLink
-              href={`/deportiva/${zone.slug}/${sector.slug}/${wall.slug}/pdf?t=${storedPdf?.generatedAt.getTime() ?? Date.now()}`}
-              event="deportiva_wall_pdf"
+              href={`/deportiva/${zone.slug}/pdf?t=${generatedAt?.getTime() ?? Date.now()}`}
+              event="deportiva_zone_pdf"
               properties={{ zone: zone.slug, wall: wall.slug }}
               className="font-brown text-[0.65rem] tracking-[0.12em] uppercase underline decoration-from-font underline-offset-4 md:text-sm md:tracking-[0.14em]"
             >
-              PDF de esta pared
+              Descargar topo
             </DownloadPdfLink>
-            {storedPdf ? (
+            {generatedAt ? (
               <p className="font-brown text-ink-soft mt-0.5 hidden text-xs tracking-[0.08em] uppercase md:block">
-                Generado {formatGuideDate(storedPdf.generatedAt)}
+                Generado {formatGuideDate(generatedAt)}
               </p>
             ) : null}
           </div>

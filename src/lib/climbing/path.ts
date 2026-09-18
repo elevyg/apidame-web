@@ -38,8 +38,15 @@ export function pointerRadius(routeStrokeWidth: number, scale = 1): number {
   return Math.max(90, 100 * routeStrokeWidth) * scale;
 }
 
+export function scaledPointerRadius(
+  routeStrokeWidth: number,
+  scale: number,
+): number {
+  return 100 * scale * routeStrokeWidth;
+}
+
 export function pdfPointerRadius(routeStrokeWidth: number, scale: number): number {
-  return Math.max(8, pointerRadius(routeStrokeWidth, scale) * 0.82);
+  return scaledPointerRadius(routeStrokeWidth, scale);
 }
 
 export function fitDiscLabelSize(

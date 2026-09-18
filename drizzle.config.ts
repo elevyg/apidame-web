@@ -1,7 +1,10 @@
+import { existsSync } from "node:fs";
 import { config } from "dotenv";
 import { defineConfig } from "drizzle-kit";
 
-config({ path: ".env.local" });
+if (existsSync(".env.local")) {
+  config({ path: ".env.local" });
+}
 
 const url = process.env.TURSO_DATABASE_URL ?? process.env.TURSO_DABASE_URL;
 const authToken =

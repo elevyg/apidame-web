@@ -1,14 +1,9 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { upsertUser } from "@/db/seed";
+import { isAdminEmail } from "@/lib/guide/adminEmail";
 
-export const ADMIN_EMAIL = (
-  process.env.ADMIN_EMAIL ?? "elevyg91@gmail.com"
-).toLowerCase();
-
-export function isAdminEmail(email: string | null | undefined): boolean {
-  return email?.toLowerCase() === ADMIN_EMAIL;
-}
+export { ADMIN_EMAIL, isAdminEmail } from "@/lib/guide/adminEmail";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
@@ -23,30 +18,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       const email = user?.email ?? token.email;
-      if (email) {
-        token.email = email;
-        token.role = isAdminEmail(email) ? "admin" : "user";
+      if (!email) return token;
+      token.email = email;
+      if (!user && token.userId) {
+        if (isAdminEmail(email)) token.role = "admin";
+        return token;
       }
+      const superAdmin = isAdminEmail(email);
+      const saved = await upsertUser({
+        email,
+        name: user?.name ?? (token.name as string | undefined),
+        image: user?.image ?? (token.picture as string | undefined),
+        superAdmin,
+      });
+      token.userId = saved.id;
+      token.role = saved.role;
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.email = token.email as string;
         session.user.role = (token.role as "admin" | "user") ?? "user";
-        session.user.id = token.sub ?? "";
+        session.user.id = (token.userId as string) ?? token.sub ?? "";
       }
       return session;
-    },
-  },
-  events: {
-    async signIn({ user }) {
-      if (!user.email) return;
-      await upsertUser({
-        email: user.email,
-        name: user.name,
-        image: user.image,
-        role: isAdminEmail(user.email) ? "admin" : "user",
-      });
     },
   },
 });

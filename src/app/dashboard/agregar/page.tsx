@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { actorZoneIds, requireActor } from "@/lib/guide/authz";
 import { getAdminTree } from "@/lib/guide/queries";
 import { nextCreateStep, type CreateKind } from "@/lib/guide/adminCreate";
 import { createRoute, createSector, createWall } from "../actions";
@@ -32,7 +33,9 @@ function hrefWith(
 export default async function AddEntityPage({ searchParams }: AddPageProps) {
   const params = await searchParams;
   const kind = asKind(params.kind);
-  const tree = await getAdminTree();
+  const actor = await requireActor();
+  const zoneIds = await actorZoneIds(actor);
+  const tree = await getAdminTree(zoneIds);
   const zone = tree.find((row) => row.id === params.zoneId) ?? null;
   const sector =
     zone?.sectors.find((row) => row.id === params.sectorId) ??

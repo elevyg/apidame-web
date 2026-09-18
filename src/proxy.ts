@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth, isAdminEmail } from "@/auth";
+import { auth } from "@/auth";
 
 const proxy = auth((req) => {
   const path = req.nextUrl.pathname;
@@ -10,10 +10,6 @@ const proxy = auth((req) => {
     const login = new URL("/login", req.nextUrl);
     login.searchParams.set("callbackUrl", path);
     return NextResponse.redirect(login);
-  }
-
-  if (!isAdminEmail(email)) {
-    return NextResponse.redirect(new URL("/deportiva", req.nextUrl));
   }
 
   return NextResponse.next();

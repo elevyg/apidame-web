@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { optimizedImageUrl } from "@/lib/climbing/cloudinary";
+import { loadZoneAccess, requireActor } from "@/lib/guide/authz";
+import { canMutateOwned, hasZoneAction } from "@/lib/guide/zoneAccess";
 import { getTopoEditor, listGuidePhotoLibrary } from "@/lib/guide/queries";
 import { updateTopoMeta } from "../../actions";
 import AdminPhotoField from "../../AdminPhotoField";
@@ -14,6 +16,11 @@ export default async function TopoAdminPage({ params }: TopoAdminProps) {
   const data = await getTopoEditor(topoId);
   if (!data) notFound();
   const { topo, wall, zone, routes, paths } = data;
+  const actor = await requireActor();
+  const access = await loadZoneAccess(actor, zone.id);
+  if (!access.platformAdmin && !access.role) notFound();
+  const canEdit = canMutateOwned(access, "update", topo.createdByUserId);
+  const canSetMain = hasZoneAction(access, "setMainTopo");
   const library = await listGuidePhotoLibrary();
   const currentUrl = optimizedImageUrl(
     { url: topo.imageUrl, publicId: topo.imagePublicId },
@@ -28,6 +35,7 @@ export default async function TopoAdminPage({ params }: TopoAdminProps) {
         <Link href={`/dashboard/paredes/${wall.id}`}>{wall.name}</Link>
       </p>
       <h1 className="font-display mt-2 text-4xl">{topo.name ?? "Topo"}</h1>
+      {canEdit ? (
       <form
         action={updateTopoMeta}
         className="mt-8 flex max-w-xl flex-col gap-3"
@@ -46,10 +54,15 @@ export default async function TopoAdminPage({ params }: TopoAdminProps) {
           currentAlt={topo.name ?? wall.name}
           library={library}
         />
-        <label className="font-brown flex items-center gap-2 text-sm">
-          <input type="checkbox" name="main" defaultChecked={topo.main} />
-          Topo principal de la pared
-        </label>
+        {canSetMain ? (
+          <>
+            <input type="hidden" name="setMain" value="1" />
+            <label className="font-brown flex items-center gap-2 text-sm">
+              <input type="checkbox" name="main" defaultChecked={topo.main} />
+              Topo principal de la pared
+            </label>
+          </>
+        ) : null}
         <button
           type="submit"
           className="font-brown border-rule w-fit border px-4 py-2 text-sm tracking-[0.16em] uppercase"
@@ -57,6 +70,7 @@ export default async function TopoAdminPage({ params }: TopoAdminProps) {
           Guardar topo
         </button>
       </form>
+      ) : null}
 
       <h2 className="font-display mt-14 text-2xl">Rutas en este topo</h2>
       <ul className="divide-rule mt-4 divide-y border-rule border-y">

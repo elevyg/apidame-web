@@ -16,7 +16,8 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <p className="kicker">Cuenta</p>
         <h1 className="font-display mt-4 text-4xl md:text-6xl">Entrar</h1>
         <p className="measure font-brown text-ink-soft mt-6 text-base">
-          Solo Google. El dashboard de la guía queda para la cuenta admin.
+          Solo Google. El dashboard queda para quien tenga un rol en alguna
+          zona.
         </p>
         <form
           className="mt-10"

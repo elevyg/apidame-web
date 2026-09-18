@@ -6,8 +6,10 @@ import {
   routes,
   sectors,
   topos,
+  users,
   walls,
   zoneAgreements,
+  zoneRoles,
   zones,
 } from "@/db/schema";
 import { withFrenchGrade } from "@/lib/climbing/frenchGrade";
@@ -27,6 +29,42 @@ export async function listPublishedZones() {
 
 export async function listAllZones() {
   return db.select().from(zones).orderBy(asc(zones.name));
+}
+
+export async function listDashboardZones(zoneIds: string[] | null) {
+  if (zoneIds && zoneIds.length === 0) return [];
+  if (!zoneIds) return listAllZones();
+  return db
+    .select()
+    .from(zones)
+    .where(inArray(zones.id, zoneIds))
+    .orderBy(asc(zones.name));
+}
+
+export async function listZoneMembers(zoneId: string) {
+  return db
+    .select({
+      id: zoneRoles.id,
+      userId: zoneRoles.userId,
+      role: zoneRoles.role,
+      email: users.email,
+      name: users.name,
+    })
+    .from(zoneRoles)
+    .innerJoin(users, eq(users.id, zoneRoles.userId))
+    .where(eq(zoneRoles.zoneId, zoneId));
+}
+
+export async function listUsers() {
+  return db
+    .select({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      role: users.role,
+    })
+    .from(users)
+    .orderBy(asc(users.email));
 }
 
 export async function getZoneBySlug(slug: string) {
@@ -276,9 +314,18 @@ export async function listGuidePhotoLibrary(): Promise<CloudinaryImage[]> {
   return library;
 }
 
-export async function getAdminCatalog(): Promise<AdminSearchItem[]> {
+export async function getAdminCatalog(
+  zoneIds: string[] | null = null,
+): Promise<AdminSearchItem[]> {
+  if (zoneIds && zoneIds.length === 0) return [];
   const [zoneRows, sectorRows, wallRows, routeRows] = await Promise.all([
-    db.select().from(zones).orderBy(asc(zones.name)),
+    zoneIds
+      ? db
+          .select()
+          .from(zones)
+          .where(inArray(zones.id, zoneIds))
+          .orderBy(asc(zones.name))
+      : db.select().from(zones).orderBy(asc(zones.name)),
     db.select().from(sectors).orderBy(asc(sectors.position), asc(sectors.name)),
     db.select().from(walls).orderBy(asc(walls.position), asc(walls.name)),
     db.select().from(routes).orderBy(asc(routes.position), asc(routes.name)),
@@ -346,9 +393,16 @@ export async function getAdminCatalog(): Promise<AdminSearchItem[]> {
   return items;
 }
 
-export async function getAdminTree() {
+export async function getAdminTree(zoneIds: string[] | null = null) {
+  if (zoneIds && zoneIds.length === 0) return [];
   const [zoneRows, sectorRows, wallRows] = await Promise.all([
-    db.select().from(zones).orderBy(asc(zones.name)),
+    zoneIds
+      ? db
+          .select()
+          .from(zones)
+          .where(inArray(zones.id, zoneIds))
+          .orderBy(asc(zones.name))
+      : db.select().from(zones).orderBy(asc(zones.name)),
     db.select().from(sectors).orderBy(asc(sectors.position), asc(sectors.name)),
     db.select().from(walls).orderBy(asc(walls.position), asc(walls.name)),
   ]);

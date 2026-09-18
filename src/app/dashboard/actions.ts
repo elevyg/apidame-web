@@ -3,14 +3,32 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { and, asc, eq } from "drizzle-orm";
-import { auth, isAdminEmail } from "@/auth";
 import { db } from "@/db/client";
-import { routePaths, routes, sectors, topos, walls, zones } from "@/db/schema";
+import {
+  routePaths,
+  routes,
+  sectors,
+  topos,
+  users,
+  walls,
+  zoneRoles,
+  zones,
+} from "@/db/schema";
 import {
   FRENCH_GRADE_SYSTEM,
   toFrenchGrade,
 } from "@/lib/climbing/frenchGrade";
 import { imageFromAdminForm } from "@/lib/climbing/cloudinary";
+import {
+  parseZoneRole,
+  requireOwnedAction,
+  requireSuperAdmin,
+  requireZoneAction,
+  zoneIdForRoute,
+  zoneIdForTopo,
+  zoneIdForWall,
+} from "@/lib/guide/authz";
+import { canAssignPlatformAdmin } from "@/lib/guide/platformAccess";
 import { guideSlug } from "@/lib/guide/slug";
 import { refreshPdfsForWall, refreshZoneCover } from "@/lib/guide/store";
 import {
@@ -18,15 +36,7 @@ import {
   rankNorthToSouth,
   sortSectors,
 } from "@/lib/guide/sectorOrder";
-
-async function requireAdmin() {
-  const session = await auth();
-  const email = session?.user?.email;
-  if (!email || !isAdminEmail(email)) {
-    throw new Error("No autorizado");
-  }
-  return session;
-}
+import { findOrCreateUserByEmail } from "@/db/seed";
 
 function revalidateGuide(zoneSlug?: string) {
   revalidatePath("/deportiva");
@@ -70,13 +80,13 @@ async function sectorIdsForZone(zoneId: string) {
 }
 
 export async function moveSector(formData: FormData) {
-  await requireAdmin();
   const zoneId = String(formData.get("zoneId") ?? "");
   const sectorId = String(formData.get("sectorId") ?? "");
   const direction = String(formData.get("direction") ?? "");
   if (!zoneId || !sectorId || (direction !== "up" && direction !== "down")) {
     throw new Error("No se pudo mover el sector");
   }
+  await requireZoneAction(zoneId, "editZone");
   const rows = await sectorIdsForZone(zoneId);
   const next = moveSectorId(
     rows.map((row) => row.id),
@@ -87,29 +97,26 @@ export async function moveSector(formData: FormData) {
 }
 
 export async function orderSectorsNorthToSouth(formData: FormData) {
-  await requireAdmin();
   const zoneId = String(formData.get("zoneId") ?? "");
   if (!zoneId) throw new Error("Falta la zona");
+  await requireZoneAction(zoneId, "editZone");
   const rows = await sectorIdsForZone(zoneId);
   await writeSectorOrder(zoneId, rankNorthToSouth(rows), true);
 }
 
-async function uniqueChildSlug(
-  existing: string[],
-  name: string,
-) {
+async function uniqueChildSlug(existing: string[], name: string) {
   const base = guideSlug(name);
   if (!existing.includes(base)) return base;
   return `${base}-${crypto.randomUUID().slice(0, 8)}`;
 }
 
 export async function updateZone(formData: FormData) {
-  await requireAdmin();
   const id = String(formData.get("id") ?? "");
   const name = String(formData.get("name") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const published = formData.get("published") === "on";
   if (!id || !name) throw new Error("Falta el nombre de la zona");
+  await requireZoneAction(id, "editZone");
   const cover = await imageFromAdminForm(formData, "apidame/guia/covers");
   await db
     .update(zones)
@@ -138,10 +145,10 @@ export async function updateZone(formData: FormData) {
 }
 
 export async function createSector(formData: FormData) {
-  await requireAdmin();
   const zoneId = String(formData.get("zoneId") ?? "");
   const name = String(formData.get("name") ?? "").trim();
   if (!zoneId || !name) throw new Error("Falta el sector");
+  const { actor } = await requireZoneAction(zoneId, "create");
   const siblings = await db
     .select({ slug: sectors.slug, position: sectors.position })
     .from(sectors)
@@ -156,6 +163,7 @@ export async function createSector(formData: FormData) {
       name,
     ),
     position: siblings.reduce((max, row) => Math.max(max, row.position), 0) + 1,
+    createdByUserId: actor.id,
   });
   await refreshZoneCover(zoneId);
   revalidateGuide();
@@ -163,7 +171,6 @@ export async function createSector(formData: FormData) {
 }
 
 export async function createWall(formData: FormData) {
-  await requireAdmin();
   const sectorId = String(formData.get("sectorId") ?? "");
   const name = String(formData.get("name") ?? "").trim();
   if (!sectorId || !name) throw new Error("Falta la pared");
@@ -173,6 +180,7 @@ export async function createWall(formData: FormData) {
     .where(eq(sectors.id, sectorId))
     .then((rows) => rows[0] ?? null);
   if (!sector) throw new Error("Sector no encontrado");
+  const { actor } = await requireZoneAction(sector.zoneId, "create");
   const siblings = await db
     .select({ slug: walls.slug, position: walls.position })
     .from(walls)
@@ -187,6 +195,7 @@ export async function createWall(formData: FormData) {
       name,
     ),
     position: siblings.reduce((max, row) => Math.max(max, row.position), 0) + 1,
+    createdByUserId: actor.id,
   });
   await refreshZoneCover(sector.zoneId);
   revalidateGuide();
@@ -194,7 +203,6 @@ export async function createWall(formData: FormData) {
 }
 
 export async function updateRoute(formData: FormData) {
-  await requireAdmin();
   const id = String(formData.get("id") ?? "");
   const name = String(formData.get("name") ?? "").trim();
   const grade = String(formData.get("grade") ?? "").trim();
@@ -204,11 +212,13 @@ export async function updateRoute(formData: FormData) {
   const frenchGrade = toFrenchGrade(grade || null);
   if (!id || !name) throw new Error("Falta el nombre de la ruta");
   const current = await db
-    .select({ wallId: routes.wallId })
+    .select({ wallId: routes.wallId, createdByUserId: routes.createdByUserId })
     .from(routes)
     .where(eq(routes.id, id))
     .then((rows) => rows[0] ?? null);
   if (!current) throw new Error("Ruta no encontrada");
+  const zoneId = await zoneIdForRoute(id);
+  await requireOwnedAction(zoneId, "update", current.createdByUserId);
   await db
     .update(routes)
     .set({
@@ -226,7 +236,6 @@ export async function updateRoute(formData: FormData) {
 }
 
 export async function createRoute(formData: FormData) {
-  await requireAdmin();
   const wallId = String(formData.get("wallId") ?? "");
   const name = String(formData.get("name") ?? "").trim();
   const grade = String(formData.get("grade") ?? "").trim();
@@ -234,6 +243,8 @@ export async function createRoute(formData: FormData) {
   const position = Number(formData.get("position") ?? 0);
   const frenchGrade = toFrenchGrade(grade || null);
   if (!wallId || !name) throw new Error("Falta el nombre de la ruta");
+  const zoneId = await zoneIdForWall(wallId);
+  const { actor } = await requireZoneAction(zoneId, "create");
   const siblings = await db
     .select({ slug: routes.slug, position: routes.position })
     .from(routes)
@@ -253,6 +264,7 @@ export async function createRoute(formData: FormData) {
     position: Number.isFinite(position)
       ? position
       : siblings.reduce((max, row) => Math.max(max, row.position), 0) + 1,
+    createdByUserId: actor.id,
   });
   await refreshPdfsForWall(wallId);
   revalidateGuide();
@@ -260,12 +272,19 @@ export async function createRoute(formData: FormData) {
 }
 
 export async function saveRoutePath(formData: FormData) {
-  await requireAdmin();
   const topoId = String(formData.get("topoId") ?? "");
   const routeId = String(formData.get("routeId") ?? "");
   const path = String(formData.get("path") ?? "").trim();
   const pathId = String(formData.get("pathId") ?? "");
   if (!topoId || !routeId || !path) throw new Error("Falta la línea");
+  const route = await db
+    .select({ wallId: routes.wallId, createdByUserId: routes.createdByUserId })
+    .from(routes)
+    .where(eq(routes.id, routeId))
+    .then((rows) => rows[0] ?? null);
+  if (!route) throw new Error("Ruta no encontrada");
+  const zoneId = await zoneIdForWall(route.wallId);
+  await requireOwnedAction(zoneId, "update", route.createdByUserId);
   const topo = await db
     .select({ wallId: topos.wallId })
     .from(topos)
@@ -290,18 +309,23 @@ export async function saveRoutePath(formData: FormData) {
 }
 
 export async function createTopo(formData: FormData) {
-  await requireAdmin();
   const wallId = String(formData.get("wallId") ?? "");
   const name = String(formData.get("name") ?? "").trim();
   const image = await imageFromAdminForm(formData, "apidame/guia/topos");
   const main = formData.get("main") === "on";
   if (!wallId || !image) throw new Error("Falta la foto del topo");
+  const zoneId = await zoneIdForWall(wallId);
+  const { actor } = await requireZoneAction(zoneId, "create");
   const siblings = await db
     .select({ slug: topos.slug, position: topos.position })
     .from(topos)
     .where(eq(topos.wallId, wallId));
   const id = crypto.randomUUID();
-  if (main) {
+  const asMain = siblings.length === 0 ? true : main;
+  if (main && siblings.length > 0) {
+    await requireZoneAction(zoneId, "setMainTopo");
+    await db.update(topos).set({ main: false }).where(eq(topos.wallId, wallId));
+  } else if (asMain) {
     await db.update(topos).set({ main: false }).where(eq(topos.wallId, wallId));
   }
   await db.insert(topos).values({
@@ -313,11 +337,12 @@ export async function createTopo(formData: FormData) {
       name || "topo",
     ),
     position: siblings.reduce((max, row) => Math.max(max, row.position), 0) + 1,
-    main: main || siblings.length === 0,
+    main: asMain,
     imageUrl: image.url,
     imagePublicId: image.publicId,
     imageWidth: image.width,
     imageHeight: image.height,
+    createdByUserId: actor.id,
   });
   await refreshPdfsForWall(wallId);
   revalidateGuide();
@@ -325,7 +350,6 @@ export async function createTopo(formData: FormData) {
 }
 
 export async function updateTopoMeta(formData: FormData) {
-  await requireAdmin();
   const id = String(formData.get("id") ?? "");
   const name = String(formData.get("name") ?? "").trim();
   const main = formData.get("main") === "on";
@@ -337,17 +361,23 @@ export async function updateTopoMeta(formData: FormData) {
     .where(eq(topos.id, id))
     .then((rows) => rows[0] ?? null);
   if (!topo) throw new Error("Topo no encontrado");
-  if (main) {
-    await db
-      .update(topos)
-      .set({ main: false })
-      .where(and(eq(topos.wallId, topo.wallId)));
+  const zoneId = await zoneIdForTopo(id);
+  await requireOwnedAction(zoneId, "update", topo.createdByUserId);
+  const nextMain = formData.has("setMain") ? main : topo.main;
+  if (nextMain !== topo.main) {
+    await requireZoneAction(zoneId, "setMainTopo");
+    if (nextMain) {
+      await db
+        .update(topos)
+        .set({ main: false })
+        .where(and(eq(topos.wallId, topo.wallId)));
+    }
   }
   await db
     .update(topos)
     .set({
       name: name || null,
-      main,
+      main: nextMain,
       ...(image
         ? {
             imageUrl: image.url,
@@ -362,4 +392,80 @@ export async function updateTopoMeta(formData: FormData) {
   revalidateGuide();
   revalidatePath(`/dashboard/topos/${id}`);
   revalidatePath(`/dashboard/paredes/${topo.wallId}`);
+}
+
+export async function assignZoneRole(formData: FormData) {
+  const zoneId = String(formData.get("zoneId") ?? "");
+  const email = String(formData.get("email") ?? "")
+    .trim()
+    .toLowerCase();
+  const role = parseZoneRole(String(formData.get("role") ?? ""));
+  if (!zoneId || !email) throw new Error("Falta el correo");
+  const { actor } = await requireZoneAction(zoneId, "assignRole");
+  const saved = await findOrCreateUserByEmail(email);
+  const existing = await db
+    .select()
+    .from(zoneRoles)
+    .where(and(eq(zoneRoles.userId, saved.id), eq(zoneRoles.zoneId, zoneId)))
+    .then((rows) => rows[0] ?? null);
+  if (existing) {
+    await db
+      .update(zoneRoles)
+      .set({ role, assignedByUserId: actor.id })
+      .where(eq(zoneRoles.id, existing.id));
+  } else {
+    await db.insert(zoneRoles).values({
+      id: crypto.randomUUID(),
+      userId: saved.id,
+      zoneId,
+      role,
+      assignedByUserId: actor.id,
+    });
+  }
+  revalidatePath(`/dashboard/zonas/${zoneId}`);
+}
+
+export async function removeZoneRole(formData: FormData) {
+  const zoneId = String(formData.get("zoneId") ?? "");
+  const userId = String(formData.get("userId") ?? "");
+  if (!zoneId || !userId) throw new Error("Falta el miembro");
+  await requireZoneAction(zoneId, "assignRole");
+  await db
+    .delete(zoneRoles)
+    .where(and(eq(zoneRoles.zoneId, zoneId), eq(zoneRoles.userId, userId)));
+  revalidatePath(`/dashboard/zonas/${zoneId}`);
+}
+
+export async function setPlatformAdmin(formData: FormData) {
+  const actor = await requireSuperAdmin();
+  const userId = String(formData.get("userId") ?? "");
+  const role = String(formData.get("role") ?? "");
+  if (!userId || (role !== "admin" && role !== "user")) {
+    throw new Error("Falta el usuario");
+  }
+  const target = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, userId))
+    .then((rows) => rows[0] ?? null);
+  if (!target) throw new Error("Usuario no encontrado");
+  if (!canAssignPlatformAdmin(actor, target.email)) {
+    throw new Error("No autorizado");
+  }
+  await db.update(users).set({ role }).where(eq(users.id, userId));
+  revalidatePath("/dashboard");
+}
+
+export async function invitePlatformAdmin(formData: FormData) {
+  const actor = await requireSuperAdmin();
+  const email = String(formData.get("email") ?? "")
+    .trim()
+    .toLowerCase();
+  if (!email) throw new Error("Falta el correo");
+  if (!canAssignPlatformAdmin(actor, email)) {
+    throw new Error("No autorizado");
+  }
+  const saved = await findOrCreateUserByEmail(email);
+  await db.update(users).set({ role: "admin" }).where(eq(users.id, saved.id));
+  revalidatePath("/dashboard");
 }

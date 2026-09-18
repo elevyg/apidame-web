@@ -6,6 +6,8 @@ import { db } from "@/db/client";
 import { routePaths, routes, topos } from "@/db/schema";
 import { asc, eq, inArray } from "drizzle-orm";
 import { optimizedImageUrl } from "@/lib/climbing/cloudinary";
+import { loadZoneAccess, requireActor } from "@/lib/guide/authz";
+import { hasZoneAction } from "@/lib/guide/zoneAccess";
 import { getWallById, listGuidePhotoLibrary } from "@/lib/guide/queries";
 import { createRoute, createTopo } from "../../actions";
 import AdminPhotoField from "../../AdminPhotoField";
@@ -19,6 +21,11 @@ export default async function WallAdminPage({ params }: WallAdminProps) {
   const context = await getWallById(wallId);
   if (!context) notFound();
   const { wall, sector, zone } = context;
+  const actor = await requireActor();
+  const access = await loadZoneAccess(actor, zone.id);
+  if (!access.platformAdmin && !access.role) notFound();
+  const canCreate = hasZoneAction(access, "create");
+  const canSetMain = hasZoneAction(access, "setMainTopo");
   const wallRoutes = await db
     .select()
     .from(routes)
@@ -89,6 +96,7 @@ export default async function WallAdminPage({ params }: WallAdminProps) {
         })}
       </ul>
 
+      {canCreate ? (
       <form
         action={createTopo}
         className="border-rule mt-6 grid max-w-xl gap-3 border p-4"
@@ -107,6 +115,7 @@ export default async function WallAdminPage({ params }: WallAdminProps) {
           library={library}
           required
         />
+        {canSetMain ? (
         <label className="font-brown flex items-center gap-2 text-sm">
           <input
             type="checkbox"
@@ -115,6 +124,7 @@ export default async function WallAdminPage({ params }: WallAdminProps) {
           />
           Topo principal
         </label>
+        ) : null}
         <button
           type="submit"
           className="font-brown border-rule w-fit border px-4 py-2 text-xs tracking-[0.16em] uppercase"
@@ -122,15 +132,18 @@ export default async function WallAdminPage({ params }: WallAdminProps) {
           Crear topo
         </button>
       </form>
+      ) : null}
 
       <div className="mt-14 flex items-end justify-between gap-4">
         <h2 className="font-display text-2xl">Rutas</h2>
+        {canCreate ? (
         <Link
           href={`/dashboard/agregar?kind=ruta&zoneId=${zone.id}&sectorId=${sector.id}&wallId=${wall.id}`}
           className="font-brown text-xs tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
         >
           Agregar ruta
         </Link>
+        ) : null}
       </div>
       <ul className="divide-rule mt-4 divide-y border-rule border-y">
         {wallRoutes.map(withFrenchGrade).map((route) => {
@@ -158,6 +171,7 @@ export default async function WallAdminPage({ params }: WallAdminProps) {
         })}
       </ul>
 
+      {canCreate ? (
       <form
         action={createRoute}
         className="border-rule mt-8 grid max-w-xl gap-3 border p-4"
@@ -186,6 +200,7 @@ export default async function WallAdminPage({ params }: WallAdminProps) {
           Crear y abrir ficha
         </button>
       </form>
+      ) : null}
     </section>
   );
 }

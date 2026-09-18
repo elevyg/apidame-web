@@ -1,11 +1,19 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { optimizedImageUrl } from "@/lib/climbing/cloudinary";
-import { getZoneById, listGuidePhotoLibrary } from "@/lib/guide/queries";
+import { loadZoneAccess, requireActor } from "@/lib/guide/authz";
+import { hasZoneAction, ROLE_HELP, ROLE_LABEL, ZONE_ROLES } from "@/lib/guide/zoneAccess";
 import {
-  updateZone,
+  getZoneById,
+  listGuidePhotoLibrary,
+  listZoneMembers,
+} from "@/lib/guide/queries";
+import {
+  assignZoneRole,
   moveSector,
   orderSectorsNorthToSouth,
+  removeZoneRole,
+  updateZone,
 } from "../../actions";
 import AdminPhotoField from "../../AdminPhotoField";
 
@@ -15,9 +23,16 @@ type ZoneAdminProps = {
 
 export default async function ZoneAdminPage({ params }: ZoneAdminProps) {
   const { zoneId } = await params;
+  const actor = await requireActor();
+  const access = await loadZoneAccess(actor, zoneId);
+  if (!access.platformAdmin && !access.role) notFound();
   const data = await getZoneById(zoneId);
   if (!data) notFound();
   const { zone, sectors, walls, routes, topos } = data;
+  const canEditZone = hasZoneAction(access, "editZone");
+  const canCreate = hasZoneAction(access, "create");
+  const canAssign = hasZoneAction(access, "assignRole");
+  const members = canAssign ? await listZoneMembers(zoneId) : [];
   const library = await listGuidePhotoLibrary();
   const coverUrl = zone.coverImageUrl
     ? optimizedImageUrl(
@@ -35,46 +50,63 @@ export default async function ZoneAdminPage({ params }: ZoneAdminProps) {
         Guía
       </Link>
       <h1 className="font-display mt-2 text-4xl">{zone.name}</h1>
-      <form action={updateZone} className="mt-8 flex max-w-xl flex-col gap-4">
-        <input type="hidden" name="id" value={zone.id} />
-        <label className="font-brown text-sm">
-          Nombre
-          <input
-            name="name"
-            defaultValue={zone.name}
-            className="border-rule mt-2 block w-full border px-3 py-2"
-          />
-        </label>
-        <label className="font-brown text-sm">
-          Descripción
-          <textarea
-            name="description"
-            defaultValue={zone.description ?? ""}
-            rows={6}
-            className="border-rule mt-2 block w-full border px-3 py-2"
-          />
-        </label>
-        <AdminPhotoField
-          currentUrl={coverUrl}
-          currentAlt={zone.name}
-          library={library}
-        />
-        <label className="font-brown flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            name="published"
-            defaultChecked={zone.published}
-          />
-          Publicada
-        </label>
-        <button
-          type="submit"
-          className="font-brown border-rule w-fit border px-4 py-2 text-sm tracking-[0.16em] uppercase"
-        >
-          Guardar zona
-        </button>
-      </form>
+      {actor.superAdmin ? (
+        <p className="font-brown text-ink-soft mt-2 text-xs tracking-[0.14em] uppercase">
+          Super-admin
+        </p>
+      ) : access.platformAdmin ? (
+        <p className="font-brown text-ink-soft mt-2 text-xs tracking-[0.14em] uppercase">
+          Admin de plataforma
+        </p>
+      ) : access.role ? (
+        <p className="font-brown text-ink-soft mt-2 text-xs tracking-[0.14em] uppercase">
+          {ROLE_LABEL[access.role]}
+        </p>
+      ) : null}
 
+      {canEditZone ? (
+        <form action={updateZone} className="mt-8 flex max-w-xl flex-col gap-4">
+          <input type="hidden" name="id" value={zone.id} />
+          <label className="font-brown text-sm">
+            Nombre
+            <input
+              name="name"
+              defaultValue={zone.name}
+              className="border-rule mt-2 block w-full border px-3 py-2"
+            />
+          </label>
+          <label className="font-brown text-sm">
+            Descripción
+            <textarea
+              name="description"
+              defaultValue={zone.description ?? ""}
+              rows={6}
+              className="border-rule mt-2 block w-full border px-3 py-2"
+            />
+          </label>
+          <AdminPhotoField
+            currentUrl={coverUrl}
+            currentAlt={zone.name}
+            library={library}
+          />
+          <label className="font-brown flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              name="published"
+              defaultChecked={zone.published}
+            />
+            Publicada
+          </label>
+          <button
+            type="submit"
+            className="font-brown border-rule w-fit border px-4 py-2 text-sm tracking-[0.16em] uppercase"
+          >
+            Guardar zona
+          </button>
+        </form>
+      ) : null}
+
+      {canEditZone ? (
       <section className="mt-14">
         <h2 className="font-display text-2xl">Orden del mapa</h2>
         <p className="font-brown text-ink-soft mt-3 max-w-xl text-sm leading-relaxed">
@@ -142,15 +174,18 @@ export default async function ZoneAdminPage({ params }: ZoneAdminProps) {
           ))}
         </ol>
       </section>
+      ) : null}
 
       <div className="mt-14 flex items-end justify-between gap-4">
         <h2 className="font-display text-2xl">Sectores</h2>
-        <Link
-          href={`/dashboard/agregar?kind=sector&zoneId=${zone.id}`}
-          className="font-brown text-xs tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
-        >
-          Agregar sector
-        </Link>
+        {canCreate ? (
+          <Link
+            href={`/dashboard/agregar?kind=sector&zoneId=${zone.id}`}
+            className="font-brown text-xs tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
+          >
+            Agregar sector
+          </Link>
+        ) : null}
       </div>
 
       {sectors.map((sector) => {
@@ -163,12 +198,14 @@ export default async function ZoneAdminPage({ params }: ZoneAdminProps) {
           >
             <div className="flex items-end justify-between gap-4">
               <h3 className="font-display text-2xl">{sector.name}</h3>
-              <Link
-                href={`/dashboard/agregar?kind=pared&zoneId=${zone.id}&sectorId=${sector.id}`}
-                className="font-brown text-xs tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
-              >
-                Agregar pared
-              </Link>
+              {canCreate ? (
+                <Link
+                  href={`/dashboard/agregar?kind=pared&zoneId=${zone.id}&sectorId=${sector.id}`}
+                  className="font-brown text-xs tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
+                >
+                  Agregar pared
+                </Link>
+              ) : null}
             </div>
             <ul className="mt-4 grid gap-3">
               {sectorWalls.map((wall) => {
@@ -203,6 +240,86 @@ export default async function ZoneAdminPage({ params }: ZoneAdminProps) {
           </section>
         );
       })}
+
+      {canAssign ? (
+        <section className="mt-16 max-w-xl">
+          <h2 className="font-display text-2xl">Equipo</h2>
+          <ul className="divide-rule mt-4 divide-y border-rule border-y">
+            {members.map((member) => (
+              <li
+                key={member.id}
+                className="flex items-center justify-between gap-4 py-3"
+              >
+                <span>
+                  <span className="font-brown block text-sm">
+                    {member.email}
+                  </span>
+                  <span className="font-brown text-ink-soft text-xs tracking-[0.12em] uppercase">
+                    {ROLE_LABEL[member.role as keyof typeof ROLE_LABEL] ??
+                      member.role}
+                  </span>
+                </span>
+                <form action={removeZoneRole}>
+                  <input type="hidden" name="zoneId" value={zone.id} />
+                  <input type="hidden" name="userId" value={member.userId} />
+                  <button
+                    type="submit"
+                    className="font-brown text-xs tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
+                  >
+                    Quitar
+                  </button>
+                </form>
+              </li>
+            ))}
+          </ul>
+          <form action={assignZoneRole} className="mt-6 grid gap-3">
+            <input type="hidden" name="zoneId" value={zone.id} />
+            <label className="font-brown text-sm">
+              Correo
+              <input
+                name="email"
+                type="email"
+                required
+                className="border-rule mt-1 block w-full border px-3 py-2"
+              />
+            </label>
+            <p className="font-brown text-ink-soft text-xs leading-relaxed">
+              Puede ser alguien que todavía no entra. El rol queda listo para
+              cuando inicie sesión con ese Google.
+            </p>
+            <label className="font-brown text-sm">
+              Rol
+              <select
+                name="role"
+                className="border-rule mt-1 block w-full border px-3 py-2"
+                defaultValue="collaborator"
+              >
+                {ZONE_ROLES.map((role) => (
+                  <option key={role} value={role}>
+                    {ROLE_LABEL[role]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <ul className="font-brown text-ink-soft grid gap-2 text-xs leading-relaxed">
+              {ZONE_ROLES.map((role) => (
+                <li key={role}>
+                  <span className="text-ink tracking-[0.08em] uppercase">
+                    {ROLE_LABEL[role]}.
+                  </span>{" "}
+                  {ROLE_HELP[role]}
+                </li>
+              ))}
+            </ul>
+            <button
+              type="submit"
+              className="font-brown border-rule w-fit border px-4 py-2 text-xs tracking-[0.16em] uppercase"
+            >
+              Asignar
+            </button>
+          </form>
+        </section>
+      ) : null}
     </section>
   );
 }

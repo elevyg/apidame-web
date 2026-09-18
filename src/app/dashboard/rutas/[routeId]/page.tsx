@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { loadZoneAccess, requireActor } from "@/lib/guide/authz";
+import { canMutateOwned } from "@/lib/guide/zoneAccess";
 import { getRouteEditor } from "@/lib/guide/queries";
 import { updateRoute } from "../../actions";
 import RouteLineForm from "../RouteLineForm";
@@ -13,6 +15,10 @@ export default async function RouteAdminPage({ params }: RouteAdminProps) {
   const data = await getRouteEditor(routeId);
   if (!data) notFound();
   const { route, wall, sector, zone, topos, paths } = data;
+  const actor = await requireActor();
+  const access = await loadZoneAccess(actor, zone.id);
+  if (!access.platformAdmin && !access.role) notFound();
+  const canEdit = canMutateOwned(access, "update", route.createdByUserId);
   const mainTopo = topos.find((topo) => topo.main);
   const hasMainLine = mainTopo
     ? paths.some((path) => path.topoId === mainTopo.id)
@@ -36,6 +42,7 @@ export default async function RouteAdminPage({ params }: RouteAdminProps) {
             : "Sin línea en el topo principal."}
       </p>
 
+      {canEdit ? (
       <form action={updateRoute} className="mt-8 grid max-w-xl gap-3">
         <input type="hidden" name="id" value={route.id} />
         <label className="font-brown text-sm">
@@ -87,14 +94,23 @@ export default async function RouteAdminPage({ params }: RouteAdminProps) {
           Guardar ruta
         </button>
       </form>
+      ) : (
+        <p className="font-brown text-ink-soft mt-8 text-sm">
+          {route.grade ?? "s/g"} · {route.kind}
+        </p>
+      )}
 
-      <h2 className="font-display mt-14 text-2xl">Línea</h2>
-      <p className="font-brown text-ink-soft mt-2 max-w-xl text-sm leading-relaxed">
-        La línea es esta ruta en un topo. Elige la foto y dibuja.
-      </p>
-      <div className="mt-6">
-        <RouteLineForm routeId={route.id} topos={topos} paths={paths} />
-      </div>
+      {canEdit ? (
+        <>
+          <h2 className="font-display mt-14 text-2xl">Línea</h2>
+          <p className="font-brown text-ink-soft mt-2 max-w-xl text-sm leading-relaxed">
+            La línea es esta ruta en un topo. Elige la foto y dibuja.
+          </p>
+          <div className="mt-6">
+            <RouteLineForm routeId={route.id} topos={topos} paths={paths} />
+          </div>
+        </>
+      ) : null}
     </section>
   );
 }

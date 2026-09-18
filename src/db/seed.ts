@@ -51,13 +51,19 @@ export async function upsertUser(input: {
   email: string;
   name?: string | null;
   image?: string | null;
-  role: "admin" | "user";
+  superAdmin?: boolean;
 }) {
+  const email = input.email.trim().toLowerCase();
   const existing = await db
     .select()
     .from(users)
-    .where(eq(users.email, input.email))
+    .where(eq(users.email, email))
     .then((rows) => rows[0] ?? null);
+  const role = input.superAdmin
+    ? "admin"
+    : existing?.role === "admin"
+      ? "admin"
+      : "user";
 
   if (existing) {
     await db
@@ -65,19 +71,23 @@ export async function upsertUser(input: {
       .set({
         name: input.name ?? existing.name,
         image: input.image ?? existing.image,
-        role: input.role,
+        role,
       })
-      .where(eq(users.email, input.email));
-    return existing.id;
+      .where(eq(users.email, email));
+    return { id: existing.id, role };
   }
 
   const id = crypto.randomUUID();
   await db.insert(users).values({
     id,
-    email: input.email,
+    email,
     name: input.name ?? null,
     image: input.image ?? null,
-    role: input.role,
+    role,
   });
-  return id;
+  return { id, role };
+}
+
+export async function findOrCreateUserByEmail(email: string) {
+  return upsertUser({ email, superAdmin: false });
 }

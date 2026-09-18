@@ -1,4 +1,5 @@
-import { signIn } from "@/auth";
+import { redirect } from "next/navigation";
+import { auth, signIn } from "@/auth";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 
@@ -6,8 +7,19 @@ type LoginPageProps = {
   searchParams: Promise<{ callbackUrl?: string }>;
 };
 
+function safeReturnTo(value: string | undefined) {
+  if (!value) return "/dashboard";
+  if (!value.startsWith("/") || value.startsWith("//") || value.includes("://")) {
+    return "/dashboard";
+  }
+  if (value === "/login" || value.startsWith("/login?")) return "/dashboard";
+  return value;
+}
+
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const { callbackUrl } = await searchParams;
+  const session = await auth();
+  if (session?.user?.email) redirect(safeReturnTo(callbackUrl));
 
   return (
     <main className="flex min-h-screen flex-col">
@@ -16,14 +28,15 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <p className="kicker">Cuenta</p>
         <h1 className="font-display mt-4 text-4xl md:text-6xl">Entrar</h1>
         <p className="measure font-brown text-ink-soft mt-6 text-base">
-          Solo Google. El dashboard de la guía queda para la cuenta admin.
+          Solo Google. El dashboard queda para quien tenga un rol en alguna
+          zona.
         </p>
         <form
           className="mt-10"
           action={async () => {
             "use server";
             await signIn("google", {
-              redirectTo: callbackUrl || "/dashboard",
+              redirectTo: safeReturnTo(callbackUrl),
             });
           }}
         >

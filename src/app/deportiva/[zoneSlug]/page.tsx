@@ -4,7 +4,10 @@ import TrackedLink from "@/components/TrackedLink";
 import SiteFooter from "@/components/SiteFooter";
 import DeportivaBackLink from "@/components/climbing/DeportivaBackLink";
 import DeportivaPageTransition from "@/components/climbing/DeportivaPageTransition";
+import ZoneAgreements from "@/components/climbing/ZoneAgreements";
+import ZoneGradeHistogram from "@/components/climbing/ZoneGradeHistogram";
 import ZoneMap from "@/components/climbing/ZoneMap";
+import { gradeHistogram } from "@/lib/climbing/gradeHistogram";
 import { requireZoneBySlug } from "@/lib/guide/queries";
 import { formatGuideDate } from "@/lib/guide/layout";
 import { latestPdfDate } from "@/lib/guide/store";
@@ -37,8 +40,9 @@ export async function generateMetadata({
 export default async function ZonePage({ params }: ZonePageProps) {
   const { zoneSlug } = await params;
   const guide = await requireZoneBySlug(zoneSlug);
-  const { zone, sectors, walls, routes } = guide;
+  const { zone, sectors, walls, routes, rules } = guide;
   const generatedAt = await latestPdfDate(zone.id);
+  const histogram = gradeHistogram(routes);
   const mapView =
     mapboxToken().length > 0
       ? buildZoneMapView(zoneToMapInput(guide), WEB_MAP_SIZE)
@@ -75,6 +79,21 @@ export default async function ZonePage({ params }: ZonePageProps) {
               </p>
             ) : null}
           </header>
+
+          {histogram.total > 0 || rules.length > 0 ? (
+            <section className="page-shell border-rule border-b py-12">
+              <div
+                className={
+                  histogram.total > 0 && rules.length > 0
+                    ? "grid gap-12 md:grid-cols-2 md:items-start"
+                    : "grid gap-12"
+                }
+              >
+                <ZoneAgreements rules={rules} />
+                <ZoneGradeHistogram histogram={histogram} />
+              </div>
+            </section>
+          ) : null}
 
           {mapView ? (
             <ZoneMap

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth, isAdminEmail } from "@/auth";
+import { auth } from "@/auth";
 
 const proxy = auth((req) => {
   const path = req.nextUrl.pathname;
@@ -12,10 +12,6 @@ const proxy = auth((req) => {
     return NextResponse.redirect(login);
   }
 
-  if (!isAdminEmail(email)) {
-    return NextResponse.redirect(new URL("/deportiva", req.nextUrl));
-  }
-
   return NextResponse.next();
 });
 
@@ -23,5 +19,5 @@ export default proxy;
 export { proxy };
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard", "/dashboard/:path*"],
 };

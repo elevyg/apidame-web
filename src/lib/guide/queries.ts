@@ -1,14 +1,27 @@
 import { and, asc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/client";
 import {
+  agreements,
   routePaths,
   routes,
   sectors,
   topos,
+  users,
   walls,
+  zoneAgreements,
+  zoneRoles,
   zones,
 } from "@/db/schema";
+import { withFrenchGrade } from "@/lib/climbing/frenchGrade";
+import { agreementRank } from "@/lib/guide/overlay";
+import type { CloudinaryImage } from "@/lib/climbing/cloudinary";
+import { listGuideImagesOrEmpty } from "@/lib/climbing/cloudinary";
+import type { AdminSearchItem } from "./adminSearch";
 import { notFound } from "next/navigation";
+
+export async function listAgreements() {
+  return db.select().from(agreements).orderBy(asc(agreements.title));
+}
 
 export async function listPublishedZones() {
   return db
@@ -20,6 +33,42 @@ export async function listPublishedZones() {
 
 export async function listAllZones() {
   return db.select().from(zones).orderBy(asc(zones.name));
+}
+
+export async function listDashboardZones(zoneIds: string[] | null) {
+  if (zoneIds && zoneIds.length === 0) return [];
+  if (!zoneIds) return listAllZones();
+  return db
+    .select()
+    .from(zones)
+    .where(inArray(zones.id, zoneIds))
+    .orderBy(asc(zones.name));
+}
+
+export async function listZoneMembers(zoneId: string) {
+  return db
+    .select({
+      id: zoneRoles.id,
+      userId: zoneRoles.userId,
+      role: zoneRoles.role,
+      email: users.email,
+      name: users.name,
+    })
+    .from(zoneRoles)
+    .innerJoin(users, eq(users.id, zoneRoles.userId))
+    .where(eq(zoneRoles.zoneId, zoneId));
+}
+
+export async function listUsers() {
+  return db
+    .select({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      role: users.role,
+    })
+    .from(users)
+    .orderBy(asc(users.email));
 }
 
 export async function getZoneBySlug(slug: string) {
@@ -74,13 +123,36 @@ export async function getZoneBySlug(slug: string) {
           .from(routePaths)
           .where(inArray(routePaths.topoId, topoIds));
 
+  const zoneRuleRows = await db
+    .select({
+      id: zoneAgreements.id,
+      level: zoneAgreements.level,
+      position: zoneAgreements.position,
+      comment: zoneAgreements.comment,
+      agreementId: zoneAgreements.agreementId,
+      title: agreements.title,
+      description: agreements.description,
+      classic: agreements.classic,
+      icon: agreements.icon,
+    })
+    .from(zoneAgreements)
+    .innerJoin(agreements, eq(zoneAgreements.agreementId, agreements.id))
+    .where(eq(zoneAgreements.zoneId, zone.id));
+
+  const rules = [...zoneRuleRows].sort((a, b) => {
+    const rank = agreementRank(a.level) - agreementRank(b.level);
+    if (rank !== 0) return rank;
+    return a.title.localeCompare(b.title, "es");
+  });
+
   return {
     zone,
     sectors: zoneSectors,
     walls: zoneWalls,
-    routes: zoneRoutes,
+    routes: zoneRoutes.map(withFrenchGrade),
     topos: zoneTopos,
     paths: zonePaths,
+    rules,
   };
 }
 
@@ -147,7 +219,14 @@ export async function getWallGuide(
           .from(routePaths)
           .where(inArray(routePaths.topoId, topoIds));
 
-  return { zone, sector, wall, topos: wallTopos, routes: wallRoutes, paths };
+  return {
+    zone,
+    sector,
+    wall,
+    topos: wallTopos,
+    routes: wallRoutes.map(withFrenchGrade),
+    paths,
+  };
 }
 
 export async function requireWallGuide(
@@ -200,5 +279,166 @@ export async function getTopoEditor(topoId: string) {
     .select()
     .from(routePaths)
     .where(eq(routePaths.topoId, topo.id));
-  return { topo, ...context, routes: wallRoutes, paths };
+  return { topo, ...context, routes: wallRoutes.map(withFrenchGrade), paths };
+}
+
+export async function listGuidePhotoLibrary(): Promise<CloudinaryImage[]> {
+  const [topoRows, zoneRows, uploaded] = await Promise.all([
+    db
+      .select({
+        url: topos.imageUrl,
+        publicId: topos.imagePublicId,
+        width: topos.imageWidth,
+        height: topos.imageHeight,
+      })
+      .from(topos),
+    db
+      .select({
+        url: zones.coverImageUrl,
+        publicId: zones.coverPublicId,
+        width: zones.coverImageWidth,
+        height: zones.coverImageHeight,
+      })
+      .from(zones),
+    listGuideImagesOrEmpty("apidame/guia"),
+  ]);
+  const seen = new Set<string>();
+  const library: CloudinaryImage[] = [];
+  for (const row of [...uploaded, ...topoRows, ...zoneRows]) {
+    if (!row.url) continue;
+    const key = row.publicId || row.url;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    library.push({
+      url: row.url,
+      publicId: row.publicId ?? row.url,
+      width: row.width ?? null,
+      height: row.height ?? null,
+    });
+  }
+  return library;
+}
+
+export async function getAdminCatalog(
+  zoneIds: string[] | null = null,
+): Promise<AdminSearchItem[]> {
+  if (zoneIds && zoneIds.length === 0) return [];
+  const [zoneRows, sectorRows, wallRows, routeRows] = await Promise.all([
+    zoneIds
+      ? db
+          .select()
+          .from(zones)
+          .where(inArray(zones.id, zoneIds))
+          .orderBy(asc(zones.name))
+      : db.select().from(zones).orderBy(asc(zones.name)),
+    db.select().from(sectors).orderBy(asc(sectors.position), asc(sectors.name)),
+    db.select().from(walls).orderBy(asc(walls.position), asc(walls.name)),
+    db.select().from(routes).orderBy(asc(routes.position), asc(routes.name)),
+  ]);
+  const zoneById = new Map(zoneRows.map((zone) => [zone.id, zone]));
+  const sectorById = new Map(sectorRows.map((sector) => [sector.id, sector]));
+  const wallById = new Map(wallRows.map((wall) => [wall.id, wall]));
+
+  const items: AdminSearchItem[] = zoneRows.map((zone) => ({
+    kind: "zona",
+    id: zone.id,
+    name: zone.name,
+    href: `/dashboard/zonas/${zone.id}`,
+    crumb: zone.published ? "Publicada" : "Oculta",
+    zoneId: zone.id,
+  }));
+
+  for (const sector of sectorRows) {
+    const zone = zoneById.get(sector.zoneId);
+    if (!zone) continue;
+    items.push({
+      kind: "sector",
+      id: sector.id,
+      name: sector.name,
+      href: `/dashboard/zonas/${zone.id}#sector-${sector.id}`,
+      crumb: zone.name,
+      zoneId: zone.id,
+      sectorId: sector.id,
+    });
+  }
+
+  for (const wall of wallRows) {
+    const sector = sectorById.get(wall.sectorId);
+    const zone = sector ? zoneById.get(sector.zoneId) : undefined;
+    if (!sector || !zone) continue;
+    items.push({
+      kind: "pared",
+      id: wall.id,
+      name: wall.name,
+      href: `/dashboard/paredes/${wall.id}`,
+      crumb: `${zone.name} · ${sector.name}`,
+      zoneId: zone.id,
+      sectorId: sector.id,
+      wallId: wall.id,
+    });
+  }
+
+  for (const route of routeRows) {
+    const wall = wallById.get(route.wallId);
+    const sector = wall ? sectorById.get(wall.sectorId) : undefined;
+    const zone = sector ? zoneById.get(sector.zoneId) : undefined;
+    if (!wall || !sector || !zone) continue;
+    items.push({
+      kind: "ruta",
+      id: route.id,
+      name: route.name,
+      href: `/dashboard/rutas/${route.id}`,
+      crumb: `${zone.name} · ${wall.name}`,
+      zoneId: zone.id,
+      sectorId: sector.id,
+      wallId: wall.id,
+    });
+  }
+
+  return items;
+}
+
+export async function getAdminTree(zoneIds: string[] | null = null) {
+  if (zoneIds && zoneIds.length === 0) return [];
+  const [zoneRows, sectorRows, wallRows] = await Promise.all([
+    zoneIds
+      ? db
+          .select()
+          .from(zones)
+          .where(inArray(zones.id, zoneIds))
+          .orderBy(asc(zones.name))
+      : db.select().from(zones).orderBy(asc(zones.name)),
+    db.select().from(sectors).orderBy(asc(sectors.position), asc(sectors.name)),
+    db.select().from(walls).orderBy(asc(walls.position), asc(walls.name)),
+  ]);
+  return zoneRows.map((zone) => ({
+    ...zone,
+    sectors: sectorRows
+      .filter((sector) => sector.zoneId === zone.id)
+      .map((sector) => ({
+        ...sector,
+        walls: wallRows.filter((wall) => wall.sectorId === sector.id),
+      })),
+  }));
+}
+
+export async function getRouteEditor(routeId: string) {
+  const route = await db
+    .select()
+    .from(routes)
+    .where(eq(routes.id, routeId))
+    .then((rows) => rows[0] ?? null);
+  if (!route) return null;
+  const context = await getWallById(route.wallId);
+  if (!context) return null;
+  const wallTopos = await db
+    .select()
+    .from(topos)
+    .where(eq(topos.wallId, route.wallId))
+    .orderBy(asc(topos.position));
+  const paths = await db
+    .select()
+    .from(routePaths)
+    .where(eq(routePaths.routeId, route.id));
+  return { route, ...context, topos: wallTopos, paths };
 }

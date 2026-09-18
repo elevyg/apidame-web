@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "./client";
 import {
+  agreements,
   routePaths,
   routes,
   sectors,
@@ -8,6 +9,7 @@ import {
   users,
   walls,
   zones,
+  zoneAgreements,
   guidePdfs,
 } from "./schema";
 import type { GuideSeed } from "../lib/climbing/fromExtract";
@@ -15,6 +17,8 @@ import type { GuideSeed } from "../lib/climbing/fromExtract";
 export async function replaceGuideSeed(seed: GuideSeed) {
   await db.delete(routePaths);
   await db.delete(guidePdfs);
+  await db.delete(zoneAgreements);
+  await db.delete(agreements);
   await db.delete(routes);
   await db.delete(topos);
   await db.delete(walls);
@@ -35,19 +39,31 @@ export async function replaceGuideSeed(seed: GuideSeed) {
   if (seed.topos.length > 0) await db.insert(topos).values(seed.topos);
   if (seed.routes.length > 0) await db.insert(routes).values(seed.routes);
   if (seed.paths.length > 0) await db.insert(routePaths).values(seed.paths);
+  if (seed.agreements.length > 0) {
+    await db.insert(agreements).values(seed.agreements);
+  }
+  if (seed.zoneAgreements.length > 0) {
+    await db.insert(zoneAgreements).values(seed.zoneAgreements);
+  }
 }
 
 export async function upsertUser(input: {
   email: string;
   name?: string | null;
   image?: string | null;
-  role: "admin" | "user";
+  superAdmin?: boolean;
 }) {
+  const email = input.email.trim().toLowerCase();
   const existing = await db
     .select()
     .from(users)
-    .where(eq(users.email, input.email))
+    .where(eq(users.email, email))
     .then((rows) => rows[0] ?? null);
+  const role = input.superAdmin
+    ? "admin"
+    : existing?.role === "admin"
+      ? "admin"
+      : "user";
 
   if (existing) {
     await db
@@ -55,19 +71,23 @@ export async function upsertUser(input: {
       .set({
         name: input.name ?? existing.name,
         image: input.image ?? existing.image,
-        role: input.role,
+        role,
       })
-      .where(eq(users.email, input.email));
-    return existing.id;
+      .where(eq(users.email, email));
+    return { id: existing.id, role };
   }
 
   const id = crypto.randomUUID();
   await db.insert(users).values({
     id,
-    email: input.email,
+    email,
     name: input.name ?? null,
     image: input.image ?? null,
-    role: input.role,
+    role,
   });
-  return id;
+  return { id, role };
+}
+
+export async function findOrCreateUserByEmail(email: string) {
+  return upsertUser({ email, superAdmin: false });
 }

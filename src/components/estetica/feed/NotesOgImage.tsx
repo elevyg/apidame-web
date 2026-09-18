@@ -52,6 +52,7 @@ export default function NotesOgImage({
           width: "100%",
           background: "#e8e2d4",
           color: "#12110f",
+          fontFamily: "Brown",
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- Satori OG */}
@@ -104,6 +105,7 @@ export default function NotesOgImage({
         width: "100%",
         background: "#e8e2d4",
         color: "#12110f",
+        fontFamily: "Brown",
         padding: 32,
       }}
     >

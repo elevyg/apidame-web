@@ -7,7 +7,7 @@ import {
   uniqueIndex,
   index,
 } from "drizzle-orm/sqlite-core";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
@@ -31,6 +31,8 @@ export const zones = sqliteTable(
     coverImageWidth: integer("cover_image_width"),
     coverImageHeight: integer("cover_image_height"),
     coverPublicId: text("cover_public_id"),
+    latitude: real("latitude"),
+    longitude: real("longitude"),
     published: integer("published", { mode: "boolean" }).notNull().default(true),
     createdAt: integer("created_at", { mode: "timestamp_ms" })
       .notNull()
@@ -53,6 +55,11 @@ export const sectors = sqliteTable(
     name: text("name").notNull(),
     position: integer("position").notNull().default(0),
     kind: text("kind").notNull().default("Wall"),
+    latitude: real("latitude"),
+    longitude: real("longitude"),
+    createdByUserId: text("created_by_user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
   },
   (table) => [
     index("sectors_zone_idx").on(table.zoneId),
@@ -70,6 +77,9 @@ export const walls = sqliteTable(
     slug: text("slug").notNull(),
     name: text("name").notNull(),
     position: integer("position").notNull().default(0),
+    createdByUserId: text("created_by_user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
   },
   (table) => [
     index("walls_sector_idx").on(table.sectorId),
@@ -93,6 +103,9 @@ export const topos = sqliteTable(
     imageWidth: integer("image_width"),
     imageHeight: integer("image_height"),
     imagePublicId: text("image_public_id"),
+    createdByUserId: text("created_by_user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
   },
   (table) => [index("topos_wall_idx").on(table.wallId)],
 );
@@ -116,6 +129,13 @@ export const routes = sqliteTable(
     gradeSystem: text("grade_system"),
     length: real("length"),
     lengthUnit: text("length_unit"),
+    starAverage: real("star_average"),
+    starCount: integer("star_count")
+      .notNull()
+      .default(sql`0`),
+    createdByUserId: text("created_by_user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
   },
   (table) => [index("routes_wall_idx").on(table.wallId)],
 );
@@ -143,8 +163,13 @@ export const routePaths = sqliteTable(
   ],
 );
 
+export const usersRelations = relations(users, ({ many }) => ({
+  zoneRoles: many(zoneRoles),
+}));
+
 export const zonesRelations = relations(zones, ({ many }) => ({
   sectors: many(sectors),
+  zoneRoles: many(zoneRoles),
 }));
 
 export const sectorsRelations = relations(sectors, ({ one, many }) => ({
@@ -171,6 +196,63 @@ export const routesRelations = relations(routes, ({ one, many }) => ({
 export const routePathsRelations = relations(routePaths, ({ one }) => ({
   topo: one(topos, { fields: [routePaths.topoId], references: [topos.id] }),
   route: one(routes, { fields: [routePaths.routeId], references: [routes.id] }),
+}));
+
+export const agreements = sqliteTable("agreements", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  classic: text("classic"),
+  icon: text("icon"),
+});
+
+export const zoneAgreements = sqliteTable(
+  "zone_agreements",
+  {
+    id: text("id").primaryKey(),
+    zoneId: text("zone_id")
+      .notNull()
+      .references(() => zones.id, { onDelete: "cascade" }),
+    agreementId: text("agreement_id")
+      .notNull()
+      .references(() => agreements.id, { onDelete: "cascade" }),
+    level: text("level").notNull(),
+    position: integer("position").notNull().default(0),
+    comment: text("comment"),
+  },
+  (table) => [
+    index("zone_agreements_zone_idx").on(table.zoneId),
+    index("zone_agreements_agreement_idx").on(table.agreementId),
+  ],
+);
+
+export const zoneRoles = sqliteTable(
+  "zone_roles",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    zoneId: text("zone_id")
+      .notNull()
+      .references(() => zones.id, { onDelete: "cascade" }),
+    role: text("role").notNull(),
+    assignedByUserId: text("assigned_by_user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (table) => [
+    uniqueIndex("zone_roles_user_zone_idx").on(table.userId, table.zoneId),
+    index("zone_roles_zone_idx").on(table.zoneId),
+  ],
+);
+
+export const zoneRolesRelations = relations(zoneRoles, ({ one }) => ({
+  user: one(users, { fields: [zoneRoles.userId], references: [users.id] }),
+  zone: one(zones, { fields: [zoneRoles.zoneId], references: [zones.id] }),
 }));
 
 export const guidePdfs = sqliteTable(

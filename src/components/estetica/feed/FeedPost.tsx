@@ -20,6 +20,8 @@ import {
   type CardTone,
   type FeedPostData,
 } from "./posts";
+import { NotaShared } from "./NotaShared";
+import { notaCoverName, notaTitleName } from "./notaTransition";
 import { DevEditorChrome } from "./dev/DevEditor";
 
 const isDev = process.env.NODE_ENV === "development";
@@ -193,10 +195,12 @@ function isBleed(card: Card) {
 
 function CardFace({
   card,
+  shareSlug,
   coverCta,
   coverNavigation,
 }: {
   card: Card;
+  shareSlug: string;
   coverCta?: ReactNode;
   coverNavigation?: ReactNode;
 }) {
@@ -223,17 +227,23 @@ function CardFace({
     if (card.art) {
       return (
         <div className={`relative min-h-0 flex-1 ${tone.bg}`}>
-          <Image
-            src={card.art}
-            alt={card.artAlt ?? card.text}
-            fill
-            priority
-            quality={92}
-            sizes="(max-width: 768px) 100vw, 36rem"
-            className={`object-cover ${card.object ?? "object-center"}`}
-          />
+          <NotaShared name={notaCoverName(shareSlug)} share="nota-morph">
+            <div className="absolute inset-0">
+              <Image
+                src={card.art}
+                alt={card.artAlt ?? card.text}
+                fill
+                priority
+                quality={92}
+                sizes="(max-width: 768px) 100vw, 36rem"
+                className={`object-cover ${card.object ?? "object-center"}`}
+              />
+            </div>
+          </NotaShared>
           <div className="feed-cover-heading">
-            <h1 className="feed-cover-title">{card.text}</h1>
+            <NotaShared name={notaTitleName(shareSlug)} share="text-morph">
+              <h1 className="feed-cover-title">{card.text}</h1>
+            </NotaShared>
             <div className="feed-cover-tools">
               <p className="feed-cover-kicker">{card.kicker}</p>
               {coverCta}
@@ -255,7 +265,9 @@ function CardFace({
           max={72}
           className="font-display mt-5 leading-[1.08] tracking-tight"
         >
-          <h1>{card.text}</h1>
+          <NotaShared name={notaTitleName(shareSlug)} share="text-morph">
+            <h1>{card.text}</h1>
+          </NotaShared>
         </FillType>
       </div>
     );
@@ -325,6 +337,7 @@ function RelatedNoteCard({
   return (
     <Link
       href={href}
+      prefetch
       className={`mt-5 flex shrink-0 items-stretch gap-3 border p-2 transition ${
         onDark
           ? "bg-canvas hover:border-accent border-white/20"
@@ -334,22 +347,28 @@ function RelatedNoteCard({
     >
       {cover ? (
         <div className="bg-canvas relative aspect-[3/4] w-[4.25rem] shrink-0 overflow-hidden">
-          <Image
-            src={cover.src}
-            alt=""
-            fill
-            sizes="68px"
-            className={`object-cover ${cover.object}`}
-          />
+          <NotaShared name={notaCoverName(slug)} share="nota-morph">
+            <div className="absolute inset-0">
+              <Image
+                src={cover.src}
+                alt=""
+                fill
+                sizes="68px"
+                className={`object-cover ${cover.object}`}
+              />
+            </div>
+          </NotaShared>
         </div>
       ) : null}
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 py-1 pr-1">
         <p className="font-brown text-accent text-[0.65rem] tracking-[0.16em] uppercase">
           Nota relacionada
         </p>
-        <p className="font-display text-[1.05rem] leading-[1.05] tracking-[-0.03em] italic">
-          {title}
-        </p>
+        <NotaShared name={notaTitleName(slug)} share="text-morph">
+          <p className="font-display text-[1.05rem] leading-[1.05] tracking-[-0.03em] italic">
+            {title}
+          </p>
+        </NotaShared>
         <p
           className={`font-brown text-[0.62rem] tracking-[0.14em] uppercase ${
             onDark ? "text-white/55" : "text-ink-soft"
@@ -507,6 +526,7 @@ function Slide({
         <div className="contents">
           <CardFace
             card={card}
+            shareSlug={postId}
             coverCta={
               index === 0 && onJump && papeoIndex >= 0 ? (
                 <CoverPapeoCta onJump={onJump} to={papeoIndex} />

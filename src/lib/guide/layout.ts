@@ -52,6 +52,20 @@ export function wrapWords(text: string, maxChars: number): string[] {
   return lines;
 }
 
+export function fitTextSize(
+  text: string,
+  maxWidth: number,
+  maxSize: number,
+  minSize: number,
+  widthOf: (size: number) => number,
+) {
+  let size = maxSize;
+  while (size > minSize && widthOf(size) > maxWidth) {
+    size -= 0.5;
+  }
+  return size;
+}
+
 export function wrapMeasured(
   text: string,
   maxWidth: number,

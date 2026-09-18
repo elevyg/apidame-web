@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { seedFromExtract, type ExtractDump } from "./fromExtract";
+import {
+  applyLocations,
+  seedFromExtract,
+  type ExtractDump,
+} from "./fromExtract";
 
 const dump: ExtractDump = {
   texts: [{ id: "t1", originalText: "Zona viva" }],
@@ -128,7 +132,93 @@ describe("seedFromExtract", () => {
     expect(seed.walls).toHaveLength(1);
     expect(seed.routes.map((r) => r.name)).toEqual(["Pitufina"]);
     expect(seed.routes[0]?.grade).toBe("6a");
+    expect(seed.routes[0]?.gradeSystem).toBe("French");
     expect(seed.topos[0]?.imagePublicId).toBe("andescalada-app/topo");
     expect(seed.paths).toHaveLength(1);
+    expect(seed.zones[0]?.latitude).toBeNull();
+    expect(seed.agreements).toEqual([]);
+    expect(seed.routes[0]?.starCount).toBe(0);
+  });
+
+  it("averages live route evaluations", () => {
+    const seed = seedFromExtract({
+      ...dump,
+      evaluations: [
+        { routeId: "r1", evaluation: 5, isDeleted: "NotDeleted" },
+        { routeId: "r1", evaluation: 3, isDeleted: "NotDeleted" },
+        { routeId: "r1", evaluation: 1, isDeleted: "DeletedPublic" },
+      ],
+    });
+    expect(seed.routes[0]?.starAverage).toBe(4);
+    expect(seed.routes[0]?.starCount).toBe(2);
+  });
+
+  it("keeps zone agreements except NotAplicable", () => {
+    const seed = seedFromExtract({
+      ...dump,
+      agreements: [
+        {
+          id: "a1",
+          title: "No fuego",
+          description: "Sin fogatas",
+          classic: "NoFire",
+          icon: null,
+          isDeleted: "NotDeleted",
+        },
+      ],
+      zoneAgreements: [
+        {
+          id: "za1",
+          zoneId: "z1",
+          agreementId: "a1",
+          level: "Critical",
+          position: 0,
+          isDeleted: "NotDeleted",
+        },
+        {
+          id: "za2",
+          zoneId: "z1",
+          agreementId: "a1",
+          level: "NotAplicable",
+          position: 1,
+          isDeleted: "NotDeleted",
+        },
+      ],
+    });
+    expect(seed.agreements).toHaveLength(1);
+    expect(seed.zoneAgreements).toEqual([
+      {
+        id: "za1",
+        zoneId: "z1",
+        agreementId: "a1",
+        level: "Critical",
+        position: 0,
+        comment: null,
+      },
+    ]);
+  });
+
+  it("stores Yosemite grades as French", () => {
+    const seed = seedFromExtract({
+      ...dump,
+      grades: [
+        {
+          routeId: "r1",
+          originalGrade: "5.10c",
+          originalGradeSystem: "Yosemite",
+        },
+      ],
+    });
+    expect(seed.routes[0]?.grade).toBe("6b");
+    expect(seed.routes[0]?.gradeSystem).toBe("French");
+  });
+
+  it("copies lat/lng from the location seed by id", () => {
+    const seed = applyLocations(seedFromExtract(dump), {
+      zones: { z1: { latitude: -46.5, longitude: -71.7 } },
+      sectors: { "s-live": { latitude: -46.51, longitude: -71.71 } },
+    });
+    expect(seed.zones[0]?.latitude).toBe(-46.5);
+    expect(seed.sectors[0]?.longitude).toBe(-71.71);
   });
 });

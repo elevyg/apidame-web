@@ -41,7 +41,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "diedro-del-medio",
       "name": "Diedro del medio",
-      "position": 6,
+      "position": 2,
       "kind": "Wall"
     },
     {
@@ -57,7 +57,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "pared-blanca-titanica",
       "name": "Gengis Kan",
-      "position": 7,
+      "position": 6,
       "kind": "Wall"
     },
     {
@@ -65,7 +65,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "guggenheim",
       "name": "Guggenheim",
-      "position": 2,
+      "position": 4,
       "kind": "Wall"
     },
     {
@@ -73,7 +73,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "corta-viento-y-potasio",
       "name": "Corta Viento y Potasio",
-      "position": 4,
+      "position": 5,
       "kind": "Wall"
     },
     {
@@ -81,7 +81,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "la-buena-vaina",
       "name": "La buena vaina",
-      "position": 1,
+      "position": 3,
       "kind": "Wall"
     },
     {
@@ -89,7 +89,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "al-principio",
       "name": "Donde pega el sol",
-      "position": 5,
+      "position": 1,
       "kind": "Wall"
     },
     {
@@ -97,7 +97,7 @@
       "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
       "slug": "el-queso",
       "name": "El queso",
-      "position": 3,
+      "position": 7,
       "kind": "Wall"
     },
     {
@@ -520,10 +520,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.10c",
-      "gradeSystem": "Yosemite",
+      "grade": "6b",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "08088a77-07c1-49ec-a6a7-10cce49df25d",
@@ -534,10 +536,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.12b",
-      "gradeSystem": "Yosemite",
+      "grade": "7b+",
+      "gradeSystem": "French",
       "length": 17,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "0aed67eb-097f-4fa8-8fd4-59370c2764b9",
@@ -548,10 +552,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.10c",
-      "gradeSystem": "Yosemite",
+      "grade": "6b",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "0e0450c9-c1b6-46de-94be-2dbecc34243a",
@@ -565,7 +571,9 @@
       "grade": "7c+",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "12d5e163-8d01-4de4-afde-5239647b2604",
@@ -576,10 +584,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "no grade",
-      "gradeSystem": "French",
+      "grade": null,
+      "gradeSystem": null,
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "13cd8165-b43d-4386-a180-21e3af6462c3",
@@ -590,10 +600,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "20",
-      "gradeSystem": "French",
+      "grade": null,
+      "gradeSystem": null,
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "1813fc93-ad90-4e18-beb0-933d8fd9d0de",
@@ -604,10 +616,12 @@
       "kind": "Trad",
       "unknownName": false,
       "description": null,
-      "grade": "5.9",
-      "gradeSystem": "Yosemite",
+      "grade": "5c",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "18a73f7e-48d2-4602-9e82-17ba8c18e2a2",
@@ -621,7 +635,9 @@
       "grade": "6c+",
       "gradeSystem": "French",
       "length": 20,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "18f478a9-e766-4376-80c5-66a65f898d48",
@@ -632,10 +648,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "Excelente via! Es recomendable extender la tercera, cuarta, sexta, y octava cinta lo mas largas posible.",
-      "grade": "5.12b",
-      "gradeSystem": "Yosemite",
+      "grade": "7b+",
+      "gradeSystem": "French",
       "length": 30,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 5,
+      "starCount": 2
     },
     {
       "id": "1b6488e5-5fda-4bbe-b4bb-5a4b3a649093",
@@ -646,10 +664,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.10d",
-      "gradeSystem": "Yosemite",
+      "grade": "6b+",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "223c14eb-4f7b-4c8e-a137-9bc2c04a7f06",
@@ -660,10 +680,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "Se recomienda poner cintas lo más largas posibles. \n\n15 cintas!",
-      "grade": "5.11b",
-      "gradeSystem": "Yosemite",
+      "grade": "6c+",
+      "gradeSystem": "French",
       "length": 28,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 5,
+      "starCount": 2
     },
     {
       "id": "229cf8d6-71c3-4c00-ad3b-e38e1ab61581",
@@ -677,7 +699,9 @@
       "grade": "6b+",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "268e3156-e71d-4213-8a43-0cb1f59a8143",
@@ -691,7 +715,9 @@
       "grade": "6a+",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "2907c524-5a52-4d20-b87c-4fb6634b1171",
@@ -705,7 +731,9 @@
       "grade": "6b",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "2c9a0073-590c-47b0-9e7d-8e4c46459b2f",
@@ -719,7 +747,9 @@
       "grade": "5a",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "34afb129-86fc-4c5e-aaab-518c2bfba552",
@@ -733,7 +763,9 @@
       "grade": "6b+",
       "gradeSystem": "French",
       "length": 31,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 4.5,
+      "starCount": 2
     },
     {
       "id": "36c1ef72-b25b-4a7f-b3ff-1fda6f87ff76",
@@ -745,9 +777,11 @@
       "unknownName": false,
       "description": null,
       "grade": null,
-      "gradeSystem": "Yosemite",
+      "gradeSystem": null,
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "3aeade65-59aa-4379-bb71-a6c2b7a23458",
@@ -758,10 +792,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.12b",
-      "gradeSystem": "Yosemite",
+      "grade": "7b+",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "3f9ca0cc-d54c-4b39-a218-4658a4e6873e",
@@ -772,10 +808,12 @@
       "kind": "Sport",
       "unknownName": true,
       "description": null,
-      "grade": "no grade",
-      "gradeSystem": "French",
+      "grade": null,
+      "gradeSystem": null,
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "40cf9b3f-1592-48db-ba39-6a35e32cd5a6",
@@ -789,7 +827,9 @@
       "grade": "7a+",
       "gradeSystem": "French",
       "length": 30,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "41bd5cea-e3a1-4e97-952f-24be24cba519",
@@ -803,7 +843,9 @@
       "grade": "7a+",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "45cbae96-8be5-47f6-86bc-af066eb4d910",
@@ -817,7 +859,9 @@
       "grade": "6a+",
       "gradeSystem": "French",
       "length": 18,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 4,
+      "starCount": 1
     },
     {
       "id": "534221e1-fce0-4df4-98cf-f694c1dce6bf",
@@ -831,7 +875,9 @@
       "grade": "7a+",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "53dac3e0-995a-48ca-a41b-473b964da579",
@@ -845,7 +891,9 @@
       "grade": "6b+",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": 3.5,
+      "starCount": 1
     },
     {
       "id": "64621cc0-386a-41e5-9d18-06e46a6dfbf8",
@@ -856,10 +904,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "no grade",
-      "gradeSystem": "Yosemite",
+      "grade": null,
+      "gradeSystem": null,
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "64a5d354-1984-4e1b-886e-cd44a39b07c2",
@@ -873,7 +923,9 @@
       "grade": "6b+",
       "gradeSystem": "French",
       "length": 30,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "6850be8a-b177-483e-bb51-954610633b63",
@@ -884,10 +936,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.11a",
-      "gradeSystem": "Yosemite",
+      "grade": "6c",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": 4,
+      "starCount": 1
     },
     {
       "id": "6ccbdc48-aebd-4691-9e42-3219ddea9aca",
@@ -901,7 +955,9 @@
       "grade": "7a",
       "gradeSystem": "French",
       "length": 30,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "6eac8c2b-b69c-428d-ba43-b5f2baf0b7e6",
@@ -915,7 +971,9 @@
       "grade": "6c+",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "6f136b01-c0b7-43ac-883f-7aa2942fd1b2",
@@ -929,7 +987,9 @@
       "grade": "6a+",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "72e104fe-e69f-4624-9c0c-c878c80508be",
@@ -943,7 +1003,9 @@
       "grade": "6a",
       "gradeSystem": "French",
       "length": 20,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "754f33ce-2b65-4d08-ae76-176274ad746a",
@@ -954,10 +1016,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "15 cintas, te recomiendo alargar la 5° y 7° cinta.\n\nEs una maravillosa ruta que lleva el nombre de uno de los personajes de la guerra de Chile Chico.",
-      "grade": "5.11c",
-      "gradeSystem": "Yosemite",
+      "grade": "7a",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "791c2e3f-687e-4f47-b33f-dee7e83f0166",
@@ -968,10 +1032,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.11a",
-      "gradeSystem": "Yosemite",
+      "grade": "6c",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "7c0083ec-168d-4195-bf60-3a694f142924",
@@ -982,10 +1048,12 @@
       "kind": "Sport",
       "unknownName": true,
       "description": null,
-      "grade": "5.11b",
-      "gradeSystem": "Yosemite",
+      "grade": "6c+",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": 4.5,
+      "starCount": 1
     },
     {
       "id": "7dc63b22-2811-4803-b34c-b06aa51d7ae2",
@@ -996,10 +1064,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.12a",
-      "gradeSystem": "Yosemite",
+      "grade": "7b",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "84955200-5b48-4344-803c-62332721adcf",
@@ -1010,10 +1080,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.11d",
-      "gradeSystem": "Yosemite",
+      "grade": "7a+",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "857f185b-9578-41c2-85c0-0af66c723649",
@@ -1024,10 +1096,12 @@
       "kind": "Sport",
       "unknownName": true,
       "description": null,
-      "grade": "12",
-      "gradeSystem": "French",
+      "grade": null,
+      "gradeSystem": null,
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "860771af-77d0-4dbd-8ed7-e76077e5ad96",
@@ -1038,10 +1112,12 @@
       "kind": "Sport",
       "unknownName": true,
       "description": "Proyecto\nPosible 8a+ / 8b\n",
-      "grade": "no grade",
-      "gradeSystem": "Yosemite",
+      "grade": null,
+      "gradeSystem": null,
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "875dedf4-5ff0-417c-aec8-c1d2bbf84ca9",
@@ -1055,7 +1131,9 @@
       "grade": "7a+",
       "gradeSystem": "French",
       "length": 15,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "8a27d6fe-f2d3-4b63-944d-7ee8c8efc66a",
@@ -1066,10 +1144,12 @@
       "kind": "Sport",
       "unknownName": true,
       "description": null,
-      "grade": "5.12c",
-      "gradeSystem": "Yosemite",
+      "grade": "7c",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "8a2eecc1-13b5-4dc6-ba72-50e30514261a",
@@ -1080,10 +1160,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.11a",
-      "gradeSystem": "Yosemite",
+      "grade": "6c",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "8b67a5fc-fb0b-4f76-b30f-cb788f845e90",
@@ -1094,10 +1176,12 @@
       "kind": "Sport",
       "unknownName": true,
       "description": null,
-      "grade": "5.9",
-      "gradeSystem": "Yosemite",
+      "grade": "5c",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "8b9cae25-b85a-4865-b32f-4a096ba205ee",
@@ -1108,10 +1192,12 @@
       "kind": "Sport",
       "unknownName": true,
       "description": null,
-      "grade": "5.10a",
-      "gradeSystem": "Yosemite",
+      "grade": "6a",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "8e7f7262-c260-417b-9fd7-a5d68dcb8e66",
@@ -1125,7 +1211,9 @@
       "grade": "5c",
       "gradeSystem": "French",
       "length": 12,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "916a9f77-69d3-40b8-a3f6-8dda01e8da80",
@@ -1139,7 +1227,9 @@
       "grade": "5c",
       "gradeSystem": "French",
       "length": 25,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 4,
+      "starCount": 4
     },
     {
       "id": "9499646c-f86f-4644-8729-9ff12d42a27f",
@@ -1150,10 +1240,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.13b",
-      "gradeSystem": "Yosemite",
+      "grade": "8a+",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "962b9245-a31d-498b-94c9-0f3be645372e",
@@ -1167,7 +1259,9 @@
       "grade": "6c",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "962b9d82-24af-4377-8391-84382b192714",
@@ -1178,10 +1272,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.13b",
-      "gradeSystem": "Yosemite",
+      "grade": "8a+",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "96cdb852-d1af-473e-ba6b-6bb34da3242a",
@@ -1195,7 +1291,9 @@
       "grade": "8b",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "96efa019-c1bc-4262-9d96-9ff9ee41da2a",
@@ -1207,9 +1305,11 @@
       "unknownName": true,
       "description": null,
       "grade": null,
-      "gradeSystem": "French",
+      "gradeSystem": null,
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "9b785f39-9a90-470c-aaeb-7bf83b85ad19",
@@ -1220,10 +1320,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.12b",
-      "gradeSystem": "Yosemite",
+      "grade": "7b+",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "9c7b30ae-34df-406b-b3cf-30690adf228f",
@@ -1234,10 +1336,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "22",
-      "gradeSystem": "French",
+      "grade": null,
+      "gradeSystem": null,
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "9f55915d-2cf8-4a24-954b-235d7c28c9d5",
@@ -1251,7 +1355,9 @@
       "grade": "5c",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "9f83a07b-5cdf-4f05-8d14-db65da503aeb",
@@ -1262,10 +1368,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "La ruta tiene dos mosquetones que sirven para desequiparla. Déjalos o mejoralos.",
-      "grade": "no grade",
-      "gradeSystem": "French",
+      "grade": null,
+      "gradeSystem": null,
       "length": 35,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 1,
+      "starCount": 1
     },
     {
       "id": "a1e21869-ef6d-4243-b0dd-cc454f0f9340",
@@ -1276,10 +1384,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.11c",
-      "gradeSystem": "Yosemite",
+      "grade": "7a",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "a23cceb8-8d12-4b30-ab04-ca06fa789544",
@@ -1293,7 +1403,9 @@
       "grade": "8a",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "ac89c384-2d22-4673-91ca-a2375ed26a32",
@@ -1307,7 +1419,9 @@
       "grade": "7b",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "ad7c74be-8ce9-41fd-9f8a-2bff09cfd7c5",
@@ -1318,10 +1432,12 @@
       "kind": "Sport",
       "unknownName": true,
       "description": null,
-      "grade": "5.10b",
-      "gradeSystem": "Yosemite",
+      "grade": "6a+",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "ae1ea54b-4eec-4f62-a54d-0c2d3018fef5",
@@ -1332,10 +1448,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.10b",
-      "gradeSystem": "Yosemite",
+      "grade": "6a+",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "ae8bb773-827a-4cb6-97ef-2723b36eb7fc",
@@ -1346,10 +1464,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "Sigue una linea evidente de hoyos. Se ve más fácil de lo que es, buena suerte 🍀.",
-      "grade": "5.12c",
-      "gradeSystem": "Yosemite",
+      "grade": "7c",
+      "gradeSystem": "French",
       "length": 17,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 3.5,
+      "starCount": 1
     },
     {
       "id": "b2558529-d8cf-4ab1-bb76-f952a150aa9d",
@@ -1363,7 +1483,9 @@
       "grade": "6a",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "b90c8d9b-d954-459f-b0e3-aee992aa3359",
@@ -1377,7 +1499,9 @@
       "grade": "6b",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "bb18aace-f99b-4321-962d-877d26638cdb",
@@ -1388,10 +1512,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "Rutón; Cada paso vale la pena. Corta pero notable. ",
-      "grade": "5.11d",
-      "gradeSystem": "Yosemite",
+      "grade": "7a+",
+      "gradeSystem": "French",
       "length": 15,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 4,
+      "starCount": 2
     },
     {
       "id": "bc26e74e-aa5e-4edd-ab3e-46bfac034f1f",
@@ -1402,10 +1528,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "Buenísima ruta! El agarre del final es mejor de todo el sector.",
-      "grade": "5.11b",
-      "gradeSystem": "Yosemite",
+      "grade": "6c+",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "c124ae45-01d0-427c-8451-f2bdbc496986",
@@ -1416,10 +1544,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.13a",
-      "gradeSystem": "Yosemite",
+      "grade": "8a",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "c438def1-c75c-4506-ae52-bef7368155b9",
@@ -1430,10 +1560,12 @@
       "kind": "Trad",
       "unknownName": false,
       "description": null,
-      "grade": "5.10a",
-      "gradeSystem": "Yosemite",
+      "grade": "6a",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "c98bc99b-79ad-4c26-8fa6-5b18016a8439",
@@ -1447,7 +1579,9 @@
       "grade": "5b",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "cabb630e-2c7a-4c6a-bb4e-aa9fdb1d31d8",
@@ -1461,7 +1595,9 @@
       "grade": "6c+",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "d1901aed-84a6-4746-8534-da1f4c76c0cd",
@@ -1472,10 +1608,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.10c",
-      "gradeSystem": "Yosemite",
+      "grade": "6b",
+      "gradeSystem": "French",
       "length": 25,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "dafc5639-d464-42e1-b9b9-48e180bf9472",
@@ -1486,10 +1624,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.10a",
-      "gradeSystem": "Yosemite",
+      "grade": "6a",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "dd4c09d9-efb3-479c-9831-19b6f7e02231",
@@ -1503,7 +1643,9 @@
       "grade": "6a",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "e19bf7d6-f66f-4dc4-bbf6-add27f17f906",
@@ -1517,7 +1659,9 @@
       "grade": "6b",
       "gradeSystem": "French",
       "length": 25,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 4,
+      "starCount": 1
     },
     {
       "id": "e3f10d6a-a56d-4555-9019-f7463c46e926",
@@ -1529,9 +1673,11 @@
       "unknownName": true,
       "description": "El equipador de esta ruta dijo que habia que mejorar algunas chapas.\n\nEsta muy sucia pero tiene potencial.",
       "grade": null,
-      "gradeSystem": "French",
+      "gradeSystem": null,
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "e58abb46-3c61-45bc-928c-dd3c7d67507e",
@@ -1545,7 +1691,9 @@
       "grade": "6a",
       "gradeSystem": "French",
       "length": 20,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "e5b016a4-cc31-41a3-9a79-97ae0582230a",
@@ -1556,10 +1704,12 @@
       "kind": "Trad",
       "unknownName": false,
       "description": null,
-      "grade": "5.10b",
-      "gradeSystem": "Yosemite",
+      "grade": "6a+",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "e5ca0a63-bfd9-4968-a772-255325272445",
@@ -1573,7 +1723,9 @@
       "grade": "6a",
       "gradeSystem": "French",
       "length": 10,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 2.83,
+      "starCount": 3
     },
     {
       "id": "ee87b80c-17eb-42ea-8f06-0d1298c373e8",
@@ -1584,10 +1736,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": "Primera ruta equipada en el cerro el indio. Un clásico.",
-      "grade": "5.10d",
-      "gradeSystem": "Yosemite",
+      "grade": "6b+",
+      "gradeSystem": "French",
       "length": 30,
-      "lengthUnit": "Metric"
+      "lengthUnit": "Metric",
+      "starAverage": 5,
+      "starCount": 1
     },
     {
       "id": "f063494c-369c-45ca-8ca9-73a16754f367",
@@ -1599,9 +1753,11 @@
       "unknownName": false,
       "description": null,
       "grade": null,
-      "gradeSystem": "French",
+      "gradeSystem": null,
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "f7fd7661-453e-4042-91a6-a5f6d345fec4",
@@ -1615,7 +1771,9 @@
       "grade": "6a",
       "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     },
     {
       "id": "fca6561b-ba7a-4438-a017-19b89437fc09",
@@ -1626,10 +1784,12 @@
       "kind": "Sport",
       "unknownName": false,
       "description": null,
-      "grade": "5.12a",
-      "gradeSystem": "Yosemite",
+      "grade": "7b",
+      "gradeSystem": "French",
       "length": null,
-      "lengthUnit": null
+      "lengthUnit": null,
+      "starAverage": null,
+      "starCount": 0
     }
   ],
   "paths": [
@@ -2604,6 +2764,157 @@
       "labelPoint": null,
       "pitchLabelPoint": null,
       "hideStart": false
+    }
+  ],
+  "agreements": [
+    {
+      "id": "54688af2-2a1b-4248-8baa-38c7b485db1c",
+      "title": "Acceso libre",
+      "description": "No es necesario pagar para acceder a esta zona de escalada.",
+      "classic": "Payment",
+      "icon": "shake-hands"
+    },
+    {
+      "id": "830428fc-a6fc-4444-a1c7-4fd65bbdcb65",
+      "title": "No hay baño, no dejes rastro",
+      "description": "No existe un baño habilitado, por favor no dejes rastro. Entierra o llévate tus caca.",
+      "classic": "Toilet",
+      "icon": "poop-bag"
+    },
+    {
+      "id": "8ea7b6bf-75e3-49b2-ace4-e6f2e3748e3f",
+      "title": "No hacer fuego",
+      "description": "No esta permitido hacer fuego en esta zona de escalada.",
+      "classic": "Fire",
+      "icon": "no-fire"
+    },
+    {
+      "id": "b699fde0-a224-4915-a840-a8162d562a07",
+      "title": "Se permiten mascotas",
+      "description": "Tus mascotas son bienvenidas en esta zona de escalada. Se responsable y respetuoso.",
+      "classic": "Pets",
+      "icon": "dog"
+    },
+    {
+      "id": "c8180f28-fecc-4c68-b818-3ed9031196bd",
+      "title": "No se permite acampar",
+      "description": "No esta permitido acampar en esta zona de escalada",
+      "classic": "Camping",
+      "icon": "no-camping"
+    }
+  ],
+  "zoneAgreements": [
+    {
+      "id": "0f959c92-f71c-4180-836a-063cc64bc4d2",
+      "zoneId": "0f740c0b-39db-4964-a58f-a502cd605919",
+      "agreementId": "8ea7b6bf-75e3-49b2-ace4-e6f2e3748e3f",
+      "level": "Critical",
+      "position": 0,
+      "comment": null
+    },
+    {
+      "id": "10fc9c6d-57a0-4441-9018-ae1114e8573d",
+      "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
+      "agreementId": "8ea7b6bf-75e3-49b2-ace4-e6f2e3748e3f",
+      "level": "Important",
+      "position": 0,
+      "comment": null
+    },
+    {
+      "id": "218ea6ef-7221-41f8-b5a6-929b4065faba",
+      "zoneId": "1d60a4aa-4803-41a8-9534-e267ba00b83a",
+      "agreementId": "54688af2-2a1b-4248-8baa-38c7b485db1c",
+      "level": "Important",
+      "position": 0,
+      "comment": null
+    },
+    {
+      "id": "26988235-8a25-497c-aedd-da01222474a2",
+      "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
+      "agreementId": "b699fde0-a224-4915-a840-a8162d562a07",
+      "level": "Important",
+      "position": 0,
+      "comment": "Ten cuidado que han habido muchos casos de mascotas envenenadas por el cerro"
+    },
+    {
+      "id": "3eafb66b-e9e8-408b-a85f-17b2c922ce25",
+      "zoneId": "0f740c0b-39db-4964-a58f-a502cd605919",
+      "agreementId": "830428fc-a6fc-4444-a1c7-4fd65bbdcb65",
+      "level": "Important",
+      "position": 0,
+      "comment": "Llévate tu papel confort!"
+    },
+    {
+      "id": "4c284b19-8270-4d99-a75e-d57df3d05bb1",
+      "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
+      "agreementId": "54688af2-2a1b-4248-8baa-38c7b485db1c",
+      "level": "Important",
+      "position": 0,
+      "comment": null
+    },
+    {
+      "id": "70fe2e15-91ce-48e6-a27b-7a1be0715f05",
+      "zoneId": "1d60a4aa-4803-41a8-9534-e267ba00b83a",
+      "agreementId": "8ea7b6bf-75e3-49b2-ace4-e6f2e3748e3f",
+      "level": "Important",
+      "position": 0,
+      "comment": null
+    },
+    {
+      "id": "73c44c02-33f7-4d5c-ad77-b8be0fdd2ebf",
+      "zoneId": "0f740c0b-39db-4964-a58f-a502cd605919",
+      "agreementId": "c8180f28-fecc-4c68-b818-3ed9031196bd",
+      "level": "Critical",
+      "position": 0,
+      "comment": null
+    },
+    {
+      "id": "7e85953d-35a2-45d5-876d-89a60702a1ef",
+      "zoneId": "0f740c0b-39db-4964-a58f-a502cd605919",
+      "agreementId": "b699fde0-a224-4915-a840-a8162d562a07",
+      "level": "Important",
+      "position": 0,
+      "comment": "Si llevas a tu mascota,  se responsable, evita que persiga la fauna y que no moleste a otros escaladores. Esta zona se considera dentro del sector urbano y hay muchos perros libremente, si tu mascota es agresiva, mejor déjala en casa."
+    },
+    {
+      "id": "855b33ee-a9e8-492f-9123-2e36ebeee20e",
+      "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
+      "agreementId": "c8180f28-fecc-4c68-b818-3ed9031196bd",
+      "level": "Critical",
+      "position": 0,
+      "comment": "Aparte de no haber agua, los propietarios pidieron no acampar"
+    },
+    {
+      "id": "975ddbb5-0e44-409b-8938-8149f5fae010",
+      "zoneId": "5b588822-cbf5-4611-8399-f9f00a5507bd",
+      "agreementId": "830428fc-a6fc-4444-a1c7-4fd65bbdcb65",
+      "level": "Critical",
+      "position": 0,
+      "comment": "Matengamos la zona limpia!"
+    },
+    {
+      "id": "bba14d91-d3ff-4c22-970e-8dfbeb9dd0d8",
+      "zoneId": "0f740c0b-39db-4964-a58f-a502cd605919",
+      "agreementId": "54688af2-2a1b-4248-8baa-38c7b485db1c",
+      "level": "Important",
+      "position": 0,
+      "comment": "En algún momento se harán colectas y cobros para mejorar la infraestructura y desarrollar mas el lugar\n"
+    },
+    {
+      "id": "e475d090-2b5b-4e14-8a8b-d2291cb3b64c",
+      "zoneId": "1d60a4aa-4803-41a8-9534-e267ba00b83a",
+      "agreementId": "c8180f28-fecc-4c68-b818-3ed9031196bd",
+      "level": "Important",
+      "position": 0,
+      "comment": null
+    },
+    {
+      "id": "ef131b58-b604-4d9f-89eb-935c2b171c71",
+      "zoneId": "1d60a4aa-4803-41a8-9534-e267ba00b83a",
+      "agreementId": "830428fc-a6fc-4444-a1c7-4fd65bbdcb65",
+      "level": "Recommended",
+      "position": 0,
+      "comment": null
     }
   ]
 }

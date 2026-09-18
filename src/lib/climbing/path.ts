@@ -38,6 +38,30 @@ export function pointerRadius(routeStrokeWidth: number, scale = 1): number {
   return Math.max(90, 100 * routeStrokeWidth) * scale;
 }
 
+export function scaledPointerRadius(
+  routeStrokeWidth: number,
+  scale: number,
+): number {
+  return 100 * scale * routeStrokeWidth;
+}
+
+export function pdfPointerRadius(routeStrokeWidth: number, scale: number): number {
+  return scaledPointerRadius(routeStrokeWidth, scale);
+}
+
+export function fitDiscLabelSize(
+  label: string,
+  radius: number,
+  widthOf: (size: number) => number,
+): number {
+  const inner = Math.max(4, radius * 2 - pointerRingWidth(radius) * 2 - 1.4);
+  let size = Math.min(radius * 1.05, inner);
+  while (size > 4 && widthOf(size) > inner) {
+    size -= 0.15;
+  }
+  return size;
+}
+
 export function pointerRingWidth(radius: number): number {
   return radius / 5;
 }

@@ -1,0 +1,54 @@
+{
+  "zones": {
+    "0f740c0b-39db-4964-a58f-a502cd605919": {
+      "latitude": -46.52771424,
+      "longitude": -71.74647482
+    },
+    "1d60a4aa-4803-41a8-9534-e267ba00b83a": {
+      "latitude": -46.53933624,
+      "longitude": -71.74361052
+    },
+    "5b588822-cbf5-4611-8399-f9f00a5507bd": {
+      "latitude": -46.55745747,
+      "longitude": -71.72237467
+    }
+  },
+  "sectors": {
+    "018b4818-51e4-439a-9eba-7ce18a14f351": {
+      "latitude": -46.55598532,
+      "longitude": -71.72159512
+    },
+    "15b7e4c6-9e11-4cab-9ce9-0d06fa4b516e": {
+      "latitude": -46.53975849,
+      "longitude": -71.74308149
+    },
+    "374697b3-0691-4d71-8c7a-44faf33d5e7f": {
+      "latitude": -46.55827968,
+      "longitude": -71.71988622
+    },
+    "5b4c6f5c-877a-4b88-bfc7-264e1044f421": {
+      "latitude": -46.55670288,
+      "longitude": -71.72124
+    },
+    "776d304c-e02b-49cf-8158-6ffc95175f61": {
+      "latitude": -46.55765341,
+      "longitude": -71.72050586
+    },
+    "a10d5d26-60e0-41b0-aee2-004af451564f": {
+      "latitude": -46.55645598,
+      "longitude": -71.72141448
+    },
+    "afb549ea-7181-43f7-a43f-e21ff2837f2a": {
+      "latitude": -46.55358254,
+      "longitude": -71.72157605
+    },
+    "e0dedf87-d3e0-4aab-ac82-07d28ec12ba6": {
+      "latitude": -46.55849291,
+      "longitude": -71.71930602
+    },
+    "f51ff78e-a22e-4219-876e-9a978dbcbddf": {
+      "latitude": -46.52745459,
+      "longitude": -71.74815489
+    }
+  }
+}

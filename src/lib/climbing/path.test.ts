@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  fitDiscLabelSize,
   parsePath,
   parsePoint,
   pointerRadius,
+  scaledPointerRadius,
+  pointerRingWidth,
   serializePath,
   strokeWidthPx,
 } from "./path";
@@ -48,5 +51,20 @@ describe("pointerRadius", () => {
   it("keeps the andescalada start disc readable on a 4k topo", () => {
     expect(pointerRadius(1)).toBe(100);
     expect(pointerRadius(0.43)).toBe(90);
+  });
+});
+
+describe("scaledPointerRadius", () => {
+  it("follows the Skia start disc on a fitted canvas", () => {
+    expect(scaledPointerRadius(1, 364 / 4000)).toBeCloseTo(9.1);
+    expect(scaledPointerRadius(0.43, 0.1)).toBeCloseTo(4.3);
+  });
+});
+
+describe("fitDiscLabelSize", () => {
+  it("keeps two-digit labels inside a small PDF disc", () => {
+    const radius = 8;
+    const size = fitDiscLabelSize("12", radius, (fontSize) => fontSize * 1.15);
+    expect(size * 1.15).toBeLessThanOrEqual(radius * 2 - pointerRingWidth(radius) * 2);
   });
 });

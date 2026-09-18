@@ -45,11 +45,20 @@ const config = {
     ];
   },
   outputFileTracingIncludes: {
+    "/opengraph-image": [
+      "./src/assets/fonts/BrownStd-Regular.otf",
+      "./src/assets/fonts/The-Foregen-Regular.ttf",
+      "./src/assets/fonts/Holluise-Regular.ttf",
+    ],
     "/notas-de-cordada/[slug]/opengraph-image": [
       "./src/assets/fonts/BrownStd-Regular.otf",
+      "./src/assets/fonts/The-Foregen-Regular.ttf",
+      "./src/assets/fonts/Holluise-Regular.ttf",
     ],
     "/notas-de-cordada/opengraph-image": [
       "./src/assets/fonts/BrownStd-Regular.otf",
+      "./src/assets/fonts/The-Foregen-Regular.ttf",
+      "./src/assets/fonts/Holluise-Regular.ttf",
     ],
   },
   outputFileTracingExcludes: {

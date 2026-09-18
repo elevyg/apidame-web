@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import DownloadPdfLink from "@/components/DownloadPdfLink";
-import SiteHeader from "@/components/SiteHeader";
+import DeportivaBackLink from "@/components/climbing/DeportivaBackLink";
+import DeportivaPageTransition from "@/components/climbing/DeportivaPageTransition";
 import WallTopoExplorer from "@/components/climbing/WallTopoExplorer";
 import { requireWallGuide } from "@/lib/guide/queries";
 import { formatGuideDate } from "@/lib/guide/layout";
-import { getStoredPdf, wallPdfId } from "@/lib/guide/store";
+import { latestPdfDate } from "@/lib/guide/store";
+import { pageMetadata } from "../../../../seo";
 
 type WallPageProps = {
   params: Promise<{
@@ -19,10 +21,11 @@ export async function generateMetadata({
 }: WallPageProps): Promise<Metadata> {
   const { zoneSlug, sectorSlug, wallSlug } = await params;
   const data = await requireWallGuide(zoneSlug, sectorSlug, wallSlug);
-  return {
+  return pageMetadata({
     title: `${data.wall.name} · ${data.zone.name}`,
-    description: `Topo de ${data.wall.name} en ${data.zone.name}.`,
-  };
+    description: `Topo de ${data.wall.name} en ${data.zone.name}, Chile Chico.`,
+    path: `/deportiva/${data.zone.slug}/${data.sector.slug}/${data.wall.slug}`,
+  });
 }
 
 export default async function WallPage({ params }: WallPageProps) {
@@ -32,35 +35,40 @@ export default async function WallPage({ params }: WallPageProps) {
     sectorSlug,
     wallSlug,
   );
-  const storedPdf = await getStoredPdf(wallPdfId(wall.id));
+  const generatedAt = await latestPdfDate(zone.id);
 
   return (
-    <main className="flex h-dvh flex-col overflow-hidden">
-      <SiteHeader current="deportiva" />
-      <header className="page-shell border-rule flex shrink-0 flex-col gap-3 border-b py-4 md:flex-row md:items-end md:justify-between md:py-5">
-        <div>
-          <p className="kicker">
-            {zone.name} · {sector.name}
-          </p>
-          <h1 className="font-display mt-2 text-3xl md:text-5xl">{wall.name}</h1>
-        </div>
-        <div className="text-left md:text-right">
-          <DownloadPdfLink
-            href={`/deportiva/${zone.slug}/${sector.slug}/${wall.slug}/pdf?t=${storedPdf?.generatedAt.getTime() ?? Date.now()}`}
-            event="deportiva_wall_pdf"
-            properties={{ zone: zone.slug, wall: wall.slug }}
-            className="font-brown text-sm tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
-          >
-            PDF de esta pared
-          </DownloadPdfLink>
-          {storedPdf ? (
-            <p className="font-brown text-ink-soft mt-1 text-xs tracking-[0.08em] uppercase">
-              Generado {formatGuideDate(storedPdf.generatedAt)}
-            </p>
-          ) : null}
-        </div>
-      </header>
-      <WallTopoExplorer topos={topos} routes={routes} paths={paths} />
-    </main>
+    <DeportivaPageTransition>
+      <main className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+        <header className="page-shell border-rule relative z-30 flex shrink-0 items-center justify-between gap-3 border-b bg-paper py-2 md:py-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <DeportivaBackLink
+              href={`/deportiva/${zone.slug}#sector-${sector.slug}`}
+              to={zone.name}
+              compact
+            />
+            <h1 className="font-display truncate text-2xl leading-none md:text-5xl">
+              {wall.name}
+            </h1>
+          </div>
+          <div className="shrink-0 text-right">
+            <DownloadPdfLink
+              href={`/deportiva/${zone.slug}/pdf?t=${generatedAt?.getTime() ?? Date.now()}`}
+              event="deportiva_zone_pdf"
+              properties={{ zone: zone.slug, wall: wall.slug }}
+              className="font-brown text-[0.65rem] tracking-[0.12em] uppercase underline decoration-from-font underline-offset-4 md:text-sm md:tracking-[0.14em]"
+            >
+              Descargar topo
+            </DownloadPdfLink>
+            {generatedAt ? (
+              <p className="font-brown text-ink-soft mt-0.5 hidden text-xs tracking-[0.08em] uppercase md:block">
+                Generado {formatGuideDate(generatedAt)}
+              </p>
+            ) : null}
+          </div>
+        </header>
+        <WallTopoExplorer topos={topos} routes={routes} paths={paths} />
+      </main>
+    </DeportivaPageTransition>
   );
 }

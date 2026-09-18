@@ -3,13 +3,14 @@ import ArchivoFotos from "@/components/estetica/ArchivoFotos";
 import ProjectCluster from "@/components/estetica/ProjectCluster";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
+import { pageMetadata } from "../seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Quiénes somos",
   description:
     "Cami y Eyal. El sello Apidame en Chile Chico: muro, Cerro Apidame y deportiva.",
-  alternates: { canonical: "/quienes-somos" },
-};
+  path: "/quienes-somos",
+});
 
 const portrait = { width: 1800, height: 2400 } as const;
 

@@ -32,6 +32,9 @@ export default function SiteFooter() {
           >
             Instagram
           </TrackedLink>
+          <Link href="/dashboard" className="hover:text-ink">
+            Editor
+          </Link>
           <Link href="/terminos-y-condiciones" className="hover:text-ink">
             Términos
           </Link>

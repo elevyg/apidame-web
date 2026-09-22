@@ -85,8 +85,9 @@ export async function withDbRetry<T>(
     try {
       return await operation();
     } catch (error) {
-      if (attempt >= maxAttempts || !isTransientDbError(error)) {
-        if (attempt > 1 && isTransientDbError(error)) {
+      const transient = isTransientDbError(error);
+      if (attempt >= maxAttempts || !transient) {
+        if (transient && attempt > 1) {
           options.onExhausted?.(error, attempt);
         }
         throw error;

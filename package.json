@@ -6,12 +6,13 @@
     "node": "24.x"
   },
   "scripts": {
-    "build": "next build",
+    "build": "yarn db:migrate && next build",
     "dev": "next dev --port 4000",
     "fetch:topos": "node scripts/fetch-drive-topos.mjs",
     "lint": "eslint .",
     "start": "next start --port 4000",
     "test": "vitest run",
+    "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:seed": "node --env-file=.env.local --import tsx scripts/seed-deportiva.ts"
   },

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchStaticMap } from "@/lib/guide/mapbox";
 import { buildZoneMapView, WEB_MAP_SIZE } from "@/lib/guide/mapView";
-import { requireZoneBySlug } from "@/lib/guide/queries";
+import { requireZoneBySlug, ZoneDataUnavailableError } from "@/lib/guide/queries";
 import { zoneToMapInput } from "@/lib/guide/zoneMap";
 
 type RouteProps = {
@@ -10,7 +10,15 @@ type RouteProps = {
 
 export async function GET(_request: NextRequest, { params }: RouteProps) {
   const { zoneSlug } = await params;
-  const guide = await requireZoneBySlug(zoneSlug);
+  let guide;
+  try {
+    guide = await requireZoneBySlug(zoneSlug);
+  } catch (error) {
+    if (error instanceof ZoneDataUnavailableError) {
+      return new NextResponse("Mapa no disponible", { status: 502 });
+    }
+    throw error;
+  }
   const view = buildZoneMapView(zoneToMapInput(guide), WEB_MAP_SIZE);
   if (!view) {
     return new NextResponse("Mapa no disponible", { status: 404 });

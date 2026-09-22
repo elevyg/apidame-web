@@ -166,8 +166,25 @@ export async function getZoneById(id: string) {
   return getZoneBySlug(zone.slug);
 }
 
+/**
+ * Thrown when the database is unreachable while loading a zone, so callers can
+ * tell a genuine "zone not found" (a 404) apart from a transient upstream
+ * failure that survived the client retries (a 502).
+ */
+export class ZoneDataUnavailableError extends Error {
+  constructor(slug: string, options?: { cause?: unknown }) {
+    super(`No se pudo cargar la zona "${slug}"`, options);
+    this.name = "ZoneDataUnavailableError";
+  }
+}
+
 export async function requireZoneBySlug(slug: string) {
-  const data = await getZoneBySlug(slug);
+  let data: Awaited<ReturnType<typeof getZoneBySlug>>;
+  try {
+    data = await getZoneBySlug(slug);
+  } catch (error) {
+    throw new ZoneDataUnavailableError(slug, { cause: error });
+  }
   if (!data || !data.zone.published) notFound();
   return data;
 }

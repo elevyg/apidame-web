@@ -31,7 +31,10 @@ export interface OpenSeadragonNavigator {
 export interface OpenSeadragonViewer {
   viewport: OpenSeadragonViewport;
   navigator?: OpenSeadragonNavigator;
-  addHandler(event: string, handler: () => void): void;
+  addHandler(
+    event: string,
+    handler: (event: { message?: string }) => void,
+  ): void;
   removeOverlay(element: HTMLElement): void;
   addOverlay(options: {
     element: HTMLElement;

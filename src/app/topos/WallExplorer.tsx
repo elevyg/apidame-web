@@ -19,6 +19,7 @@ const CDN_SRC =
 const IMAGES_PREFIX = "/vendor/openseadragon/images/";
 const SCRIPT_TIMEOUT_MS = 15000;
 const DEFAULT_MARKER_SIZE = 120;
+const WALL_ID = "proa-repisa";
 const LOAD_ERROR_MESSAGE =
   "No se pudo cargar el visor del topo. Revisa tu conexión e inténtalo de nuevo.";
 
@@ -77,8 +78,7 @@ export default function WallExplorer({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const viewerRef = useRef<OpenSeadragonViewer | null>(null);
   const overlayMapRef = useRef<Map<string, HTMLElement>>(new Map());
-  const scriptSourceRef = useRef<string | null>(null);
-  const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [scriptSource, setScriptSource] = useState<string | null>(null);
   const [viewerError, setViewerError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
 
@@ -92,12 +92,11 @@ export default function WallExplorer({
     loadOpenSeadragon()
       .then((source) => {
         if (cancelled) return;
-        scriptSourceRef.current = source;
-        setScriptLoaded(true);
+        setScriptSource(source);
       })
       .catch((err) => {
         if (cancelled) return;
-        posthog.captureException(err, { wall: "proa-repisa", attempt });
+        posthog.captureException(err, { wall: WALL_ID, attempt });
         setViewerError(LOAD_ERROR_MESSAGE);
       });
 
@@ -107,7 +106,7 @@ export default function WallExplorer({
   }, [image, attempt]);
 
   useEffect(() => {
-    if (!scriptLoaded) return;
+    if (!scriptSource) return;
     if (!image) return;
     if (!containerRef.current) return;
     if (!window.OpenSeadragon) {
@@ -151,8 +150,8 @@ export default function WallExplorer({
     viewer.addHandler("open", () => {
       viewer.viewport.goHome(true);
       posthog.capture("topo_viewer_ready", {
-        wall: "proa-repisa",
-        script_source: scriptSourceRef.current,
+        wall: WALL_ID,
+        script_source: scriptSource,
         load_ms: Math.round(performance.now() - startedAt),
         attempt,
       });
@@ -161,7 +160,7 @@ export default function WallExplorer({
     viewer.addHandler("open-failed", (event) => {
       posthog.captureException(
         new Error(`OpenSeadragon could not open tiles: ${event.message}`),
-        { wall: "proa-repisa", tile_source: image.dziPath, attempt },
+        { wall: WALL_ID, tile_source: image.dziPath, attempt },
       );
       setViewerError(LOAD_ERROR_MESSAGE);
     });
@@ -170,7 +169,7 @@ export default function WallExplorer({
       viewer.destroy();
       if (viewerRef.current === viewer) viewerRef.current = null;
     };
-  }, [scriptLoaded, image, attempt]);
+  }, [scriptSource, image, attempt]);
 
   const visibleRouteMap = useMemo(() => {
     return new Map(visibleRoutes.map((route) => [route.id, route]));

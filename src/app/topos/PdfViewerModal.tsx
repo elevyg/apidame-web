@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import posthog from "posthog-js";
+import TrackedLink from "@/components/TrackedLink";
 
 const PREVIEW_TIMEOUT_MS = 10000;
 
@@ -54,21 +55,16 @@ export default function PdfViewerModal({
         />
         <div className="border-rule font-brown text-ink-soft flex items-center justify-between gap-4 border-t px-5 py-3 text-xs">
           <span>Si no carga, ábrelo en una pestaña nueva.</span>
-          <a
+          <TrackedLink
             href={openUrl}
+            event="topo_pdf_external_opened"
+            properties={{ title, file_id: fileId, source: "footer" }}
             target="_blank"
             rel="noreferrer"
             className="text-ink underline decoration-from-font underline-offset-4"
-            onClick={() => {
-              posthog.capture("topo_pdf_external_opened", {
-                title,
-                file_id: fileId,
-                source: "footer",
-              });
-            }}
           >
             Abrir PDF
-          </a>
+          </TrackedLink>
         </div>
       </div>
     </div>
@@ -83,16 +79,14 @@ type PdfPreviewProps = {
 };
 
 function PdfPreview({ title, fileId, previewUrl, openUrl }: PdfPreviewProps) {
-  const [status, setStatus] = useState<"loading" | "loaded" | "timeout">(
-    "loading",
-  );
+  const [timedOut, setTimedOut] = useState(false);
   const openedAtRef = useRef(0);
   const timeoutRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     openedAtRef.current = performance.now();
     timeoutRef.current = window.setTimeout(() => {
-      setStatus("timeout");
+      setTimedOut(true);
       posthog.captureException(
         new Error("Google Drive PDF preview did not load in time"),
         { title, file_id: fileId, timeout_ms: PREVIEW_TIMEOUT_MS },
@@ -103,7 +97,7 @@ function PdfPreview({ title, fileId, previewUrl, openUrl }: PdfPreviewProps) {
 
   const handleLoad = () => {
     window.clearTimeout(timeoutRef.current);
-    setStatus("loaded");
+    setTimedOut(false);
     posthog.capture("topo_pdf_preview_loaded", {
       title,
       file_id: fileId,
@@ -122,26 +116,21 @@ function PdfPreview({ title, fileId, previewUrl, openUrl }: PdfPreviewProps) {
         onLoad={handleLoad}
         className="absolute inset-0 h-full w-full border-none"
       />
-      {status === "timeout" ? (
+      {timedOut ? (
         <div className="bg-paper absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center">
           <p className="font-brown text-ink-soft text-sm">
             La vista previa no cargó.
           </p>
-          <a
+          <TrackedLink
             href={openUrl}
+            event="topo_pdf_external_opened"
+            properties={{ title, file_id: fileId, source: "timeout" }}
             target="_blank"
             rel="noreferrer"
             className="font-brown bg-ink text-paper px-5 py-3 text-xs tracking-[0.16em] uppercase"
-            onClick={() => {
-              posthog.capture("topo_pdf_external_opened", {
-                title,
-                file_id: fileId,
-                source: "timeout",
-              });
-            }}
           >
             Abrir PDF
-          </a>
+          </TrackedLink>
         </div>
       ) : null}
     </div>

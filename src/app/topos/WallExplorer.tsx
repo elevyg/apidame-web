@@ -16,7 +16,57 @@ type WallExplorerProps = {
 const SCRIPT_SRC = "/vendor/openseadragon.min.js";
 const CDN_SRC =
   "https://openseadragon.github.io/openseadragon/openseadragon.min.js";
+const IMAGES_PREFIX = "/vendor/openseadragon/images/";
+const SCRIPT_TIMEOUT_MS = 15000;
 const DEFAULT_MARKER_SIZE = 120;
+const WALL_ID = "proa-repisa";
+const LOAD_ERROR_MESSAGE =
+  "No se pudo cargar el visor del topo. Revisa tu conexión e inténtalo de nuevo.";
+
+function loadScript(src: string) {
+  // A tag left by an earlier attempt already fired load or error, so
+  // listening on it again never settles. Replace it with a fresh tag.
+  document.querySelector(`script[src="${src}"]`)?.remove();
+
+  return new Promise<void>((resolve, reject) => {
+    const script = document.createElement("script");
+    const timeout = window.setTimeout(() => {
+      script.remove();
+      reject(new Error(`Timed out loading OpenSeadragon from ${src}`));
+    }, SCRIPT_TIMEOUT_MS);
+
+    script.src = src;
+    script.async = true;
+    script.onload = () => {
+      window.clearTimeout(timeout);
+      resolve();
+    };
+    script.onerror = () => {
+      window.clearTimeout(timeout);
+      script.remove();
+      reject(new Error(`Failed to load OpenSeadragon from ${src}`));
+    };
+    document.body.appendChild(script);
+  });
+}
+
+async function loadOpenSeadragon() {
+  if (window.OpenSeadragon) return "cached";
+
+  let lastError: unknown = null;
+  for (const src of [SCRIPT_SRC, CDN_SRC]) {
+    try {
+      await loadScript(src);
+    } catch (err) {
+      lastError = err;
+    }
+    if (window.OpenSeadragon) return src;
+  }
+  throw (
+    lastError ??
+    new Error("OpenSeadragon is not defined after loading the script")
+  );
+}
 
 export default function WallExplorer({
   data,
@@ -28,8 +78,9 @@ export default function WallExplorer({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const viewerRef = useRef<OpenSeadragonViewer | null>(null);
   const overlayMapRef = useRef<Map<string, HTMLElement>>(new Map());
-  const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [scriptSource, setScriptSource] = useState<string | null>(null);
   const [viewerError, setViewerError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   const image = data?.image;
 
@@ -37,51 +88,25 @@ export default function WallExplorer({
     if (!containerRef.current) return;
     if (!image) return;
 
-    const loadScript = (src: string) =>
-      new Promise<void>((resolve, reject) => {
-        const existing = document.querySelector(`script[src="${src}"]`);
-        if (existing) {
-          if (window.OpenSeadragon) {
-            resolve();
-          } else {
-            existing.addEventListener("load", () => resolve());
-            existing.addEventListener("error", () => reject());
-          }
-          return;
-        }
-
-        const script = document.createElement("script");
-        script.src = src;
-        script.async = true;
-        script.onload = () => resolve();
-        script.onerror = () => reject();
-        document.body.appendChild(script);
-      });
-
-    loadScript(SCRIPT_SRC)
-      .then(() => {
-        if (window.OpenSeadragon) {
-          setScriptLoaded(true);
-          return;
-        }
-        return loadScript(CDN_SRC).then(() => {
-          if (window.OpenSeadragon) {
-            setScriptLoaded(true);
-            return;
-          }
-          throw new Error("OpenSeadragon no disponible");
-        });
+    let cancelled = false;
+    loadOpenSeadragon()
+      .then((source) => {
+        if (cancelled) return;
+        setScriptSource(source);
       })
       .catch((err) => {
-        posthog.captureException(err);
-        setViewerError(
-          "No se pudo cargar OpenSeadragon. Revisa el bundle local o la conexión al CDN.",
-        );
+        if (cancelled) return;
+        posthog.captureException(err, { wall: WALL_ID, attempt });
+        setViewerError(LOAD_ERROR_MESSAGE);
       });
-  }, [image]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [image, attempt]);
 
   useEffect(() => {
-    if (!scriptLoaded) return;
+    if (!scriptSource) return;
     if (!image) return;
     if (!containerRef.current) return;
     if (!window.OpenSeadragon) {
@@ -90,9 +115,7 @@ export default function WallExplorer({
           "OpenSeadragon no está disponible después de cargar el script",
         ),
       );
-      setViewerError(
-        "OpenSeadragon no está disponible. Revisa el bundle local o la carga desde CDN.",
-      );
+      setViewerError(LOAD_ERROR_MESSAGE);
       return;
     }
 
@@ -101,10 +124,11 @@ export default function WallExplorer({
       viewerRef.current = null;
     }
 
+    const startedAt = performance.now();
     const viewer = window.OpenSeadragon({
       element: containerRef.current,
       tileSources: image.dziPath,
-      prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
+      prefixUrl: IMAGES_PREFIX,
       showNavigator: true,
       showZoomControl: false,
       showHomeControl: false,
@@ -125,12 +149,27 @@ export default function WallExplorer({
 
     viewer.addHandler("open", () => {
       viewer.viewport.goHome(true);
+      posthog.capture("topo_viewer_ready", {
+        wall: WALL_ID,
+        script_source: scriptSource,
+        load_ms: Math.round(performance.now() - startedAt),
+        attempt,
+      });
+    });
+
+    viewer.addHandler("open-failed", (event) => {
+      posthog.captureException(
+        new Error(`OpenSeadragon could not open tiles: ${event.message}`),
+        { wall: WALL_ID, tile_source: image.dziPath, attempt },
+      );
+      setViewerError(LOAD_ERROR_MESSAGE);
     });
 
     return () => {
       viewer.destroy();
+      if (viewerRef.current === viewer) viewerRef.current = null;
     };
-  }, [scriptLoaded, image]);
+  }, [scriptSource, image, attempt]);
 
   const visibleRouteMap = useMemo(() => {
     return new Map(visibleRoutes.map((route) => [route.id, route]));
@@ -221,7 +260,16 @@ export default function WallExplorer({
     return (
       <div className="font-brown text-signal flex h-full flex-col items-center justify-center gap-2 p-6 text-center text-xs">
         <p>{viewerError}</p>
-        <p className="text-white/50">Se mostrará el topo descargable abajo.</p>
+        <button
+          type="button"
+          onClick={() => {
+            setViewerError(null);
+            setAttempt((value) => value + 1);
+          }}
+          className="font-brown text-canvas-ink border border-white/40 px-3 py-2 text-[10px] tracking-[0.18em] uppercase hover:text-white"
+        >
+          Reintentar
+        </button>
       </div>
     );
   }

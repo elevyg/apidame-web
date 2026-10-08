@@ -47,3 +47,8 @@ yarn-error.log*
 .secrets/
 .env*
 !.env.example
+
+# local libSQL/SQLite dev database
+local.db
+local.db-*
+*.db

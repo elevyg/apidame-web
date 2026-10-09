@@ -13,7 +13,8 @@
     "start": "next start --port 4000",
     "test": "vitest run",
     "db:push": "drizzle-kit push",
-    "db:seed": "node --env-file=.env.local --import tsx scripts/seed-deportiva.ts"
+    "db:seed": "node --env-file=.env.local --import tsx scripts/seed-deportiva.ts",
+    "afiche:asado": "node scripts/afiche-asado-guadal.mjs"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",

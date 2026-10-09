@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pegues y asado — Club Andino de Puerto Guadal</title>
+    <style>
+      @font-face {
+        font-family: Holluise;
+        src: url("../src/assets/fonts/Holluise-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: Foregen;
+        src: url("../src/assets/fonts/The-Foregen-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: Brown;
+        src: url("../src/assets/fonts/BrownStd-Regular.otf") format("opentype");
+        font-weight: 400;
+        font-style: normal;
+      }
+
+      @page {
+        size: A3;
+        margin: 0;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 297mm;
+        height: 420mm;
+        background: #e8e2d4;
+        color: #1c1916;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .poster {
+        width: 297mm;
+        height: 420mm;
+        display: flex;
+        flex-direction: column;
+        background: #e8e2d4;
+        overflow: hidden;
+      }
+
+      .plate {
+        position: relative;
+        height: 188mm;
+        background: #12110f;
+        overflow: hidden;
+        flex: 0 0 188mm;
+      }
+
+      .plate img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 48%;
+        filter: grayscale(1);
+      }
+
+      .plate::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(18, 17, 15, 0.62) 0%,
+          rgba(18, 17, 15, 0.06) 34%,
+          rgba(18, 17, 15, 0.2) 100%
+        );
+      }
+
+      .chrome {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 14mm 16mm;
+        color: #ffffff;
+        text-shadow: 0 1px 16px rgba(0, 0, 0, 0.55);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 4mm;
+      }
+
+      .brand img {
+        width: 9mm;
+        height: 8.4mm;
+        filter: brightness(0) invert(1);
+      }
+
+      .brand span {
+        font-family: Holluise, sans-serif;
+        font-size: 5.2mm;
+        letter-spacing: 0.2em;
+        line-height: 1;
+      }
+
+      .place {
+        font-family: Brown, sans-serif;
+        font-size: 3.1mm;
+        letter-spacing: 0.16em;
+        padding-top: 1.6mm;
+      }
+
+      .field {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 16mm 16mm 13mm;
+        border-top: 0.8mm solid #1c1916;
+      }
+
+      h1 {
+        font-family: Foregen, sans-serif;
+        font-size: 26mm;
+        font-weight: 400;
+        line-height: 0.86;
+        letter-spacing: -0.03em;
+      }
+
+      .copy {
+        font-family: Brown, sans-serif;
+        font-size: 6.2mm;
+        line-height: 1.22;
+        letter-spacing: -0.02em;
+        max-width: 24em;
+        margin-top: 12mm;
+      }
+
+      .rule {
+        width: 22mm;
+        height: 2.1mm;
+        background: #1c1916;
+        margin-top: 8mm;
+      }
+
+      footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 8mm;
+        margin-top: auto;
+        border-top: 0.35mm solid #1c1916;
+        padding-top: 5mm;
+        font-family: Brown, sans-serif;
+        font-size: 3mm;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <article class="poster">
+      <div class="plate">
+        <img src="../public/estetica/muro/bn-luna.jpg" alt="" />
+        <div class="chrome">
+          <div class="brand">
+            <img src="../src/assets/svgs/icon-solo.svg" alt="" />
+            <span>APIDAME</span>
+          </div>
+          <p class="place">CHILE CHICO</p>
+        </div>
+      </div>
+      <div class="field">
+        <h1>Asado</h1>
+        <div>
+          <p class="copy">
+            Queremos invitar al Club Andino de Puerto Guadal a los pegues en
+            roca y después un asado con escalada en el Boulder y alojamiento en
+            el mismo también para este domingo Domingo 11.
+          </p>
+          <div class="rule"></div>
+        </div>
+        <footer>
+          <span>Apidame Boulder · Camino Internacional</span>
+          <span>@apidameboulder</span>
+        </footer>
+      </div>
+    </article>
+    <script>
+      document.fonts.ready.then(() => {
+        document.documentElement.dataset.fonts = "ready";
+      });
+    </script>
+  </body>
+</html>

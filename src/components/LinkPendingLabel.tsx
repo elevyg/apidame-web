@@ -17,7 +17,7 @@ export default function LinkPendingLabel({
   const { pending } = useLinkStatus();
   return (
     <span
-      className={`${className ?? ""} ${pending ? "animate-pulse" : ""}`}
+      className={pending ? `${className ?? ""} animate-pulse` : className}
       aria-live="polite"
     >
       {pending ? pendingLabel : children}

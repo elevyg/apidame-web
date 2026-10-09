@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import TrackedLink from "@/components/TrackedLink";
+import LinkPendingLabel from "@/components/LinkPendingLabel";
 import SiteFooter from "@/components/SiteFooter";
 import DeportivaPageTransition from "@/components/climbing/DeportivaPageTransition";
 import { optimizedImageUrl } from "@/lib/climbing/cloudinary";
@@ -62,9 +63,12 @@ export default async function DeportivaPage() {
                         {zone.description}
                       </p>
                     ) : null}
-                    <span className="font-brown mt-5 inline-block text-sm tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4">
+                    <LinkPendingLabel
+                      pendingLabel="Abriendo…"
+                      className="font-brown mt-5 inline-block text-sm tracking-[0.14em] uppercase underline decoration-from-font underline-offset-4"
+                    >
                       Abrir zona
-                    </span>
+                    </LinkPendingLabel>
                   </div>
                   {cover ? (
                     <Image

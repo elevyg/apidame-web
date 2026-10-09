@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import DownloadPdfLink from "@/components/DownloadPdfLink";
 import TrackedLink from "@/components/TrackedLink";
 import SiteFooter from "@/components/SiteFooter";
@@ -16,6 +17,8 @@ import { buildZoneMapView, WEB_MAP_SIZE } from "@/lib/guide/mapView";
 import { mapboxToken } from "@/lib/guide/mapbox";
 import { zoneToMapInput } from "@/lib/guide/zoneMap";
 
+const getZone = cache(requireZoneBySlug);
+
 type ZonePageProps = {
   params: Promise<{ zoneSlug: string }>;
 };
@@ -24,7 +27,7 @@ export async function generateMetadata({
   params,
 }: ZonePageProps): Promise<Metadata> {
   const { zoneSlug } = await params;
-  const data = await requireZoneBySlug(zoneSlug);
+  const data = await getZone(zoneSlug);
   const title = `${data.zone.name} · Chile Chico`;
   const description = flattenDescription(
     data.zone.description,
@@ -39,7 +42,7 @@ export async function generateMetadata({
 
 export default async function ZonePage({ params }: ZonePageProps) {
   const { zoneSlug } = await params;
-  const guide = await requireZoneBySlug(zoneSlug);
+  const guide = await getZone(zoneSlug);
   const { zone, sectors, walls, routes, rules } = guide;
   const generatedAt = await latestPdfDate(zone.id);
   const histogram = gradeHistogram(routes);

@@ -1,0 +1,17 @@
+{
+  "name": "apidame-web",
+  "install": "bash .cursor/setup.sh",
+  "terminals": [
+    {
+      "name": "next-dev",
+      "command": "bash .cursor/dev.sh",
+      "description": "Next.js dev server (Turbopack) on http://localhost:4000"
+    }
+  ],
+  "ports": [
+    {
+      "name": "next-dev",
+      "port": 4000
+    }
+  ]
+}

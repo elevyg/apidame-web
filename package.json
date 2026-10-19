@@ -6,7 +6,7 @@
     "node": "24.x"
   },
   "scripts": {
-    "build": "yarn db:migrate && next build",
+    "build": "next build",
     "dev": "next dev --port 4000",
     "fetch:topos": "node scripts/fetch-drive-topos.mjs",
     "lint": "eslint .",

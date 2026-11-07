@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import FeaturedRoutesGallery from "./FeaturedRoutesGallery";
 import featuredRoutes from "./featuredRoutes.json";
+import { formatUpdated } from "./formatUpdated";
 import type { FeaturedRoute } from "./types";
 import Notice from "@/components/Notice";
 import SiteFooter from "@/components/SiteFooter";
@@ -41,7 +42,10 @@ const structuredData = {
 };
 
 export default function Topos() {
-  const routes = featuredRoutes as FeaturedRoute[];
+  const routes = (featuredRoutes as FeaturedRoute[]).map((route) => ({
+    ...route,
+    updatedLabel: formatUpdated(route.modifiedTime),
+  }));
 
   return (
     <main className="flex min-h-screen flex-col">

@@ -7,19 +7,8 @@ import type { FeaturedRoute } from "./types";
 import PdfViewerModal from "./PdfViewerModal";
 
 type FeaturedRoutesGalleryProps = {
-  routes: FeaturedRoute[];
+  routes: (FeaturedRoute & { updatedLabel: string })[];
 };
-
-function formatUpdated(dateValue: string | null) {
-  if (!dateValue) return "Actualización reciente";
-  const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) return "Actualización reciente";
-  return date.toLocaleDateString("es-CL", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-}
 
 function displayName(name: string) {
   return name.replace(/\.pdf$/i, "");
@@ -73,7 +62,7 @@ export default function FeaturedRoutesGallery({
             <p className="font-brown mt-3 text-sm leading-snug">
               {displayName(route.name)}
             </p>
-            <p className="kicker mt-2">{formatUpdated(route.modifiedTime)}</p>
+            <p className="kicker mt-2">{route.updatedLabel}</p>
           </button>
         ))}
       </div>

@@ -29,7 +29,57 @@ describe("dropInjectedBrowserExceptions", () => {
     expect(dropInjectedBrowserExceptions(event)).toBeNull();
   });
 
-  it("keeps an exception with an app frame", () => {
+  it("drops an exception whose frames name only page addresses", () => {
+    const event = exceptionEvent([
+      "https://www.apidame.com/login",
+      "https://www.apidame.com/login",
+      "https://www.apidame.com/topos",
+    ]);
+    expect(dropInjectedBrowserExceptions(event)).toBeNull();
+  });
+
+  it("drops an exception whose frames name the root page address", () => {
+    const event = exceptionEvent(["https://www.apidame.com/"]);
+    expect(dropInjectedBrowserExceptions(event)).toBeNull();
+  });
+
+  it("drops a page address exception that also has an anonymous frame", () => {
+    const event = exceptionEvent([undefined, "https://www.apidame.com/topos"]);
+    expect(dropInjectedBrowserExceptions(event)).toBeNull();
+  });
+
+  it("keeps a page address exception that also has a Next.js chunk frame", () => {
+    const event = exceptionEvent([
+      "https://www.apidame.com/topos",
+      "https://www.apidame.com/_next/static/immutable/chunks/2zk81v7u04s0p.js",
+    ]);
+    expect(dropInjectedBrowserExceptions(event)).toBe(event);
+  });
+
+  it("keeps a page address exception that also has a PostHog script frame", () => {
+    const event = exceptionEvent([
+      "https://www.apidame.com/topos",
+      "https://www.apidame.com/ingest/static/array.js",
+    ]);
+    expect(dropInjectedBrowserExceptions(event)).toBe(event);
+  });
+
+  it("keeps a page address exception that also has a vendor script frame", () => {
+    const event = exceptionEvent([
+      "https://www.apidame.com/topos",
+      "https://www.apidame.com/vendor/openseadragon.min.js",
+    ]);
+    expect(dropInjectedBrowserExceptions(event)).toBe(event);
+  });
+
+  it("keeps an exception with a Next.js chunk frame", () => {
+    const event = exceptionEvent([
+      "https://www.apidame.com/_next/static/immutable/chunks/2zk81v7u04s0p.js",
+    ]);
+    expect(dropInjectedBrowserExceptions(event)).toBe(event);
+  });
+
+  it("keeps an exception with a script file frame", () => {
     const event = exceptionEvent(["https://www.apidame.com/main.js"]);
     expect(dropInjectedBrowserExceptions(event)).toBe(event);
   });

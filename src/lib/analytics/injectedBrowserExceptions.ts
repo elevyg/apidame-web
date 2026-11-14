@@ -15,9 +15,19 @@ type CapturedException = {
 const SCHEME = /^([a-z][a-z0-9+.-]*):\/\//i;
 const APP_SCHEMES = new Set(["http", "https"]);
 
+// App code runs from script files such as "/_next/static/chunks/x.js". WebKit
+// labels scripts that Chrome on iOS injects with the page document URL, such as
+// "https://www.apidame.com/topos", so an http(s) frame with no script file is
+// also injected.
+const SCRIPT_FILE = /\.[cm]?js$/i;
+
 function isInjectedFrame(frame: StackFrame): boolean {
-  const match = frame.filename?.match(SCHEME);
-  return !!match && !APP_SCHEMES.has(match[1].toLowerCase());
+  const filename = frame.filename;
+  const match = filename?.match(SCHEME);
+  if (!filename || !match) return false;
+  if (!APP_SCHEMES.has(match[1].toLowerCase())) return true;
+  const path = filename.split(/[?#]/)[0];
+  return !SCRIPT_FILE.test(path);
 }
 
 function framesOf(event: CaptureResult): StackFrame[] {
@@ -27,8 +37,8 @@ function framesOf(event: CaptureResult): StackFrame[] {
 }
 
 // Drops $exception events whose every stack frame comes from an injected
-// in-app browser script. Genuine app exceptions keep at least one http(s)
-// frame, so they pass through untouched.
+// browser script. Genuine app exceptions keep at least one frame from an
+// http(s) script file, so they pass through untouched.
 export function dropInjectedBrowserExceptions(
   event: CaptureResult | null,
 ): CaptureResult | null {

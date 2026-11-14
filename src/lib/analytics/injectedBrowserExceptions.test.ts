@@ -29,6 +29,33 @@ describe("dropInjectedBrowserExceptions", () => {
     expect(dropInjectedBrowserExceptions(event)).toBeNull();
   });
 
+  it("drops when every frame names a page document instead of a script file", () => {
+    const event = exceptionEvent([
+      "https://www.apidame.com/login",
+      "https://www.apidame.com/topos",
+      "https://www.apidame.com/",
+    ]);
+    expect(dropInjectedBrowserExceptions(event)).toBeNull();
+  });
+
+  it("drops when document frames mix with non-http frames", () => {
+    const event = exceptionEvent(["https://www.apidame.com/topos", "iabjs://one"]);
+    expect(dropInjectedBrowserExceptions(event)).toBeNull();
+  });
+
+  it("keeps an exception that mixes an app frame with a document frame", () => {
+    const event = exceptionEvent([
+      "https://www.apidame.com/topos",
+      "https://www.apidame.com/_next/static/chunks/main.js",
+    ]);
+    expect(dropInjectedBrowserExceptions(event)).toBe(event);
+  });
+
+  it("keeps an app frame whose script URL has a query string", () => {
+    const event = exceptionEvent(["https://www.apidame.com/_next/static/chunks/main.js?v=1"]);
+    expect(dropInjectedBrowserExceptions(event)).toBe(event);
+  });
+
   it("keeps an exception with an app frame", () => {
     const event = exceptionEvent(["https://www.apidame.com/main.js"]);
     expect(dropInjectedBrowserExceptions(event)).toBe(event);

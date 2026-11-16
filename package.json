@@ -27,7 +27,7 @@
     "next-auth": "5.0.0-beta.32",
     "pdf-lib": "^1.17.1",
     "posthog-js": "^1.433.6",
-    "posthog-node": "^5.52.4",
+    "posthog-node": "^5.74.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-zoom-pan-pinch": "^4.2.0",
